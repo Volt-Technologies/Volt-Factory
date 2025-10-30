@@ -118,14 +118,14 @@ This feature will be developed through a multi-agent workflow following Business
    - Write unit tests in the `BC Test` folder for each implemented feature
    - Follow AL coding standards and best practices
    - Ensure proper object numbering and naming conventions
-3. Build the Business Central app incrementally, testing each task's implementation
-4. After completing all tasks, or at logical checkpoints, request testing via the compilation and testing workflow (see Phase 4)
+3. Build the Business Central app incrementally, compiling and testing each task's implementation
+4. After completing all tasks, or at logical checkpoints, request compilation and publishing (Phase 4) followed by testing (Phase 5)
 
 **Output**: Complete AL code implementation and unit tests in the BC and BC Test folders.
 
 ---
 
-### Phase 4: Compilation, Publishing, and Testing
+### Phase 4: Compilation and Publishing
 
 **Agent**: `bc-app-compiler-tester`
 
@@ -133,30 +133,51 @@ This feature will be developed through a multi-agent workflow following Business
 1. Compile the Business Central app from the `BC` folder
 2. Compile the test app from the `BC Test` folder
 3. Publish the compiled app to the Business Central environment
-4. Execute all unit tests
-5. Report detailed results including:
+4. Report detailed results including:
    - Compilation status (success/failures with specific errors)
    - Publishing status
-   - Test execution results (passed/failed tests with details)
-   - Error messages, stack traces, and file/line references for any failures
+   - Error messages and file/line references for any failures
 
 **Iteration Cycle**:
-6. If compilation, publishing, or testing fails:
+5. If compilation or publishing fails:
    - The `bc-app-compiler-tester` agent provides detailed error information
    - The `bc-al-developer` agent:
      * Analyzes the errors
      * Makes necessary corrections to the AL code
-     * Updates unit tests if needed
-   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler-tester` compiles, publishes, and tests again
-7. Continue this iteration until:
+   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler-tester` compiles and publishes again
+6. Continue this iteration until:
    - The app compiles successfully
    - The app publishes successfully
-   - All unit tests pass
-8. Only consider the feature complete when all three conditions are met.
+7. Once compilation and publishing succeed, proceed to Phase 5 (Testing)
 
 ---
 
-### Phase 5: Documentation
+### Phase 5: Testing
+
+**Agent**: `bc-test-runner`
+
+**Responsibilities**:
+1. Execute all unit tests via Business Central's AL Test Tool web interface
+2. Monitor test execution (which can take 10-20+ minutes)
+3. Capture comprehensive test results including:
+   - Passed/failed test counts
+   - Detailed error messages for failures
+   - Stack traces and assertion failures
+   - Test codeunit and test procedure names
+
+**Iteration Cycle**:
+4. If testing fails:
+   - The `bc-test-runner` agent provides detailed test failure information
+   - The `bc-al-developer` agent:
+     * Analyzes the test failures
+     * Makes necessary corrections to the AL code or unit tests
+   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler-tester` recompiles and republishes (Phase 4) → `bc-test-runner` executes tests again
+5. Continue this iteration until all unit tests pass
+6. Only after all tests pass successfully, proceed to Phase 6 (Documentation)
+
+---
+
+### Phase 6: Documentation
 
 **Agent**: `gitbook-documentation-builder`
 
@@ -182,14 +203,14 @@ This feature will be developed through a multi-agent workflow following Business
 ## Success Criteria
 
 The feature is considered complete when:
-1. ✅ All functional design work items are created in Azure DevOps with proper hierarchy
-2. ✅ All technical design subtasks are created in Azure DevOps with detailed specifications
-3. ✅ All technical tasks are implemented in AL code
-4. ✅ All unit tests are written and passing
-5. ✅ The Business Central app compiles without errors
-6. ✅ The app publishes successfully to the Business Central environment
-7. ✅ All unit tests execute and pass successfully
-8. ✅ Complete user-facing documentation is created with screenshots and organized in GitBook structure
+1. ✅ All functional design work items are created in Azure DevOps with proper hierarchy (Phase 1)
+2. ✅ All technical design subtasks are created in Azure DevOps with detailed specifications (Phase 2)
+3. ✅ All technical tasks are implemented in AL code (Phase 3)
+4. ✅ All unit tests are written in the BC Test folder (Phase 3)
+5. ✅ The Business Central app compiles without errors (Phase 4)
+6. ✅ The app publishes successfully to the Business Central environment (Phase 4)
+7. ✅ All unit tests execute and pass successfully via bc-test-runner (Phase 5)
+8. ✅ Complete user-facing documentation is created with screenshots and organized in GitBook structure (Phase 6)
 
 ## Notes
 
@@ -197,6 +218,14 @@ The feature is considered complete when:
 - All Azure DevOps work items should follow the strict hierarchy: Epic → Feature → User Story → Task → Subtask
 - The development should follow Business Central AL best practices and coding standards
 - All code changes should be made in the `BC` folder, and all tests in the `BC Test` folder
-- The iteration cycle between `bc-al-developer` and `bc-app-compiler-tester` should continue until all issues are resolved
-- Documentation should be created for all newly developed features using the `gitbook-documentation-builder` agent as the final step
+- **Compilation and Publishing** (Phase 4) is handled by `bc-app-compiler-tester` agent - it does NOT execute tests
+- **Testing** (Phase 5) is handled separately by `bc-test-runner` agent after successful compilation and publishing
+- The iteration cycle involves:
+  - `bc-al-developer` writes/fixes code
+  - `bc-app-compiler-tester` compiles and publishes
+  - If compilation/publishing fails, loop back to `bc-al-developer`
+  - If compilation/publishing succeeds, `bc-test-runner` executes tests
+  - If tests fail, loop back to `bc-al-developer` (which will trigger recompilation and republishing)
+  - Continue until both compilation/publishing and testing succeed
+- Documentation should be created for all newly developed features using the `gitbook-documentation-builder` agent as the final step (Phase 6)
 
