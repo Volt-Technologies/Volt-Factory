@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "name": ".claude",
+            "path": ".claude"
+        },
+        {
+            "name": "scripts",
+            "path": "scripts"
+        },
+        {
+            "name": "BC",
+            "path": "BC"
+        },
+        {
+            "path": "old"
+        }
+    ],
+	"settings": {
+		"claudeCodeChat.permissions.yoloMode": true,
+		"terminal.integrated.cwd": ".."
+	}
+}

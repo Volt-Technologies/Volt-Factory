@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if exist \"BC\\BC.app\" del \"BC\\BC.app\")",
+      "Bash(test:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(./compile.sh:*)",
+      "Bash(bash scripts/compile.sh:*)",
+      "Bash(bash scripts/bc-publish-sandbox-dev.sh:*)",
+      "Bash(bash:*)",
+      "Bash(/dev/null)",
+      "SlashCommand(/bc_workflow_sandbox)",
+      "mcp__al-mcp-server__al_search_objects",
+      "mcp__al-mcp-server__al_packages",
+      "mcp__al-mcp-server__al_get_object_summary",
+      "mcp__al-mcp-server__al_get_object_definition",
+      "Bash(python main.py:*)",
+      "Bash(where:*)",
+      "Bash(python:*)",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(source venv/Scripts/activate)",
+      "Bash(pip --version:*)",
+      "Bash(pip install:*)",
+      "Bash(source .venv/Scripts/activate)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(claude mcp add azureDevOps -s user -e AZURE_DEVOPS_ORG_URL=\"https://dev.azure.com/VoltBC/\" -e AZURE_DEVOPS_AUTH_METHOD=\"pat\" -e AZURE_DEVOPS_PAT=\"2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp\" -e AZURE_DEVOPS_DEFAULT_PROJECT=\"Factory\" -- npx @tiberriver256/mcp-server-azure-devops)",
+      "mcp__azureDevOps__list_work_items",
+      "mcp__azureDevOps__get_work_item"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
