@@ -13,7 +13,19 @@
             "path": "BC"
         },
         {
-            "path": "old"
+            "path": "BC Test"
+        },
+        {
+            "path": "docs"
+        },
+        {
+            "path": "factory"
+        },
+        {
+            "path": "factory_docs"
+        },
+        {
+            "path": ".venv"
         }
     ],
 	"settings": {
