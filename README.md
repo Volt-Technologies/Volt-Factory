@@ -1,15 +1,23 @@
 # TO DO
-
 Set the .env variables
 
 # MS Learn MCP
 claude mcp add --transport http microsoft_docs_mcp https://learn.microsoft.com/api/mcp
 
-
 # DevOps MCP server
 we dont use mcirosoft's because it doesnt allow PAT.
 Run the following command to add the mcp server for Azure DevOps where Contoso is the organization name, mostly VoltBC
 claude mcp add azureDevOps -s user -e AZURE_DEVOPS_ORG_URL="https://dev.azure.com/VoltBC/" -e AZURE_DEVOPS_AUTH_METHOD="pat" -e AZURE_DEVOPS_PAT="2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp" -e AZURE_DEVOPS_DEFAULT_PROJECT="Factory" -- npx @tiberriver256/mcp-server-azure-devops
+
+# PLaywright MCP
+claude mcp add playwright npx @playwright/mcp@latest --extension
+
+For the Playwright MCP server to use the existing Chrome/edge session, so we dont have to deal with users and logins etc, make sure to install the extension, and do it as dev.
+
+https://github.com/microsoft/playwright-mcp/releases
+
+https://www.youtube.com/watch?v=uE0r51pneSA
+
 
 # Business Central Claude Code Plugin
 A comprehensive development solution for compiling and publishing Business Central (Dynamics 365 BC) AL extensions using Claude Code. This repository provides automated compilation and deployment tools with support for multiple apps, multiple environments, cross-platform compatibility, and flexible configuration.

@@ -156,6 +156,29 @@ This feature will be developed through a multi-agent workflow following Business
 
 ---
 
+### Phase 5: Documentation
+
+**Agent**: `gitbook-documentation-builder`
+
+**Responsibilities**:
+1. Create comprehensive end-user documentation for the newly developed features
+2. Document all modules and functionality that were implemented
+3. Generate step-by-step user guides with screenshots captured via Playwright
+4. Organize documentation in the appropriate module structure within the `docs/Documentation` folder
+5. Update the SUMMARY.md file to include the new documentation pages
+6. Document:
+   - Feature overview and purpose
+   - How to access and use the new functionality
+   - Step-by-step instructions for each use case
+   - Field descriptions and validation rules
+   - Business rules and constraints
+   - Troubleshooting common issues
+   - Visual guides with annotated screenshots
+
+**Output**: Complete user-facing documentation in GitBook format with screenshots, properly organized in the docs structure.
+
+---
+
 ## Success Criteria
 
 The feature is considered complete when:
@@ -166,6 +189,7 @@ The feature is considered complete when:
 5. ✅ The Business Central app compiles without errors
 6. ✅ The app publishes successfully to the Business Central environment
 7. ✅ All unit tests execute and pass successfully
+8. ✅ Complete user-facing documentation is created with screenshots and organized in GitBook structure
 
 ## Notes
 
@@ -174,4 +198,5 @@ The feature is considered complete when:
 - The development should follow Business Central AL best practices and coding standards
 - All code changes should be made in the `BC` folder, and all tests in the `BC Test` folder
 - The iteration cycle between `bc-al-developer` and `bc-app-compiler-tester` should continue until all issues are resolved
+- Documentation should be created for all newly developed features using the `gitbook-documentation-builder` agent as the final step
 
