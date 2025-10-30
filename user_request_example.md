@@ -127,7 +127,7 @@ This feature will be developed through a multi-agent workflow following Business
 
 ### Phase 4: Compilation and Publishing
 
-**Agent**: `bc-app-compiler-tester`
+**Agent**: `bc-app-compiler`
 
 **Responsibilities**:
 1. Compile the Business Central app from the `BC` folder
@@ -140,11 +140,11 @@ This feature will be developed through a multi-agent workflow following Business
 
 **Iteration Cycle**:
 5. If compilation or publishing fails:
-   - The `bc-app-compiler-tester` agent provides detailed error information
+   - The `bc-app-compiler` agent provides detailed error information
    - The `bc-al-developer` agent:
      * Analyzes the errors
      * Makes necessary corrections to the AL code
-   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler-tester` compiles and publishes again
+   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler` compiles and publishes again
 6. Continue this iteration until:
    - The app compiles successfully
    - The app publishes successfully
@@ -171,7 +171,7 @@ This feature will be developed through a multi-agent workflow following Business
    - The `bc-al-developer` agent:
      * Analyzes the test failures
      * Makes necessary corrections to the AL code or unit tests
-   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler-tester` recompiles and republishes (Phase 4) → `bc-test-runner` executes tests again
+   - The cycle repeats: `bc-al-developer` fixes code → `bc-app-compiler` recompiles and republishes (Phase 4) → `bc-test-runner` executes tests again
 5. Continue this iteration until all unit tests pass
 6. Only after all tests pass successfully, proceed to Phase 6 (Documentation)
 
@@ -218,11 +218,11 @@ The feature is considered complete when:
 - All Azure DevOps work items should follow the strict hierarchy: Epic → Feature → User Story → Task → Subtask
 - The development should follow Business Central AL best practices and coding standards
 - All code changes should be made in the `BC` folder, and all tests in the `BC Test` folder
-- **Compilation and Publishing** (Phase 4) is handled by `bc-app-compiler-tester` agent - it does NOT execute tests
+- **Compilation and Publishing** (Phase 4) is handled by `bc-app-compiler` agent - it does NOT execute tests
 - **Testing** (Phase 5) is handled separately by `bc-test-runner` agent after successful compilation and publishing
 - The iteration cycle involves:
   - `bc-al-developer` writes/fixes code
-  - `bc-app-compiler-tester` compiles and publishes
+  - `bc-app-compiler` compiles and publishes
   - If compilation/publishing fails, loop back to `bc-al-developer`
   - If compilation/publishing succeeds, `bc-test-runner` executes tests
   - If tests fail, loop back to `bc-al-developer` (which will trigger recompilation and republishing)
