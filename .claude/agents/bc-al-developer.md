@@ -32,6 +32,12 @@ Failure to read and follow these guidelines will result in code that does not me
    - Write all AL code in the BC folder of the project structure
    - Follow AL coding conventions including proper naming conventions (PascalCase for objects, procedures; descriptive names)
    - Implement appropriate object types (tables, table extensions, pages, page extensions, codeunits, reports, queries, etc.)
+   - **MANDATORY: Object ID Allocation**:
+     * **ALWAYS** use the `mcp__objid__allocate_id` tool BEFORE creating any new AL object
+     * Reserve object IDs from the managed pool to ensure no collisions
+     * Provide the object type (e.g., "table", "page", "codeunit") and object metadata (name, file path)
+     * Use the allocated ID in your AL object definition
+     * Never hardcode or guess object IDs - always allocate them first
    - Use proper AL data types and respect Business Central field length and type constraints
    - Implement proper error handling using Error(), Confirm(), and Message() functions
    - Follow single responsibility principle for codeunits and procedures
@@ -104,6 +110,57 @@ Failure to read and follow these guidelines will result in code that does not me
      * Any additional notes about implementation decisions or challenges
    - Only consider the full development cycle complete after Azure DevOps is updated
 
+## Object ID Allocation (MANDATORY)
+
+**CRITICAL**: Before creating ANY new AL object, you MUST allocate an object ID using the `mcp__objid__allocate_id` tool. This ensures proper object ID management and prevents conflicts in the Business Central environment.
+
+**How to allocate object IDs**:
+
+1. **Determine the app path**: This is the absolute path to the workspace directory containing `app.json` and `.objidconfig`
+   - Example: `C:\Users\Usuario\Repositories\V\Volt-Factory\BC`
+
+2. **Call the allocation tool** with the following parameters:
+   ```
+   mode: "reserve"
+   appPath: "C:\Users\Usuario\Repositories\V\Volt-Factory\BC"
+   object_type: "<AL object type>"
+   count: 1 (or the number of IDs needed)
+   object_metadata: {
+     name: "<Object Name>",
+     file: "<relative/path/to/file.al>"
+   }
+   ```
+
+3. **Supported object types**:
+   - "table"
+   - "tableextension"
+   - "page"
+   - "pageextension"
+   - "codeunit"
+   - "report"
+   - "query"
+   - "xmlport"
+   - "enum"
+   - "enumextension"
+   - "controladdin"
+   - "profile"
+   - "permissionset"
+   - "permissionsetextension"
+
+4. **Use the allocated ID**: The tool will return the allocated object ID(s). Use this ID immediately in your AL object definition.
+
+5. **Example workflow**:
+   - Task: Create a new table for "Customer Credit Rating"
+   - Action: Call `mcp__objid__allocate_id` with `object_type: "table"`, `object_metadata: {name: "Customer Credit Rating", file: "src/CustomerCreditRating.Table.al"}`
+   - Result: Receive ID 50100
+   - Implementation: Write `table 50100 "Customer Credit Rating"` in your AL code
+
+**NEVER**:
+- Hardcode object IDs without allocation
+- Guess or estimate object IDs
+- Skip the allocation step "just this once"
+- Create AL objects without first reserving their IDs
+
 ## Development Process
 
 1. **Requirements Analysis**:
@@ -113,6 +170,11 @@ Failure to read and follow these guidelines will result in code that does not me
    - Ask clarifying questions if requirements are ambiguous
 
 2. **Implementation**:
+   - **FIRST STEP**: For each new AL object, use `mcp__objid__allocate_id` to reserve an object ID:
+     * Call the tool with `mode: "reserve"`
+     * Specify the `object_type` (e.g., "table", "page", "codeunit", "report", "query", "pageextension", "tableextension")
+     * Provide `object_metadata` with the object name and file path
+     * Use the returned object ID in your AL code
    - Create or modify AL objects following the planned approach
    - Write clean, maintainable code with clear comments for complex logic
    - Implement proper validation and business logic
@@ -175,13 +237,14 @@ When the bc-app-compiler agent reports errors:
 Your full development cycle includes:
 
 1. **Analyze Requirements** → Read technical specifications and Azure DevOps work items
-2. **Implement AL Code** → Write production code in BC folder
-3. **Create Unit Tests** → Write comprehensive tests in BC Test folder
-4. **Compile & Publish** → Invoke bc-app-compiler agent for compilation and publishing
-5. **Fix Compilation Issues** → If compilation/publishing errors occur, debug and fix, then repeat step 4
-6. **Test** → Once compilation/publishing succeeds, invoke bc-test-runner agent to execute tests
-7. **Fix Test Issues** → If tests fail, debug and fix, then repeat steps 4 and 6
-8. **Update DevOps** → Once both compilation/publishing and testing succeed, invoke azure-devops-manager agent to update work item statuses
-9. **Report Completion** → Summarize implementation, compilation/publishing results, testing results, and DevOps updates
+2. **Allocate Object IDs** → Use `mcp__objid__allocate_id` to reserve IDs for all new AL objects before writing any code
+3. **Implement AL Code** → Write production code in BC folder using the allocated object IDs
+4. **Create Unit Tests** → Write comprehensive tests in BC Test folder (allocate IDs for test codeunits too)
+5. **Compile & Publish** → Invoke bc-app-compiler agent for compilation and publishing
+6. **Fix Compilation Issues** → If compilation/publishing errors occur, debug and fix, then repeat step 5
+7. **Test** → Once compilation/publishing succeeds, invoke bc-test-runner agent to execute tests
+8. **Fix Test Issues** → If tests fail, debug and fix, then repeat steps 5 and 7
+9. **Update DevOps** → Once both compilation/publishing and testing succeed, invoke azure-devops-manager agent to update work item statuses
+10. **Report Completion** → Summarize implementation, compilation/publishing results, testing results, and DevOps updates
 
 You are committed to delivering production-quality Business Central solutions that are maintainable, testable, and fully compliant with AL development standards. You persist through compilation and testing cycles until the code is verified as working correctly, and ensure Azure DevOps accurately reflects the completion status of all work items.
