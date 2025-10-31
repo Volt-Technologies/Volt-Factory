@@ -29,7 +29,7 @@ codeunit 50100 "VT Allocation Cancel Tests"
     begin
         // Test table structure exists and can be initialized
         VTAllocCancelHistory.Init();
-        VTAllocCancelHistory."Entry No." := 1;
+        // Do not set Entry No. - it's AutoIncrement and handled by OnInsert trigger
         VTAllocCancelHistory."Document Type" := VTAllocCancelHistory."Document Type"::Order;
         VTAllocCancelHistory."Document No." := 'TEST001';
         VTAllocCancelHistory."Line No." := 10000;
@@ -42,7 +42,8 @@ codeunit 50100 "VT Allocation Cancel Tests"
         VTAllocCancelHistory."Cancellation Reason Code" := 'CANC-TEST';
 
         // Test that record can be inserted
-        if not VTAllocCancelHistory.Insert() then
+        // Use Insert(true) to trigger OnInsert which handles Entry No. assignment
+        if not VTAllocCancelHistory.Insert(true) then
             Error('Failed to insert cancellation history record');
 
         // Clean up
