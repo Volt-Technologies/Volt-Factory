@@ -19,13 +19,9 @@ The command performs the following steps:
 5. Provides guidance on resolving any merge conflicts
 
 ### Configuration
-The template repository URL is configured using the `VOLT_FACTORY_TEMPLATE_REPO` environment variable in `.claude/settings.local.json`:
-```json
-{
-  "env": {
-    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Apparel"
-  }
-}
+The template repository URL is configured using the `VOLT_FACTORY_TEMPLATE_REPO` environment variable in `.env`:
+```env
+VOLT_FACTORY_TEMPLATE_REPO=https://github.com/grvolttechnologies/Volt-Apparel
 ```
 
 ### Sync Strategy
@@ -65,20 +61,11 @@ Use this command to:
 
 ## Configuration Examples
 
-### Using settings.local.json (Recommended)
-Add to `.claude/settings.local.json`:
-```json
-{
-  "env": {
-    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Apparel"
-  },
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "SlashCommand(/update_volt_factory)"
-    ]
-  }
-}
+### Using .env (Recommended)
+Add to `.env` in the repository root:
+```env
+# Volt Factory Template Repository URL
+VOLT_FACTORY_TEMPLATE_REPO=https://github.com/grvolttechnologies/Volt-Apparel
 ```
 
 ## Safety Notes
@@ -92,9 +79,9 @@ Add to `.claude/settings.local.json`:
 
 ### Template URL Not Found
 If you see "Template repository URL not configured":
-1. Add the URL to `.claude/settings.local.json` or set the environment variable
-2. Ensure the JSON syntax is valid
-3. Restart Claude Code if needed
+1. Add the `VOLT_FACTORY_TEMPLATE_REPO` variable to the `.env` file in the repository root
+2. Ensure the .env file syntax is valid (KEY=value format)
+3. The .env file should be in the same directory as your git repository root
 
 ### Permission Denied
 If you get authentication errors:
@@ -116,7 +103,7 @@ If you consistently get conflicts in the same files:
 git clone https://github.com/yourorg/your-repo
 
 # Configure the template URL
-# Edit .claude/settings.local.json to add VOLT_FACTORY_TEMPLATE_REPO
+# Add VOLT_FACTORY_TEMPLATE_REPO to .env file
 
 # First update
 /update_volt_factory
@@ -168,9 +155,9 @@ git push --force-with-lease
 When this command is invoked, perform the following steps:
 
 1. **Check Configuration**:
-   - Read the `VOLT_FACTORY_TEMPLATE_REPO` environment variable
+   - Read the `VOLT_FACTORY_TEMPLATE_REPO` environment variable from the `.env` file
    - If not found, inform the user that the template repository URL is not configured
-   - Provide instructions on how to configure it in `.claude/settings.local.json`
+   - Provide instructions on how to configure it by adding it to the `.env` file in the repository root
 
 2. **Verify Git Status**:
    - Run `git status` to check for uncommitted changes
@@ -214,7 +201,9 @@ When this command is invoked, perform the following steps:
 ## Example Execution Flow
 
 ```bash
-# Step 1: Check environment
+# Step 1: Load .env and check environment
+# Read VOLT_FACTORY_TEMPLATE_REPO from .env file
+source .env 2>/dev/null || true
 echo "Template URL: $VOLT_FACTORY_TEMPLATE_REPO"
 
 # Step 2: Check status
