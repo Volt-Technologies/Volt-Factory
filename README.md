@@ -1,709 +1,880 @@
-# TO DO
-Set the .env variables
+# Volt Factory
 
-# MS Learn MCP
-claude mcp add --transport http microsoft_docs_mcp https://learn.microsoft.com/api/mcp
+An AI-powered development framework for Microsoft Dynamics 365 Business Central, built on Claude Code with specialized MCP servers. Volt Factory provides complete automation from requirements gathering to production deployment, with enforced coding standards and comprehensive project management integration.
 
-# DevOps MCP server
-we dont use mcirosoft's because it doesnt allow PAT.
-Run the following command to add the mcp server for Azure DevOps where Contoso is the organization name, mostly VoltBC
-claude mcp add azureDevOps -s user -e AZURE_DEVOPS_ORG_URL="https://dev.azure.com/VoltBC/" -e AZURE_DEVOPS_AUTH_METHOD="pat" -e AZURE_DEVOPS_PAT="2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp" -e AZURE_DEVOPS_DEFAULT_PROJECT="Factory" -- npx @tiberriver256/mcp-server-azure-devops
+## What is Volt Factory?
 
-# Playwright MCP
-claude mcp add playwright npx @playwright/mcp@latest --extension
+Volt Factory is a comprehensive development ecosystem that transforms Business Central AL development through:
 
-For the Playwright MCP server to use the existing Chrome/edge session, so we dont have to deal with users and logins etc, make sure to install the extension, and do it as dev.
+- **Specialized AI Agents** - 7 expert agents handling development, testing, design, and documentation
+- **Enforced Quality Standards** - Mandatory AL coding guidelines and centralized object ID management
+- **Complete Automation** - From business requirements to production deployment
+- **Azure DevOps Integration** - Full work item tracking and project management
+- **Cross-Platform Compilation** - Multi-app builds for Windows, Linux, and macOS
+- **Automated Testing** - Browser-based test execution with Playwright
+- **Product Documentation** - Automated GitBook documentation with screenshots
 
-https://github.com/microsoft/playwright-mcp/releases
-https://www.youtube.com/watch?v=uE0r51pneSA
+## Core Capabilities
 
+### Development Workflow Automation
+- **Requirements Analysis** → Functional Design → Technical Design → Implementation → Testing → Deployment
+- **Intelligent Code Generation** - Context-aware AL code with proper patterns and best practices
+- **Object ID Management** - Centralized allocation preventing conflicts
+- **Unit Test Generation** - Comprehensive test coverage for all features
+- **Real-Time Compilation** - Multi-app compilation with detailed error reporting
 
-# Sequential Thinking
-claude mcp add sequential-thinking -s local -- npx -y @modelcontextprotocol/server-sequential-thinking
+### Quality Enforcement
+- **30+ AL Coding Guidelines** - Enforced formatting, naming, and structure rules
+- **Design Patterns** - API patterns, command queue, facade, event bridge, and more
+- **BCLinter Integration** - Project-specific linter rules
+- **Mandatory ID Allocation** - No hardcoded object IDs allowed
+- **Code Review Standards** - Consistent patterns across the codebase
 
-# Serena AL
-For serena to work,  a python server starts automatically with:
-uvx --from git+https://github.com/SShadowS/serena serena start-mcp-server --transport stdio
+### Project Management
+- **Azure DevOps Integration** - Work items, epics, features, stories, tasks
+- **Traceability** - Every code change linked to work items
+- **Status Tracking** - Automated updates from development to deployment
+- **Documentation Generation** - Product docs synced with implementation
 
-It gets added as an mcp with:
-claude mcp add serena -- uvx --from git+https://github.com/SShadowS/serena serena start-mcp-server --context ide-assistant --project $(pwd)
+## Architecture
 
-# AL Object ID Ninja MCP
+### AI Agents
 
-# Lite mode (4 tools) - For individual developers
+Volt Factory uses 7 specialized agents, each expert in their domain:
+
+#### Development Agents
+
+**1. [bc-al-developer](.claude/agents/bc-al-developer.md)**
+- Primary AL code developer
+- Reads and enforces all AL guidelines from [.claude/al_guidelines/](.claude/al_guidelines/)
+- **Mandatory workflow**: Allocates object IDs before creating any AL object
+- Creates comprehensive unit tests for all features
+- Triggers compilation via bc-app-compiler agent
+- Triggers testing via bc-test-runner agent
+- Updates Azure DevOps work items via azure-devops-manager agent
+
+**2. [bc-app-compiler](.claude/agents/bc-app-compiler.md)**
+- Compilation and publishing specialist
+- Multi-app discovery and compilation
+- Cross-platform compiler management (Windows/Linux/macOS)
+- Dev mode publishing (fast, 5-15 seconds)
+- PTE mode publishing (production-ready, 2-5 minutes with monitoring)
+- Real-time deployment status tracking
+
+**3. [bc-test-runner](.claude/agents/bc-test-runner.md)**
+- Automated testing orchestrator
+- Browser-based test execution using Playwright MCP
+- Automated test discovery and execution
+- Detailed failure reporting with screenshots
+- Integration with compilation workflow
+
+#### Design Agents
+
+**4. [bc-functional-designer](.claude/agents/bc-functional-designer.md)**
+- Translates business requirements into BC functional specifications
+- Creates Azure DevOps work items (user stories, tasks)
+- Defines user workflows and acceptance criteria
+- Outputs functional design documents to `factory/2functional/` directory
+
+**5. [bc-technical-designer](.claude/agents/bc-technical-designer.md)**
+- Converts functional design into AL technical specifications
+- Defines tables, pages, codeunits, and object relationships
+- Specifies field structures, validations, and business logic
+- Creates technical tasks in Azure DevOps with AL object details
+- Outputs technical design to `factory/3technical/` directory
+
+#### Support Agents
+
+**6. [azure-devops-manager](.claude/agents/azure-devops-manager.md)**
+- Project management and work item orchestration
+- Creates and manages Epic → Feature → Story → Task hierarchy
+- Updates work item statuses based on development progress
+- Links work items to code changes
+- Applies tags and tracks deployment status
+
+**7. [gitbook-documentation-builder](.claude/agents/gitbook-documentation-builder.md)**
+- Automated product documentation
+- Captures screenshots using Playwright
+- Generates GitBook-compatible markdown
+- Organizes documentation by modules and features
+- Outputs to `docs/` directory with proper SUMMARY.md structure
+
+### MCP Servers
+
+Volt Factory integrates 6 MCP servers for specialized capabilities:
+
+#### 1. Azure DevOps MCP
+**Purpose**: Project management and work item tracking
+
+**Installation**:
+```bash
+claude mcp add azureDevOps -s user \
+  -e AZURE_DEVOPS_ORG_URL="https://dev.azure.com/YourOrg/" \
+  -e AZURE_DEVOPS_AUTH_METHOD="pat" \
+  -e AZURE_DEVOPS_PAT="your-personal-access-token" \
+  -e AZURE_DEVOPS_DEFAULT_PROJECT="YourProject" \
+  -- npx @tiberriver256/mcp-server-azure-devops
+```
+
+**Capabilities**:
+- List/create/update work items
+- Manage work item hierarchy
+- Search work items, wikis, and code
+- Link work items to code changes
+- Track deployment status
+
+#### 2. Object ID Ninja MCP
+**Purpose**: Centralized AL object ID management
+
+**Installation**:
+```bash
 claude mcp add objid @sshadows/objid-mcp --env MCP_MODE=lite
+```
 
-# Business Central Claude Code Plugin
-A comprehensive development solution for compiling and publishing Business Central (Dynamics 365 BC) AL extensions using Claude Code. This repository provides automated compilation and deployment tools with support for multiple apps, multiple environments, cross-platform compatibility, and flexible configuration.
+**Capabilities**:
+- Reserve object IDs from managed pools
+- Prevent ID conflicts across apps
+- Track allocations in `.objidconfig`
+- Support all AL object types (table, page, codeunit, report, etc.)
+- Analyze workspace for ID usage and conflicts
 
-## Features
+**Configuration**: Pools defined in `BC/.objidconfig`
 
-### Compilation
-- **Multi-App Compilation**: Automatically discovers and compiles all BC apps in your workspace
-- **Cross-Platform Support**: Works seamlessly on Windows, Linux, and macOS
-- **Auto-Discovery**: Recursively finds all `app.json` files in your apps directory
-- **Versioned Output**: Compiled apps include version number in filename
-- **Error Resilience**: Continues compiling remaining apps even if one fails
+#### 3. Serena AL
+**Purpose**: Semantic code navigation and analysis for AL
 
-### Publishing
-- **Multiple Publishing Modes**: Dev mode (fast) and PTE mode (production-ready)
-- **Sandbox & Production**: Support for both sandbox and production environments
-- **Online & Local**: Works with Microsoft cloud (OAuth) and local/Docker (Basic Auth)
-- **Automated Publishing**: Push apps to BC environments via API
-- **Real-Time Monitoring**: Automatic deployment status tracking with live updates
-- **App Verification**: Check installation status after deployment
-- **Complete Workflows**: End-to-end compile → publish → verify automation
-- **Smart Configuration**: Auto-fetch company ID from BC API when not configured
-
-### Integration
-- **Claude Code Integration**: Native slash command support with `bc_` prefix
-- **Flexible Configuration**: Environment-based configuration via `.env` file
-- **Comprehensive Reporting**: Detailed summaries with success/failure status
-- **Safety Features**: Production confirmations and validation checks
-
-## Quick Start
-
-1. **Clone or download this repository**
-2. **Configure your apps** (optional):
-   - Edit [.env](.env) to customize paths and settings
-   - Default configuration works with the `BC` folder
-3. **Compile your apps**:
-   - Via Claude Code: `/bc_compile`
-   - Via command line: `bash scripts/compile.sh`
-4. **Publish to sandbox**:
-   - Via Claude Code: `/bc_workflow_sandbox`
-   - Automatically compiles, publishes, and verifies
-
-## Recent Improvements
-
-### PTE Publishing with Automatic Monitoring (v2.0)
-
-The PTE (Per-Tenant Extension) publishing workflow has been completely rewritten with advanced automation:
-
-**4-Step Automated Workflow:**
-1. **Resource Creation**: Creates or reuses extensionUpload resource with smart conflict resolution
-2. **Binary Upload**: Uploads .app file with proper HTTP multipart/form-data (CRLF-compliant)
-3. **Installation Trigger**: Invokes Microsoft.NAV.upload bound action
-4. **Real-Time Monitoring**: Automatically polls deployment status every 10 seconds until complete
-
-**Key Features:**
-- ✅ **Automatic Status Tracking**: No more manual checking - monitors installation progress in real-time
-- ✅ **Smart Company Detection**: Auto-fetches company ID from BC API if not configured
-- ✅ **Complete Error Reporting**: Detailed failure information with actionable recommendations
-- ✅ **HTTP Compliance**: Fixed multipart/form-data with proper CRLF line endings
-- ✅ **Production-Ready**: Exit codes (0/1/2) for CI/CD integration
-- ✅ **Progress Indicators**: Live status updates during 2-5 minute installation process
-
-**Example Output:**
+**Installation**:
 ```bash
-Step 4: Monitoring installation status...
-[1] Status: InProgress
-[2] Status: InProgress
-...
-[12] Status: Completed
-
-✓ SUCCESS: Extension installed successfully (PTE mode)
-The extension is now available in Business Central!
+claude mcp add serena -- uvx --from git+https://github.com/SShadowS/serena \
+  serena start-mcp-server --context ide-assistant --project $(pwd)
 ```
 
-See [PTE Publishing Command](.claude/commands/bc_publish_sandbox_pte.md) for complete documentation.
+**Capabilities**:
+- Semantic symbol search and navigation
+- Code structure analysis
+- Smart editing by symbol (not just regex)
+- Find references across codebase
+- Symbol-based refactoring
 
-## Repository Structure
+**Configuration**: Project config in `.serena/project.yml`
 
-```
-BC Claude code plugin/
-├── .env                              # Environment configuration
-├── .env.example                      # Configuration template
-├── .claude/                          # Claude Code configuration
-│   └── commands/
-│       ├── bc_compile.md             # Compile command
-│       ├── bc_publish_sandbox.md     # Sandbox publishing
-│       ├── bc_publish_sandbox_pte.md # Sandbox PTE publishing
-│       ├── bc_publish_production.md  # Production publishing
-│       ├── bc_verify.md              # App verification
-│       ├── bc_workflow_sandbox.md    # Complete sandbox workflow
-│       └── bc_workflow_production.md # Complete production workflow
-├── BC/                               # Default BC apps directory
-│   ├── app.json                      # App manifest
-│   ├── HelloWorld.al                 # AL source code
-│   └── .alpackages/                  # BC dependencies
-├── scripts/
-│   ├── compile.sh                    # Multi-app compilation
-│   ├── bc-auth.sh                    # Authentication handler
-│   ├── bc-publish-sandbox-dev.sh     # Sandbox dev publishing
-│   ├── bc-publish-sandbox-pte.sh     # Sandbox PTE publishing
-│   ├── bc-publish-production-pte.sh  # Production PTE publishing
-│   ├── bc-verify-app.sh              # App verification
-│   ├── bc-config-validate.sh         # Config validation
-│   ├── bc-extract-launch-config.sh   # launch.json extractor
-│   └── compiler/                     # AL Compiler (cross-platform)
-│       └── extension/bin/
-│           ├── win32/                # Windows compiler
-│           ├── linux/                # Linux compiler
-│           └── darwin/               # macOS compiler
-├── docs/
-│   ├── PUBLISHING.md                 # Publishing guide
-│   ├── ENVIRONMENTS.md               # Environment configuration
-│   └── AUTHENTICATION.md             # Auth setup guide
-└── README.md                         # This file
-```
+#### 4. Playwright MCP
+**Purpose**: Browser automation for testing and documentation
 
-## Configuration
-
-### Environment Variables (.env)
-
-The [.env](.env) file in the repository root configures the compilation behavior:
-
+**Installation**:
 ```bash
-# Root directory containing BC apps (can contain multiple apps with app.json files)
-# The compiler will recursively search for all app.json files under this path
-# Default: BC
+claude mcp add playwright npx @playwright/mcp@latest --extension
+```
+
+**Setup**: Install [Playwright MCP browser extension](https://github.com/microsoft/playwright-mcp/releases) to connect to existing browser sessions.
+
+**Capabilities**:
+- Navigate BC web client
+- Fill forms and click buttons
+- Capture screenshots for documentation
+- Verify UI behavior in tests
+- Handle dialogs and popups
+
+#### 5. Sequential Thinking
+**Purpose**: Enhanced AI reasoning for complex multi-step tasks
+
+**Installation**:
+```bash
+claude mcp add sequential-thinking -s local \
+  -- npx -y @modelcontextprotocol/server-sequential-thinking
+```
+
+**Capabilities**:
+- Break down complex problems
+- Multi-step analysis with revision
+- Hypothesis generation and verification
+- Adaptive thinking process
+
+#### 6. Microsoft Learn MCP
+**Purpose**: Access to official Microsoft documentation
+
+**Installation**:
+```bash
+claude mcp add --transport http microsoft_docs_mcp \
+  https://learn.microsoft.com/api/mcp
+```
+
+**Capabilities**:
+- Query Business Central documentation
+- Retrieve AL language reference
+- Access API documentation
+- Get best practices from Microsoft
+
+## Getting Started
+
+### Prerequisites
+
+- **Claude Code** - Installed and configured
+- **Business Central Environment** - Sandbox or production access
+- **Azure DevOps** - Project for work item tracking (optional but recommended)
+- **Git** - Version control
+- **Node.js** - For MCP servers
+- **Python with uvx** - For Serena AL MCP
+
+### Installation
+
+**1. Clone the repository**:
+```bash
+git clone <repository-url> Volt-Factory
+cd Volt-Factory
+```
+
+**2. Install MCP servers**:
+
+Follow the installation commands in the [MCP Servers](#mcp-servers) section above. Install all 6 servers for full functionality.
+
+**3. Configure environment**:
+```bash
+cp .env.example .env
+# Edit .env with your settings
+```
+
+Key configuration in `.env`:
+```bash
+# Apps directory
 BC_APPS_ROOT=BC
 
-# Optional: Custom compiler path
-# If not set, uses: scripts/compiler/extension/bin/{OS}/alc
-# BC_COMPILER_PATH=
-
-# Optional: Custom package cache directory for dependencies
-# If not set, uses: {app_folder}/.alpackages for each app
-# BC_PACKAGE_CACHE=
-
-# Optional: Custom output directory for compiled apps
-# If not set, outputs to: {app_folder}/{app_name}.app
-# BC_OUTPUT_DIR=
-```
-
-### Configuration Examples
-
-#### Single App (Default Setup)
-Keep the default configuration to compile a single app in the `BC` folder:
-```bash
-BC_APPS_ROOT=BC
-```
-
-Result:
-- Searches: `BC/app.json`
-- Compiles: `BC/BC.app`
-
-#### Multiple Apps in Same Directory
-Organize multiple apps under the `BC` folder:
-```
-BC/
-├── AppOne/
-│   ├── app.json
-│   └── *.al files
-└── AppTwo/
-    ├── app.json
-    └── *.al files
-```
-
-Configuration (same as default):
-```bash
-BC_APPS_ROOT=BC
-```
-
-Result:
-- Finds: `BC/AppOne/app.json` and `BC/AppTwo/app.json`
-- Compiles: `BC/AppOne/AppOne.app` and `BC/AppTwo/AppTwo.app`
-
-#### Custom Apps Location
-Use a different directory for your apps:
-```bash
-BC_APPS_ROOT=MyBusinessCentralApps
-```
-
-#### Global Package Cache
-Share dependencies across all apps:
-```bash
-BC_PACKAGE_CACHE=shared-packages
-```
-
-#### Custom Output Directory
-Compile all apps to a specific output folder:
-```bash
-BC_OUTPUT_DIR=build/output
-```
-
-## Compilation
-
-### Multi-App Compilation Architecture
-
-The compilation system is designed to handle multiple Business Central apps efficiently:
-
-1. **Auto-Discovery**: The script recursively searches the `BC_APPS_ROOT` directory for all `app.json` files
-2. **Independent Compilation**: Each app is compiled independently with its own:
-   - Package cache (`.alpackages` folder)
-   - Output file (`{app-name}.app`)
-   - Compilation settings
-3. **Error Handling**: If one app fails to compile, the script continues with remaining apps
-4. **Summary Report**: At the end, you get a complete summary showing:
-   - Total apps found
-   - Successfully compiled apps with file sizes
-   - Failed apps with their locations
-   - Common troubleshooting tips
-
-### Using the Compile Command
-
-#### Via Claude Code (Recommended)
-```
-/compile
-```
-
-This runs the compilation script through Claude Code, providing a streamlined experience with automatic error handling and helpful suggestions.
-
-#### Via Command Line
-```bash
-bash scripts/compile.sh
-```
-
-With custom parameters:
-```bash
-bash scripts/compile.sh --appsroot "MyApps" --output "build"
-```
-
-Available parameters:
-- `--appsroot PATH`: Root path to search for BC apps
-- `--compiler PATH`: Path to compiler folder
-- `--packagecache PATH`: Global package cache folder
-- `--output PATH`: Custom output directory
-- `--help`: Show help message
-
-### Compilation Output Example
-
-```
-=== Business Central AL Multi-App Compilation Script ===
-Starting compilation process...
-Detected OS: win32
-
-Loading configuration from .env file...
-  BC_APPS_ROOT=BC
-
-Configuration:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Apps Root:     C:/Users/Usuario/Desktop/BC Claude code plugin/BC
-Compiler:      C:/Users/Usuario/Desktop/BC Claude code plugin/scripts/compiler/extension/bin/win32/alc.exe
-Package Cache: Per-app (.alpackages in each app folder)
-Output Dir:    Per-app (each app in its own folder)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Discovering Business Central apps...
-Found 2 app(s) to compile:
-  - C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne
-  - C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Compiling: AppOne
-Location:  C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Compilation settings:
-  Project:       C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne
-  Package Cache: C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne/.alpackages
-  Output:        C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne/AppOne.app
-
-✓ SUCCESS: AppOne compiled successfully (256K)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Compiling: AppTwo
-Location:  C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Compilation settings:
-  Project:       C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo
-  Package Cache: C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo/.alpackages
-  Output:        C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo/AppTwo.app
-
-✓ SUCCESS: AppTwo compiled successfully (128K)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-=== COMPILATION SUMMARY ===
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Total apps found:       2
-Successfully compiled:  2
-Failed:                 0
-
-✓ Successful compilations:
-  - AppOne → C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppOne/AppOne.app (256K)
-  - AppTwo → C:/Users/Usuario/Desktop/BC Claude code plugin/BC/AppTwo/AppTwo.app (128K)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Compilation process completed successfully!
-```
-
-## Publishing
-
-After compiling your apps, you can publish them to Business Central environments using the integrated publishing commands.
-
-### Quick Publishing
-
-**For Sandbox Development:**
-```bash
-bc_compile              # Compile all apps
-bc_publish_sandbox      # Publish to sandbox (dev mode)
-```
-
-**For Production:**
-```bash
-bc_compile               # Compile all apps
-bc_publish_production    # Validate and guide production deployment
-# Then upload manually via BC Admin Center
-```
-
-### Publishing Modes
-
-| Mode | Command | Environment | Use Case |
-|------|---------|-------------|----------|
-| **Dev Mode** | `bc_publish_sandbox` | Sandbox only | Fast development iteration |
-| **PTE Mode** | `bc_publish_sandbox_pte` | Sandbox | Test production process |
-| **Production** | `bc_publish_production` | Production | Live deployments |
-
-### Available Commands
-
-All commands use the `bc_` prefix for easy discovery:
-
-- **bc_compile** - Compile all BC apps
-- **bc_publish_sandbox** - Publish to sandbox (dev mode, fast)
-- **bc_publish_sandbox_pte** - Publish to sandbox (PTE mode, test production)
-- **bc_publish_production** - Production deployment (with safety checks)
-- **bc_verify** - Verify app installation status
-- **bc_workflow_sandbox** - Complete sandbox workflow
-- **bc_workflow_production** - Complete production workflow
-
-### Publishing Configuration
-
-Configure publishing in `.env`:
-
-```bash
-# ============================================================================
-# PUBLISHING CONFIGURATION
-# ============================================================================
-
-# Deployment type: online (Microsoft cloud) or local (Docker/on-premises)
+# Deployment type: online or local
 BC_DEPLOYMENT_TYPE=online
 
-# Environment type: sandbox or production
+# Environment: sandbox or production
 BC_ENVIRONMENT_TYPE=sandbox
 
-# === ONLINE/SAAS AUTHENTICATION (OAuth 2.0) ===
+# OAuth credentials for online/SaaS
 BC_TENANT_ID=your-tenant-id
 BC_CLIENT_ID=your-app-client-id
 BC_CLIENT_SECRET=your-app-secret
 
-# === LOCAL/DOCKER AUTHENTICATION (NavUserPassword) ===
-BC_LOCAL_USERNAME=your-username
-BC_LOCAL_PASSWORD=your-password
-BC_LOCAL_SERVER_URL=http://localhost:7048
-
-# === ENVIRONMENT CONFIGURATION ===
+# Environment details
 BC_ENVIRONMENT_NAME=Sandbox
 BC_COMPANY_ID=your-company-id
 ```
 
-See [.env.example](.env.example) for complete configuration template.
+**4. Configure Object ID pools**:
 
-### Authentication Setup
-
-#### Online/SaaS (OAuth 2.0)
-
-1. Create Azure AD App Registration
-2. Grant API permission: `Automation.ReadWrite.All`
-3. Grant admin consent
-4. Configure `.env` with tenant ID, client ID, and secret
-
-See [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) for detailed setup.
-
-#### Local/Docker (NavUserPassword)
-
-1. Enable NavUserPassword in BC Server
-2. Create BC user with appropriate permissions
-3. Configure `.env` with username, password, and server URL
-
-See [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) for detailed setup.
-
-### Publishing Workflow Examples
-
-#### Daily Development (Sandbox)
-```bash
-# Make code changes, then:
-bc_compile && bc_publish_sandbox
-
-# Verify deployment:
-bash scripts/bc-verify-app.sh
-```
-
-#### Pre-Production Testing
-```bash
-# Test PTE deployment process in sandbox:
-bc_compile
-bc_publish_sandbox_pte
-
-# Wait for async installation:
-sleep 60
-
-# Verify installation:
-bash scripts/bc-verify-app.sh
-```
-
-#### Production Release
-```bash
-# 1. Update version in app.json
-
-# 2. Compile production version:
-bc_compile
-
-# 3. Run production validation:
-bc_publish_production
-# (Shows checklist, requires "DEPLOY" confirmation)
-
-# 4. Upload manually via BC Admin Center:
-# - Go to https://businesscentral.dynamics.com/admin
-# - Navigate to Environments → Production → Apps
-# - Upload the compiled .app file
-# - Monitor installation
-
-# 5. Verify deployment:
-bash scripts/bc-verify-app.sh --environment "Production"
-```
-
-### Dev Mode vs PTE Mode
-
-**Dev Mode** (Sandbox Only):
-- Single-step publish and sync
-- Immediate schema updates (seconds)
-- Perfect for rapid development
-- Same as VS Code F5 debugging
-- Command: `bc_publish_sandbox`
-- **Use for**: Daily development iteration
-
-**PTE Mode** (Sandbox & Production):
-- 4-step automated workflow with monitoring
-- Asynchronous installation (2-5 minutes)
-- **NEW**: Real-time status tracking
-- **NEW**: Auto-fetches company ID
-- Formal deployment process
-- Required for production
-- Commands: `bc_publish_sandbox_pte`, `bc_publish_production`
-- **Use for**: Pre-production testing and live deployments
-
-**Key Differences:**
-
-| Feature | Dev Mode | PTE Mode |
-|---------|----------|----------|
-| **Speed** | 5-15 seconds | 2-5 minutes |
-| **Monitoring** | Immediate | Real-time polling |
-| **Environment** | Sandbox only | Sandbox & Production |
-| **Process** | Single API call | 4-step workflow |
-| **Company ID** | Not required | Auto-fetched if needed |
-| **Use Case** | Development | Testing & Production |
-
-### Documentation
-
-Comprehensive guides available:
-
-- **[Publishing Guide](docs/PUBLISHING.md)** - Complete publishing documentation
-- **[Environments Guide](docs/ENVIRONMENTS.md)** - Environment configuration
-- **[Authentication Guide](docs/AUTHENTICATION.md)** - OAuth and Basic Auth setup
-
-## Business Central App Development
-
-### App Structure
-
-Each Business Central app should have the following structure:
-
-```
-YourApp/
-├── app.json                    # Required: App manifest
-├── *.al                        # AL source code files
-└── .alpackages/                # Dependencies (Microsoft BC packages)
-    ├── Microsoft_Application_*.app
-    ├── Microsoft_Base Application_*.app
-    └── Microsoft_System_*.app
-```
-
-### app.json Configuration
-
-Example `app.json`:
-
+Create or edit `BC/.objidconfig`:
 ```json
 {
-  "id": "your-app-guid",
-  "name": "YourAppName",
-  "publisher": "Your Publisher Name",
-  "version": "1.0.0.0",
-  "platform": "1.0.0.0",
-  "application": "26.0.0.0",
-  "idRanges": [
+  "pools": [
     {
+      "id": "main",
       "from": 50100,
-      "to": 50149
+      "to": 50199,
+      "description": "Main development range"
     }
-  ],
-  "dependencies": [],
-  "runtime": "15.0"
+  ]
 }
 ```
 
-### Dependencies
+**5. Verify setup**:
+```bash
+/bc_compile
+```
 
-Dependencies should be placed in each app's `.alpackages` folder:
-- Download required Microsoft packages from your BC environment
-- Copy `.app` files to `.alpackages/`
-- The compiler will automatically reference them during compilation
+This should discover and compile your BC apps.
+
+## Usage
+
+### Complete Feature Development
+
+The typical workflow using Volt Factory agents:
+
+**1. Provide Business Requirements**
+
+Give requirements in natural language:
+```
+"Add a customer credit rating system. Customers should have a rating
+from 1-5 stars. The rating affects credit limit approval workflow.
+Include validation to prevent orders exceeding the customer's rating-based limit."
+```
+
+**2. Functional Design (Optional)**
+
+If you want formal functional specs:
+```
+Launch bc-functional-designer agent with requirements
+→ Creates functional design document
+→ Creates user stories in Azure DevOps
+→ Defines acceptance criteria
+```
+
+**3. Technical Design (Optional)**
+
+If you want technical specifications before implementation:
+```
+Launch bc-technical-designer agent with functional design
+→ Creates technical specification document
+→ Defines AL objects (tables, pages, codeunits)
+→ Creates technical tasks in Azure DevOps
+```
+
+**4. Implementation**
+
+Launch bc-al-developer agent:
+```
+bc-al-developer reads:
+→ AL guidelines from .claude/al_guidelines/
+→ Azure DevOps work items (if available)
+→ Existing codebase structure
+
+bc-al-developer executes:
+→ Allocates object IDs for all new objects (via mcp__objid__allocate_id)
+→ Implements AL code following guidelines
+→ Creates comprehensive unit tests
+→ Invokes bc-app-compiler for compilation and publishing
+→ Invokes bc-test-runner for test execution
+→ Invokes azure-devops-manager to update work items
+```
+
+**5. Documentation (Optional)**
+
+Launch gitbook-documentation-builder agent:
+```
+→ Generates user documentation with screenshots
+→ Creates GitBook structure in docs/
+→ Updates SUMMARY.md with new content
+```
+
+**Result**: Production-ready feature with code, tests, documentation, and full Azure DevOps traceability.
+
+### Quick Development Workflows
+
+**Compile all apps**:
+```
+/bc_compile
+```
+
+**Complete sandbox workflow** (compile + publish + verify):
+```
+/bc_workflow_sandbox
+```
+
+**Complete production workflow** (compile + validate + guide):
+```
+/bc_workflow_production
+```
+
+**Just publish to sandbox** (dev mode, fast):
+```
+/bc_publish_sandbox
+```
+
+**Publish to sandbox** (PTE mode, production-like):
+```
+/bc_publish_sandbox_pte
+```
+
+**Verify app installation**:
+```
+/bc_verify
+```
+
+### Using Template Prompts
+
+The `prompts/` directory contains template prompts for common scenarios:
+
+**[prompts/user_request_example.md](prompts/user_request_example.md)**:
+- Template for requesting new features
+- Shows how to structure requirements
+- Examples of good feature descriptions
+
+Use these templates to get consistent, high-quality results from the agents.
+
+## Compilation & Publishing
+
+### Multi-App Compilation
+
+**How it works**:
+1. Recursively discovers all `app.json` files in `BC_APPS_ROOT`
+2. Compiles each app independently
+3. Uses cross-platform AL compiler (auto-detected OS)
+4. Outputs versioned `.app` files
+5. Continues on errors (compiles all apps)
+6. Provides detailed summary
+
+**Via Claude Code**:
+```
+/bc_compile
+```
+
+**Via Command Line**:
+```bash
+bash scripts/compile.sh
+```
+
+**With custom parameters**:
+```bash
+bash scripts/compile.sh --appsroot "MyApps" --output "build"
+```
+
+### Publishing Modes
+
+| Mode | Command | Speed | Environment | Use Case |
+|------|---------|-------|-------------|----------|
+| **Dev** | `/bc_publish_sandbox` | 5-15 sec | Sandbox only | Daily development |
+| **PTE** | `/bc_publish_sandbox_pte` | 2-5 min | Sandbox/Prod | Pre-production testing |
+| **Production** | `/bc_publish_production` | Manual | Production | Live deployments |
+
+**Dev Mode**:
+- Single API call to `/dev/apps`
+- Immediate schema sync
+- Perfect for rapid iteration
+- Same as VS Code F5 debugging
+
+**PTE Mode**:
+- 4-step Microsoft workflow
+- Async installation with monitoring
+- Auto-fetches company ID
+- Real-time status polling
+- Production-ready process
+
+**Production Mode**:
+- Validation and safety checks
+- Manual upload via BC Admin Center
+- Guided deployment process
+- Verification support
+
+### Publishing Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `bc-publish-sandbox-dev.sh` | Dev mode publishing |
+| `bc-publish-sandbox-pte.sh` | PTE mode with monitoring |
+| `bc-publish-production-pte.sh` | Production validation |
+| `bc-verify-app.sh` | Installation verification |
+| `bc-auth.sh` | Authentication handler |
+| `bc-config-validate.sh` | Config validation |
+
+## AL Object ID Management
+
+### Mandatory Allocation Workflow
+
+**ENFORCED**: The bc-al-developer agent will NEVER create an AL object without first allocating an ID.
+
+**Workflow**:
+
+1. **Agent calls** `mcp__objid__allocate_id`:
+   ```
+   mode: "reserve"
+   appPath: "C:\path\to\Volt-Factory\BC"
+   object_type: "table"
+   object_metadata: {
+     name: "Customer Credit Rating",
+     file: "src/CustomerCreditRating.Table.al"
+   }
+   ```
+
+2. **MCP server allocates** ID from pool in `.objidconfig`
+
+3. **Agent receives** allocated ID (e.g., 50100)
+
+4. **Agent creates** AL object using allocated ID:
+   ```al
+   table 50100 "Customer Credit Rating"
+   {
+       DataClassification = CustomerContent;
+
+       fields
+       {
+           field(1; "Customer No."; Code[20])
+           {
+               TableRelation = Customer;
+           }
+           field(2; Rating; Integer)
+           {
+               MinValue = 1;
+               MaxValue = 5;
+           }
+       }
+   }
+   ```
+
+### Supported Object Types
+
+All AL object types are supported:
+- `table`, `tableextension`
+- `page`, `pageextension`
+- `codeunit`
+- `report`, `query`, `xmlport`
+- `enum`, `enumextension`
+- `controladdin`, `profile`
+- `permissionset`, `permissionsetextension`
+
+### Pool Configuration
+
+Pools are defined in `BC/.objidconfig`:
+
+```json
+{
+  "pools": [
+    {
+      "id": "main",
+      "from": 50100,
+      "to": 50199,
+      "description": "Main objects"
+    },
+    {
+      "id": "extensions",
+      "from": 50200,
+      "to": 50299,
+      "description": "Extensions"
+    }
+  ]
+}
+```
+
+## AL Coding Guidelines
+
+All AL code must follow comprehensive guidelines in [.claude/al_guidelines/](.claude/al_guidelines/).
+
+### Best Practices (30+ Guidelines)
+
+Located in [.claude/al_guidelines/BestPractices/](.claude/al_guidelines/BestPractices/):
+
+**Code Formatting**:
+- [Blank lines](.claude/al_guidelines/BestPractices/blank-lines/)
+- [Begin/end pairs](.claude/al_guidelines/BestPractices/begin-end/)
+- [Keyword pair indentation](.claude/al_guidelines/BestPractices/keyword-pairs-indentation/)
+- [Binary operators spacing](.claude/al_guidelines/BestPractices/spacing-binary-operators/)
+- [One statement per line](.claude/al_guidelines/BestPractices/one-statement-per-line/)
+- [Comments spacing](.claude/al_guidelines/BestPractices/comments-spacing/)
+
+**Control Flow**:
+- [If/else patterns](.claude/al_guidelines/BestPractices/separate-if-and-else/)
+- [Unnecessary else](.claude/al_guidelines/BestPractices/unnecessary-else/)
+- [Unnecessary true/false](.claude/al_guidelines/BestPractices/unnecessary-truefalse/)
+- [Case actions](.claude/al_guidelines/BestPractices/case-actions/)
+- [If not find then exit](.claude/al_guidelines/BestPractices/if-not-find-then-exit/)
+
+**Performance**:
+- [SetLoadFields](.claude/al_guidelines/BestPractices/SetLoadFields/)
+- [DeleteAll optimization](.claude/al_guidelines/BestPractices/DeleteAll/)
+- [IsTemporary safeguards](.claude/al_guidelines/BestPractices/istemporary-table-safeguard/)
+
+**Code Quality**:
+- [Variable naming](.claude/al_guidelines/BestPractices/variable-naming/)
+- [Named invocations](.claude/al_guidelines/BestPractices/named-invocations/)
+- [Variable declarations order](.claude/al_guidelines/BestPractices/variables-declarations-order/)
+- [Suggested abbreviations](.claude/al_guidelines/BestPractices/suggested-abbreviations/)
+- [Custom telemetry](.claude/al_guidelines/BestPractices/CustomTelemetry/)
+
+### Design Patterns
+
+Located in [.claude/al_guidelines/patterns/](.claude/al_guidelines/patterns/):
+
+- [API Delegate Operations](.claude/al_guidelines/patterns/api-delegate-operation/) - Handle API requests
+- [API Register Fieldset](.claude/al_guidelines/patterns/api-register-fieldset/) - API field management
+- [Command Queue](.claude/al_guidelines/patterns/command-queue/) - Async command processing
+- [Error Handling](.claude/al_guidelines/patterns/error-handling/) - Comprehensive error strategies
+- [Event Bridge](.claude/al_guidelines/patterns/event-bridge-pattern/) - Decouple event publishers/subscribers
+- [Facade Pattern](.claude/al_guidelines/patterns/facade-pattern/) - Simplify complex subsystems
+- [Generic Method](.claude/al_guidelines/patterns/generic-method-pattern/) - Reusable generic procedures
+- [Template Method](.claude/al_guidelines/patterns/template-method-pattern/) - Algorithm templates
+
+### Project Standards
+
+- **[Prefix Conventions](.claude/al_guidelines/prefix.md)** - Object and variable prefixes
+- **[Naming Standards](.claude/al_guidelines/names.md)** - Naming conventions for all symbols
+- **[BCLinter Rules](.claude/al_guidelines/bclintercop.md)** - Project-specific linter configuration
+- **[Permission Sets](.claude/al_guidelines/permissionset.md)** - Permission management guidelines
+- **[Object Creation](.claude/al_guidelines/objectcreation.md)** - Object creation patterns
+
+**The bc-al-developer agent reads ALL guidelines before implementing any feature.**
+
+## Available Slash Commands
+
+All commands use `bc_` prefix for discoverability:
+
+| Command | Description |
+|---------|-------------|
+| `/bc_compile` | Compile all BC apps in workspace |
+| `/bc_publish_sandbox` | Publish to sandbox (dev mode) |
+| `/bc_publish_sandbox_pte` | Publish to sandbox (PTE mode) |
+| `/bc_publish_production` | Production deployment with validations |
+| `/bc_verify` | Verify app installation status |
+| `/bc_workflow_sandbox` | Complete sandbox workflow |
+| `/bc_workflow_production` | Complete production workflow |
+| `/bc_start_serena` | Start Serena UVX MCP server |
+
+Commands are defined in [.claude/commands/](.claude/commands/).
+
+## Repository Structure
+
+```
+Volt-Factory/
+├── .env                              # Environment configuration
+├── .env.example                      # Configuration template
+├── README.md                         # This file
+│
+├── .claude/                          # Claude Code configuration
+│   ├── agents/                       # AI agent definitions
+│   │   ├── bc-al-developer.md
+│   │   ├── bc-app-compiler.md
+│   │   ├── bc-test-runner.md
+│   │   ├── bc-functional-designer.md
+│   │   ├── bc-technical-designer.md
+│   │   ├── azure-devops-manager.md
+│   │   └── gitbook-documentation-builder.md
+│   │
+│   ├── commands/                     # Slash commands
+│   │   ├── bc_compile.md
+│   │   ├── bc_publish_sandbox.md
+│   │   ├── bc_publish_sandbox_pte.md
+│   │   ├── bc_publish_production.md
+│   │   ├── bc_verify.md
+│   │   ├── bc_workflow_sandbox.md
+│   │   ├── bc_workflow_production.md
+│   │   └── bc_start_serena.md
+│   │
+│   └── al_guidelines/                # AL coding standards
+│       ├── BestPractices/            # 30+ formatting and quality rules
+│       │   ├── blank-lines/
+│       │   ├── begin-end/
+│       │   ├── SetLoadFields/
+│       │   ├── DeleteAll/
+│       │   ├── CustomTelemetry/
+│       │   ├── variable-naming/
+│       │   └── ... (30+ guidelines)
+│       │
+│       ├── patterns/                 # Design patterns
+│       │   ├── api-delegate-operation/
+│       │   ├── command-queue/
+│       │   ├── event-bridge-pattern/
+│       │   ├── facade-pattern/
+│       │   └── ... (8 patterns)
+│       │
+│       ├── bclintercop.md            # Linter rules
+│       ├── names.md                  # Naming conventions
+│       ├── objectcreation.md         # Object creation patterns
+│       ├── permissionset.md          # Permission guidelines
+│       └── prefix.md                 # Prefix standards
+│
+├── BC/                               # Business Central apps
+│   ├── app.json                      # App manifest
+│   ├── .objidconfig                  # Object ID pool configuration
+│   ├── src/                          # AL source code
+│   │   └── *.al
+│   └── .alpackages/                  # BC dependencies
+│       └── Microsoft_*.app
+│
+├── BC Test/                          # Test apps (optional)
+│   ├── app.json
+│   ├── src/
+│   │   └── *.Test.al
+│   └── .alpackages/
+│
+├── scripts/                          # Build and publish scripts
+│   ├── compile.sh                    # Multi-app compilation
+│   ├── bc-auth.sh                    # Authentication handler
+│   ├── bc-publish-sandbox-dev.sh     # Dev mode publishing
+│   ├── bc-publish-sandbox-pte.sh     # PTE mode publishing
+│   ├── bc-publish-production-pte.sh  # Production publishing
+│   ├── bc-verify-app.sh              # Installation verification
+│   ├── bc-config-validate.sh         # Config validation
+│   ├── bc-extract-launch-config.sh   # launch.json extractor
+│   │
+│   └── compiler/                     # AL compiler (cross-platform)
+│       └── extension/bin/
+│           ├── win32/alc.exe         # Windows compiler
+│           ├── linux/alc             # Linux compiler
+│           └── darwin/alc            # macOS compiler
+│
+├── factory/                          # Design output directory
+│   ├── 1research/                    # Business research output
+│   ├── 2functional/                  # Functional design docs
+│   └── 3technical/                   # Technical design docs
+│
+├── docs/                             # GitBook documentation output
+│   ├── SUMMARY.md                    # GitBook table of contents
+│   ├── Home/
+│   └── Documentation/
+│
+├── prompts/                          # Template prompts
+│   └── user_request_example.md       # Feature request template
+│
+├── factory_docs/                     # Technical guides
+│   ├── PUBLISHING.md                 # Publishing guide
+│   ├── ENVIRONMENTS.md               # Environment configuration
+│   └── AUTHENTICATION.md             # Authentication setup
+│
+└── .serena/                          # Serena MCP configuration
+    └── project.yml                   # Project settings
+```
+
+## Authentication Setup
+
+### Online/SaaS (OAuth 2.0)
+
+**For Microsoft-hosted Business Central:**
+
+1. **Create Azure AD App Registration**:
+   - Go to Azure Portal → Azure Active Directory → App registrations
+   - Create new registration
+   - Note the Application (client) ID and Directory (tenant) ID
+
+2. **Create client secret**:
+   - Go to Certificates & secrets
+   - Create new client secret
+   - Copy the secret value
+
+3. **Grant API permissions**:
+   - Go to API permissions
+   - Add permission: Dynamics 365 Business Central → `Automation.ReadWrite.All`
+   - Grant admin consent
+
+4. **Configure `.env`**:
+   ```bash
+   BC_DEPLOYMENT_TYPE=online
+   BC_TENANT_ID=your-tenant-id
+   BC_CLIENT_ID=your-client-id
+   BC_CLIENT_SECRET=your-client-secret
+   BC_ENVIRONMENT_NAME=Sandbox
+   ```
+
+### Local/Docker (Basic Auth)
+
+**For on-premises or Docker BC:**
+
+1. **Enable NavUserPassword** in BC Server configuration
+
+2. **Create BC user** with appropriate permissions
+
+3. **Configure `.env`**:
+   ```bash
+   BC_DEPLOYMENT_TYPE=local
+   BC_LOCAL_USERNAME=your-username
+   BC_LOCAL_PASSWORD=your-password
+   BC_LOCAL_SERVER_URL=http://localhost:7048
+   ```
+
+See [factory_docs/AUTHENTICATION.md](factory_docs/AUTHENTICATION.md) for detailed setup.
+
+## Documentation
+
+### Technical Guides
+
+- **[PUBLISHING.md](factory_docs/PUBLISHING.md)** - Complete publishing documentation
+- **[ENVIRONMENTS.md](factory_docs/ENVIRONMENTS.md)** - Environment configuration guide
+- **[AUTHENTICATION.md](factory_docs/AUTHENTICATION.md)** - OAuth and Basic Auth setup
+
+### Agent Documentation
+
+All agent documentation in [.claude/agents/](.claude/agents/):
+- Each agent has detailed documentation in its `.md` file
+- Describes responsibilities, tools, and workflows
+- Includes examples of when to use each agent
+
+### Command Documentation
+
+All command documentation in [.claude/commands/](.claude/commands/):
+- Each slash command has a complete `.md` file
+- Explains what the command does
+- Shows usage examples
+- Documents expected outputs
+
+## Platform Support
+
+| Platform | Compiler | Status |
+|----------|----------|--------|
+| **Windows** | `scripts/compiler/extension/bin/win32/alc.exe` | ✅ Tested on Windows 10/11 |
+| **Linux** | `scripts/compiler/extension/bin/linux/alc` | ✅ Tested on Ubuntu 20.04+ |
+| **macOS** | `scripts/compiler/extension/bin/darwin/alc` | ✅ Tested on macOS 11+ |
 
 ## Troubleshooting
 
 ### Common Issues
 
 **"No app.json files found"**
-- Verify `BC_APPS_ROOT` points to the correct directory
-- Ensure your app folders contain `app.json` files
-- Check file permissions
+- Check `BC_APPS_ROOT` in `.env`
+- Verify app folders contain `app.json`
+- Ensure correct directory structure
 
-**"Compilation failed" for specific app**
-- Check for syntax errors in AL code
-- Verify all dependencies are in `.alpackages/`
-- Ensure `app.json` configuration is valid
-- Check BC version compatibility
+**"Object ID allocation failed"**
+- Verify `.objidconfig` exists in app folder
+- Check pool configuration is valid JSON
+- Ensure pool has available IDs
 
-**"AL Compiler not found"**
-- Verify the compiler exists in `scripts/compiler/extension/bin/{os}/`
-- On Linux/macOS, ensure the compiler has execute permissions
-- Try running: `chmod +x scripts/compiler/extension/bin/{os}/alc`
+**"Compilation failed"**
+- Check AL syntax errors in output
+- Verify dependencies in `.alpackages/`
+- Ensure BC version compatibility in `app.json`
+- Check compiler has execute permissions (Linux/macOS)
 
-**Windows path issues**
-- The script automatically converts Unix paths to Windows paths
-- If issues persist, use absolute Windows paths in `.env`
+**"Publishing failed"**
+- Verify authentication credentials in `.env`
+- Check network connectivity to BC environment
+- Review API error messages for specific issues
+- Ensure environment name matches exactly
+
+**"Test execution failed"**
+- Verify BC web client is accessible
+- Check Playwright MCP is installed
+- Ensure test codeunits are compiled and published
+- Review browser console for JavaScript errors
 
 ### Getting Help
 
-- Check the [compile.md](.claude/commands/compile.md) documentation
-- Review compilation output for specific error messages
-- Verify your BC version matches the compiler version
-- Ensure all dependencies are compatible with your target BC version
+- Review agent documentation in [.claude/agents/](.claude/agents/)
+- Check command documentation in [.claude/commands/](.claude/commands/)
+- Review technical guides in [factory_docs/](factory_docs/)
+- Check compilation/publishing output for detailed errors
+- Verify MCP server installations
 
-## Development Workflow
+## Best Practices
 
-### Typical Development Cycle
+### Development Workflow
+- **Use agents for all development** - Don't bypass the workflow
+- **Let bc-al-developer allocate IDs** - Never hardcode object IDs
+- **Write comprehensive tests** - Every feature needs test coverage
+- **Update Azure DevOps** - Maintain work item traceability
+- **Follow AL guidelines** - The agents enforce these for consistency
 
-1. **Write AL Code**: Create or modify `.al` files in your app folder
-2. **Compile**: Run `/compile` to build all apps
-3. **Review**: Check compilation summary for any errors
-4. **Fix Issues**: Address any compilation errors
-5. **Deploy**: Upload compiled `.app` files to your BC environment
+### Version Control
+- **Commit `.objidconfig`** - Track allocated IDs
+- **Ignore `.app` files** - Already in `.gitignore`
+- **Version `app.json` properly** - Increment versions on releases
+- **Document breaking changes** - In commit messages and work items
 
-### Best Practices
+### Code Quality
+- **Read AL guidelines** - Located in [.claude/al_guidelines/](.claude/al_guidelines/)
+- **Use descriptive names** - Follow naming conventions
+- **Document complex logic** - Comments for maintainability
+- **Implement error handling** - Follow error handling patterns
+- **Consider performance** - Use SetLoadFields, avoid unnecessary queries
 
-- **Version Control**: Keep your `.app` files out of git (already in `.gitignore`)
-- **Dependencies**: Document required dependencies in each app's README
-- **Testing**: Compile regularly to catch errors early
-- **Naming**: Use descriptive names in `app.json` for better output clarity
-- **Structure**: Keep related apps in separate folders under `BC_APPS_ROOT`
+### Project Management
+- **Maintain Azure DevOps** - Keep work items up to date
+- **Link code to work items** - Ensure traceability
+- **Use proper hierarchy** - Epic → Feature → Story → Task
+- **Tag appropriately** - Use tags for organization and filtering
 
-## Platform Support
+## Contributing
 
-### Windows
-- Compiler: `scripts/compiler/extension/bin/win32/alc.exe`
-- Tested on Windows 10/11 with Git Bash, MSYS2, and native Command Prompt
-
-### Linux
-- Compiler: `scripts/compiler/extension/bin/linux/alc`
-- Tested on Ubuntu 20.04+ and Debian-based distributions
-- Requires: bash, grep, sed, find, du
-
-### macOS
-- Compiler: `scripts/compiler/extension/bin/darwin/alc`
-- Tested on macOS 11 (Big Sur) and later
-- Requires: bash (system default or brew-installed)
-
-## Technical Details
-
-### Compiler
-
-The AL compiler is extracted from Microsoft's official AL Language extension for VS Code and included in this repository for convenience. It supports:
-- Business Central AL compilation
-- Dependency resolution via package cache
-- Cross-platform operation
-- Standard compiler flags
-
-### Script Features
-
-The [compile.sh](scripts/compile.sh) script includes:
-- OS detection and automatic compiler selection
-- `.env` file parsing with comment support
-- Recursive app.json discovery using `find`
-- JSON parsing using `grep` and `sed`
-- Path conversion for Windows compatibility
-- Error handling and exit codes
-- Colored output and progress indicators
-
-### Publishing Implementation
-
-#### Dev Mode Publishing (bc-publish-sandbox-dev.sh)
-- **HTTP Compliance**: Uses proper CRLF (`\r\n`) line endings in multipart/form-data
-- **Binary Upload**: Uploads .app files with `application/octet-stream` content type
-- **Fast Deployment**: Single POST to `/dev/apps` endpoint with immediate schema sync
-- **Error Handling**: Validates response codes (200/201/204) and provides detailed error messages
-
-#### PTE Mode Publishing (bc-publish-sandbox-pte.sh)
-**4-Step Microsoft-Compliant Workflow:**
-
-1. **POST /extensionUpload** - Create or reuse deployment resource
-   - Auto-fetches company ID via GET `/api/v2.0/companies` if not configured
-   - Smart resource reuse prevents "entity already exists" conflicts
-   - Configures schedule ("Current version") and schema sync mode ("Add")
-
-2. **PATCH /extensionUpload({id})/extensionContent** - Upload binary content
-   - Streams .app file as `application/octet-stream`
-   - Uses `--data-binary` for proper binary handling
-   - Validates upload success before proceeding
-
-3. **POST /extensionUpload({id})/Microsoft.NAV.upload** - Trigger installation
-   - OData bound action invocation
-   - Includes Content-Length: 0 header for empty POST
-   - Queues extension for asynchronous installation
-
-4. **GET /extensionDeploymentStatus** - Monitor until complete
-   - Polls every 10 seconds (configurable)
-   - Maximum 30 attempts (5 minutes timeout)
-   - Detects status: `InProgress`, `Completed`, `Failed`, `Scheduled`
-   - Exit codes: 0 (success), 1 (failure), 2 (timeout)
-
-**Key Technical Implementations:**
-- **CRLF Compliance**: All HTTP requests use proper `\r\n` line endings via `printf`
-- **Resource Management**: GET before POST to reuse existing extensionUpload records
-- **Error Recovery**: Comprehensive error handling with actionable recommendations
-- **Status Polling**: Exponential backoff optional, fixed 10s interval for predictability
-- **JSON Parsing**: Robust `grep`/`sed` extraction of systemId, status, and metadata
-
-### API Endpoints Used
-
-**Business Central APIs:**
-- `/v2.0/{env}/dev/apps` - Dev mode publishing
-- `/v2.0/{env}/api/microsoft/automation/v2.0/companies({id})/extensionUpload` - PTE upload
-- `/v2.0/{env}/api/microsoft/automation/v2.0/companies({id})/extensionDeploymentStatus` - Status monitoring
-- `/v2.0/{env}/api/v2.0/companies` - Company ID auto-fetch
-- `/admin/v2.25/applications/businesscentral/environments/{env}/apps` - Verification
-
-**Authentication:**
-- OAuth 2.0 with client credentials flow (online/SaaS)
-- NavUserPassword basic authentication (local/Docker)
-- Token caching with 1-hour expiration
+Contributions are welcome! Please:
+- Follow the existing AL coding guidelines
+- Use the agent workflow for changes
+- Update documentation as needed
+- Test thoroughly before submitting
 
 ## License
 
 This repository is provided as-is for Business Central development purposes. The AL compiler belongs to Microsoft Corporation and is subject to their licensing terms.
 
-## Contributing
-
-Feel free to submit issues, fork the repository, and create pull requests for any improvements.
-
 ## Acknowledgments
 
-- Microsoft for the AL Language compiler
-- Anthropic for Claude Code
-- The Business Central developer community
+- **Microsoft** - AL Language compiler and Business Central platform
+- **Anthropic** - Claude Code and AI capabilities
+- **MCP Contributors** - Azure DevOps MCP, Object ID Ninja, Serena AL
+- **Playwright Team** - Browser automation framework
+- **Business Central Community** - Patterns, practices, and support
 
 ---
 
-**Happy Coding!** If you encounter any issues or have suggestions, please open an issue on the repository.
+**Volt Factory** - Complete AI-powered automation for Business Central development
+
+For questions or issues, please open an issue on the repository.
