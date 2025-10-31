@@ -46,5 +46,15 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "al-mcp-server",
+    "azureDevOps",
+    "microsoft_docs_mcp",
+    "playwright",
+    "sequential-thinking",
+    "serena",
+    "objid"
+  ],
+  "enableAllProjectMcpServers": true
 }
