@@ -35,3 +35,25 @@
 2025-10-29T10:03:41.6249477-04:00 [/1] Editor Services Host v17.0.28.34589 starting (pid 42808)...
 2025-10-29T10:03:41.7125790-04:00 [/1] Editor Services Host started!
 2025-10-29T10:07:33.5776627-04:00 [/1] Editor Services Host exited normally.
+2025-10-31T05:12:28.1747110-04:00 [/1] Editor Services Host v17.0.28.34589 starting (pid 38160)...
+2025-10-31T05:12:28.4488312-04:00 [/1] Editor Services Host started!
+2025-10-31T05:13:04.8688839-04:00 [/1] System.AggregateException: One or more errors occurred. (One or more errors occurred. (MessageReader's input stream ended unexpectedly, terminating.))
+ ---> System.AggregateException: One or more errors occurred. (MessageReader's input stream ended unexpectedly, terminating.)
+ ---> System.IO.EndOfStreamException: MessageReader's input stream ended unexpectedly, terminating.
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.MessageProtocol.MessageReader.ReadNextChunk() in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\MessageProtocol\MessageReader.cs:line 112
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.MessageProtocol.MessageReader.ReadMessage() in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\MessageProtocol\MessageReader.cs:line 65
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.MessageProtocol.RequestDispatcher.ListenForMessages(CancellationToken cancellationToken) in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\MessageProtocol\RequestDispatcher.cs:line 70
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.Utility.AsyncContext.Start(Func`1 asyncMainFunc) in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\Utility\AsyncContext.cs:line 28
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.Utility.AsyncContextThread.<>c__DisplayClass4_0.<Run>b__0() in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\Utility\AsyncContextThread.cs:line 28
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.MessageProtocol.ProtocolEndpointCompletionSource.WaitForStop() in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\MessageProtocol\ProtocolEndpointCompletionSource.cs:line 18
+   at Microsoft.Dynamics.Nav.EditorServices.Protocol.MessageProtocol.ProtocolEndpoint.WaitForExit() in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Protocol\MessageProtocol\ProtocolEndpoint.cs:line 34
+   at Prod.EditorServices.Host.Program.Main(String[] args) in X:\source\Prod\Microsoft.Dynamics.Nav.EditorServices.Host\Program.cs:line 251

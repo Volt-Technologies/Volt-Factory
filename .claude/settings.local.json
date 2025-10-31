@@ -27,7 +27,17 @@
       "Bash(.venv/Scripts/python.exe:*)",
       "Bash(claude mcp add azureDevOps -s user -e AZURE_DEVOPS_ORG_URL=\"https://dev.azure.com/VoltBC/\" -e AZURE_DEVOPS_AUTH_METHOD=\"pat\" -e AZURE_DEVOPS_PAT=\"2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp\" -e AZURE_DEVOPS_DEFAULT_PROJECT=\"Factory\" -- npx @tiberriver256/mcp-server-azure-devops)",
       "mcp__azureDevOps__list_work_items",
-      "mcp__azureDevOps__get_work_item"
+      "mcp__azureDevOps__get_work_item",
+      "Bash(uvx:*)",
+      "mcp__serena__activate_project",
+      "mcp__serena__check_onboarding_performed",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:alguidelines.dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__serena__list_dir",
+      "Bash(set:*)",
+      "Bash(export AL_EXTENSION_PATH=\"C:\\Users\\Usuario\\Repositories\\V\\Volt-Factory\\scripts\\compiler\\extension\")"
     ],
     "deny": [],
     "ask": []

@@ -9,15 +9,29 @@ we dont use mcirosoft's because it doesnt allow PAT.
 Run the following command to add the mcp server for Azure DevOps where Contoso is the organization name, mostly VoltBC
 claude mcp add azureDevOps -s user -e AZURE_DEVOPS_ORG_URL="https://dev.azure.com/VoltBC/" -e AZURE_DEVOPS_AUTH_METHOD="pat" -e AZURE_DEVOPS_PAT="2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp" -e AZURE_DEVOPS_DEFAULT_PROJECT="Factory" -- npx @tiberriver256/mcp-server-azure-devops
 
-# PLaywright MCP
+# Playwright MCP
 claude mcp add playwright npx @playwright/mcp@latest --extension
 
 For the Playwright MCP server to use the existing Chrome/edge session, so we dont have to deal with users and logins etc, make sure to install the extension, and do it as dev.
 
 https://github.com/microsoft/playwright-mcp/releases
-
 https://www.youtube.com/watch?v=uE0r51pneSA
 
+
+# Sequential Thinking
+claude mcp add sequential-thinking -s local -- npx -y @modelcontextprotocol/server-sequential-thinking
+
+# Serena AL
+For serena to work,  a python server starts automatically with:
+uvx --from git+https://github.com/SShadowS/serena serena start-mcp-server --transport stdio
+
+It gets added as an mcp with:
+claude mcp add serena -- uvx --from git+https://github.com/SShadowS/serena serena start-mcp-server --context ide-assistant --project $(pwd)
+
+# AL Object ID Ninja MCP
+
+# Lite mode (4 tools) - For individual developers
+claude mcp add objid @sshadows/objid-mcp --env MCP_MODE=lite
 
 # Business Central Claude Code Plugin
 A comprehensive development solution for compiling and publishing Business Central (Dynamics 365 BC) AL extensions using Claude Code. This repository provides automated compilation and deployment tools with support for multiple apps, multiple environments, cross-platform compatibility, and flexible configuration.
