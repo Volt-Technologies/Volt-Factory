@@ -1,4 +1,7 @@
 {
+  "env": {
+    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Apparel"
+  },
   "permissions": {
     "allow": [
       "Bash(if exist \"BC\\BC.app\" del \"BC\\BC.app\")",
@@ -10,7 +13,9 @@
       "Bash(bash scripts/bc-publish-sandbox-dev.sh:*)",
       "Bash(bash:*)",
       "Bash(/dev/null)",
+      "Bash(git:*)",
       "SlashCommand(/bc_workflow_sandbox)",
+      "SlashCommand(/update_volt_factory)",
       "mcp__al-mcp-server__al_search_objects",
       "mcp__al-mcp-server__al_packages",
       "mcp__al-mcp-server__al_get_object_summary",

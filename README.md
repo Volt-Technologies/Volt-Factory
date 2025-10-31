@@ -733,8 +733,75 @@ All commands use `bc_` prefix for discoverability:
 | `/bc_workflow_sandbox` | Complete sandbox workflow |
 | `/bc_workflow_production` | Complete production workflow |
 | `/bc_start_serena` | Start Serena UVX MCP server |
+| `/update_volt_factory` | Update from Volt Factory template repository |
 
 Commands are defined in [.claude/commands/](.claude/commands/).
+
+## Using Volt Factory as a Template
+
+Volt Factory is designed to be used as a GitHub template repository. This means you can create new Business Central projects based on this template and periodically sync updates from the upstream template.
+
+### Creating a New Project from Template
+
+1. **On GitHub**: Click "Use this template" → "Create a new repository"
+2. **Clone your new repository**:
+   ```bash
+   git clone https://github.com/yourorg/your-new-project
+   cd your-new-project
+   ```
+3. **Configure for your project**:
+   - Update `BC/app.json` with your app details
+   - Configure `.env` with your BC environment
+   - Set up `BC/.objidconfig` with your object ID ranges
+   - Configure Azure DevOps settings in `.claude/settings.local.json`
+
+### Updating from Volt Factory Template
+
+After creating your project from the template, you can periodically pull in updates to the Volt Factory framework (agents, commands, guidelines) while preserving your custom BC code.
+
+**Use the `/update_volt_factory` command**:
+```
+/update_volt_factory
+```
+
+This command will:
+1. Fetch the latest changes from the Volt Factory template repository
+2. Rebase your changes on top of the template updates
+3. Preserve your custom BC code, configurations, and work
+4. Provide conflict resolution guidance if needed
+
+**What gets updated**:
+- AI agents (`.claude/agents/`)
+- Slash commands (`.claude/commands/`)
+- AL coding guidelines (`.claude/al_guidelines/`)
+- Build and publish scripts (`scripts/`)
+- Framework documentation
+
+**What stays yours**:
+- Your BC apps (`BC/`, `BC Test/`)
+- Your environment config (`.env`, `.claude/settings.local.json`)
+- Your object ID pools (`BC/.objidconfig`)
+- Your Azure DevOps work items
+- Your project-specific documentation
+
+**Configuration**:
+The template repository URL is configured in `.claude/settings.local.json`:
+```json
+{
+  "env": {
+    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Apparel"
+  }
+}
+```
+
+**Best Practices**:
+- Update regularly to get the latest agent improvements
+- Always commit your work before running `/update_volt_factory`
+- Review changes after updating to understand what was added
+- Test your BC apps after template updates to ensure compatibility
+- Create a backup branch before major template updates
+
+See [.claude/commands/update_volt_factory.md](.claude/commands/update_volt_factory.md) for detailed documentation.
 
 ## Repository Structure
 
@@ -762,7 +829,8 @@ Volt-Factory/
 │   │   ├── bc_verify.md
 │   │   ├── bc_workflow_sandbox.md
 │   │   ├── bc_workflow_production.md
-│   │   └── bc_start_serena.md
+│   │   ├── bc_start_serena.md
+│   │   └── update_volt_factory.md
 │   │
 │   └── al_guidelines/                # AL coding standards
 │       ├── BestPractices/            # 30+ formatting and quality rules
