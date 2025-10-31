@@ -14,6 +14,103 @@ Volt Factory is a comprehensive development ecosystem that transforms Business C
 - **Automated Testing** - Browser-based test execution with Playwright
 - **Product Documentation** - Automated GitBook documentation with screenshots
 
+## Agent Workflow
+
+The following diagram shows how Volt Factory's 7 specialized agents orchestrate a complete development cycle:
+
+```mermaid
+graph TD
+    Start([Business Requirements]) --> FuncDesigner{Need Functional<br/>Design?}
+
+    FuncDesigner -->|Yes| FD[bc-functional-designer]
+    FuncDesigner -->|No| Developer
+
+    FD -->|Creates functional specs| AzureDevOps1[Azure DevOps MCP]
+    FD -->|Outputs to factory/2functional/| TechDesigner{Need Technical<br/>Design?}
+
+    TechDesigner -->|Yes| TD[bc-technical-designer]
+    TechDesigner -->|No| Developer
+
+    TD -->|Creates AL specifications| AzureDevOps2[Azure DevOps MCP]
+    TD -->|Outputs to factory/3technical/| Developer
+
+    Developer[bc-al-developer] -->|1. Reads| Guidelines[AL Guidelines<br/>.claude/al_guidelines/]
+    Developer -->|2. Allocates IDs| ObjID[Object ID Ninja MCP]
+    Developer -->|3. Writes AL Code| ALCode[AL Source Code<br/>BC/src/]
+    Developer -->|4. Creates Tests| Tests[Unit Tests<br/>BC Test/]
+    Developer -->|5. Triggers| Compiler
+
+    Compiler[bc-app-compiler] -->|Compiles & Publishes| BCEnv[Business Central<br/>Environment]
+    Compiler -->|Success?| CompileCheck{Compiled<br/>Successfully?}
+
+    CompileCheck -->|No| Developer
+    CompileCheck -->|Yes| TestRunner
+
+    TestRunner[bc-test-runner] -->|Uses| Playwright[Playwright MCP]
+    TestRunner -->|Executes tests in| BCEnv
+    TestRunner -->|Results| TestCheck{Tests<br/>Passed?}
+
+    TestCheck -->|No| Developer
+    TestCheck -->|Yes| AzureUpdate
+
+    AzureUpdate[azure-devops-manager] -->|Updates work items| AzureDevOps3[Azure DevOps MCP]
+    AzureUpdate -->|Marks tasks complete| DocBuilder{Need<br/>Documentation?}
+
+    DocBuilder -->|Yes| GB[gitbook-documentation-builder]
+    DocBuilder -->|No| Complete
+
+    GB -->|Uses| Playwright
+    GB -->|Captures screenshots| BCEnv
+    GB -->|Generates docs| Docs[GitBook Docs<br/>docs/]
+    GB --> Complete
+
+    Complete([Deployment Complete])
+
+    style Developer fill:#4CAF50,stroke:#2E7D32,color:#fff
+    style Compiler fill:#2196F3,stroke:#1565C0,color:#fff
+    style TestRunner fill:#FF9800,stroke:#E65100,color:#fff
+    style FD fill:#9C27B0,stroke:#6A1B9A,color:#fff
+    style TD fill:#9C27B0,stroke:#6A1B9A,color:#fff
+    style AzureUpdate fill:#F44336,stroke:#C62828,color:#fff
+    style GB fill:#00BCD4,stroke:#00838F,color:#fff
+    style ObjID fill:#FFD700,stroke:#FFA000,color:#000
+    style Playwright fill:#00C853,stroke:#00A043,color:#fff
+    style AzureDevOps1 fill:#0078D4,stroke:#005A9E,color:#fff
+    style AzureDevOps2 fill:#0078D4,stroke:#005A9E,color:#fff
+    style AzureDevOps3 fill:#0078D4,stroke:#005A9E,color:#fff
+```
+
+### Workflow Explanation
+
+**Design Phase (Optional)**:
+1. **bc-functional-designer** - Translates business requirements into functional specifications and creates Azure DevOps work items
+2. **bc-technical-designer** - Converts functional specs into AL technical design with object definitions
+
+**Development Phase (Core)**:
+3. **bc-al-developer** - The primary developer agent:
+   - Reads AL coding guidelines from `.claude/al_guidelines/`
+   - Allocates object IDs via Object ID Ninja MCP (mandatory)
+   - Writes AL code following all standards
+   - Creates comprehensive unit tests
+   - Triggers compilation
+
+**Verification Phase**:
+4. **bc-app-compiler** - Compiles and publishes to BC environment
+   - If compilation fails → returns to bc-al-developer for fixes
+5. **bc-test-runner** - Executes automated tests using Playwright
+   - If tests fail → returns to bc-al-developer for fixes
+
+**Completion Phase**:
+6. **azure-devops-manager** - Updates all work items to mark tasks complete
+7. **gitbook-documentation-builder** - Generates product documentation with screenshots (optional)
+
+### Key Integration Points
+
+- **Object ID Ninja MCP** - Enforces centralized ID allocation (mandatory for all new objects)
+- **Azure DevOps MCP** - Maintains work item traceability throughout the workflow
+- **Playwright MCP** - Powers both testing and documentation screenshot capture
+- **Serena AL MCP** - Provides semantic code navigation (used by all agents for code analysis)
+
 ## Core Capabilities
 
 ### Development Workflow Automation
