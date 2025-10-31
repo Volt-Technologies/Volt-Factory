@@ -471,16 +471,52 @@ Launch gitbook-documentation-builder agent:
 /bc_verify
 ```
 
-### Using Template Prompts
+### Using Workflow Prompts
 
-The `prompts/` directory contains template prompts for common scenarios:
+The `prompts/` directory contains ready-to-use workflow prompts for different development scenarios. Each prompt is designed to be copied and pasted directly into Claude Code or given to a global agent.
 
-**[prompts/user_request_example.md](prompts/user_request_example.md)**:
-- Template for requesting new features
-- Shows how to structure requirements
-- Examples of good feature descriptions
+**[prompts/README.md](prompts/README.md)** - Complete workflow guide with usage instructions
 
-Use these templates to get consistent, high-quality results from the agents.
+#### Available Workflow Scenarios
+
+**1. [Full Workflow](prompts/01_full_workflow.md)** - Complete end-to-end development
+- Business Requirement → Functional Design → Technical Design → Development → Testing → Documentation
+- Use when starting from scratch with a business requirement
+
+**2. [Business to Functional Design](prompts/02_business_to_functional_design.md)** - Design phase only
+- Business Requirement → Functional Design ✋ (STOP)
+- Use when you need functional specifications without proceeding to implementation
+
+**3. [Functional to Technical Design](prompts/03_functional_to_technical_design.md)** - Technical specs only
+- Existing Functional Design → Technical Design ✋ (STOP)
+- Use when you have functional design and need detailed technical specifications
+
+**4. [Functional to Completion](prompts/04_functional_to_completion.md)** - Complete from functional design
+- Existing Functional Design → Technical Design → Development → Testing → Documentation
+- Use when functional design is complete and you want full implementation
+
+**5. [Development to Completion](prompts/05_development_to_completion.md)** - Implementation from technical specs
+- Existing Technical Design → Development → Testing → Documentation
+- Use when technical specifications are ready for development
+
+**6. [Testing Only](prompts/06_testing_only.md)** - Test execution and iteration
+- Existing Code (compiled) → Testing → (iteration loop if failures)
+- Use when code is ready and you need to run and validate tests
+
+**7. [Documentation Only](prompts/07_documentation_only.md)** - Generate user documentation
+- Existing Feature (implemented & tested) → Documentation
+- Use when features are complete and need end-user documentation
+
+#### How to Use
+
+1. **Choose the appropriate workflow** based on your starting point (see [prompts/README.md](prompts/README.md))
+2. **Open the corresponding prompt file** (e.g., `prompts/03_functional_to_technical_design.md`)
+3. **Copy the entire content** of the file
+4. **Customize** the feature description to match your specific requirements
+5. **Paste into Claude Code** or provide to your global agent
+6. **Execute** and let the Volt-Factory agents handle the workflow
+
+These templates ensure consistent, high-quality results and allow you to start from any point in the development lifecycle.
 
 ## Compilation & Publishing
 
@@ -791,8 +827,15 @@ Volt-Factory/
 │   ├── Home/
 │   └── Documentation/
 │
-├── prompts/                          # Template prompts
-│   └── user_request_example.md       # Feature request template
+├── prompts/                          # Workflow prompt templates
+│   ├── README.md                     # Workflow guide and documentation
+│   ├── 01_full_workflow.md           # Complete end-to-end workflow
+│   ├── 02_business_to_functional_design.md    # Business → Functional design
+│   ├── 03_functional_to_technical_design.md   # Functional → Technical design
+│   ├── 04_functional_to_completion.md         # Functional design → Completion
+│   ├── 05_development_to_completion.md        # Technical design → Completion
+│   ├── 06_testing_only.md            # Testing workflow with iteration
+│   └── 07_documentation_only.md      # Documentation generation
 │
 ├── factory_docs/                     # Technical guides
 │   ├── PUBLISHING.md                 # Publishing guide
