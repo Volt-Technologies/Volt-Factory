@@ -789,7 +789,7 @@ The template repository URL is configured in `.claude/settings.local.json`:
 ```json
 {
   "env": {
-    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Apparel"
+    "VOLT_FACTORY_TEMPLATE_REPO": "https://github.com/grvolttechnologies/Volt-Factory"
   }
 }
 ```
