@@ -115,7 +115,7 @@ This workflow starts from an existing functional design and executes through to 
 **Responsibilities**:
 1. Create comprehensive end-user documentation for the implemented features
 2. Document all modules and functionality
-3. Generate step-by-step user guides with screenshots (captured via Playwright)
+3. Generate step-by-step user guides with screenshots (captured via Chrome DevTools MCP)
 4. Organize documentation in the `docs/Documentation` folder
 5. Update the SUMMARY.md file to include new documentation pages
 6. Document:

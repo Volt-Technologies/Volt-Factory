@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
 		<Metadata>
-			<Identity Language="en-US" Id="al" Version="15.2.1630495" Publisher="ms-dynamics-smb" />
+			<Identity Language="en-US" Id="al" Version="17.0.1869541" Publisher="ms-dynamics-smb" />
 			<DisplayName>AL Language extension for Microsoft Dynamics 365 Business Central</DisplayName>
 			<Description xml:space="preserve">Development tools for Dynamics 365 Business Central</Description>
-			<Tags>Dynamics 365 Business Central,AL,SMB,ERP,theme,icon-theme,snippet,keybindings,debuggers,json,al,__ext_al,__ext_dal</Tags>
+			<Tags>Dynamics 365 Business Central,AL,SMB,ERP,theme,color-theme,icon-theme,snippet,keybindings,debuggers,json,tools,language-model-tools,al,__ext_al,__ext_dal</Tags>
 			<Categories>Programming Languages,Snippets,Debuggers,Formatters</Categories>
 			<GalleryFlags>Public</GalleryFlags>
 			
 			<Properties>
-				<Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.85.0" />
+				<Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.100.0" />
 				<Property Id="Microsoft.VisualStudio.Code.ExtensionDependencies" Value="vscode.git" />
 				<Property Id="Microsoft.VisualStudio.Code.ExtensionPack" Value="" />
 				<Property Id="Microsoft.VisualStudio.Code.ExtensionKind" Value="workspace" />
 				<Property Id="Microsoft.VisualStudio.Code.LocalizedLanguages" Value="" />
 				<Property Id="Microsoft.VisualStudio.Code.EnabledApiProposals" Value="" />
-				
+				<Property Id="Microsoft.VisualStudio.Code.PreRelease" Value="true" />
 				<Property Id="Microsoft.VisualStudio.Code.ExecutesCode" Value="true" />
 				
 				<Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/Microsoft/AL.git" />

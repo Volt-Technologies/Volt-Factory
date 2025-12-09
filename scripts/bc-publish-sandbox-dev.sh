@@ -3,6 +3,14 @@
 # Business Central Sandbox Dev Mode Publishing Script
 # Publishes BC apps to sandbox environment using Dev endpoint
 # Supports both online/SaaS and local/Docker deployments
+#
+# Authentication Requirements:
+#   Online/SaaS: Uses OAuth Bearer token (no special headers needed)
+#   Local/Docker: Requires both Basic Auth AND Authorization-Scheme: NAVUserPassword header
+#
+# Tenant Configuration:
+#   Online/SaaS: Uses tenant ID from .env (BC_TENANT_ID)
+#   Local/Docker: Uses "default" as the tenant identifier (standard for on-premises)
 
 echo "=== Business Central Sandbox Dev Publishing ==="
 echo ""
@@ -197,8 +205,10 @@ if [ "$BC_DEPLOYMENT_TYPE" = "online" ]; then
     QUERY_PARAMS="tenant=$BC_TENANT_ID&SchemaUpdateMode=$SCHEMA_UPDATE_MODE&DependencyPublishingOption=$DEPENDENCY_OPTION"
 elif [ "$BC_DEPLOYMENT_TYPE" = "local" ]; then
     # Local/Docker endpoint
+    # Note: Local BC instances use "default" as the default tenant identifier
+    # This is the standard tenant name for single-tenant on-premises installations
     API_URL="$BC_LOCAL_SERVER_URL/$ENVIRONMENT_NAME/dev/apps"
-    QUERY_PARAMS="SchemaUpdateMode=$SCHEMA_UPDATE_MODE&DependencyPublishingOption=$DEPENDENCY_OPTION"
+    QUERY_PARAMS="tenant=default&SchemaUpdateMode=$SCHEMA_UPDATE_MODE&DependencyPublishingOption=$DEPENDENCY_OPTION"
 else
     echo "Error: Invalid BC_DEPLOYMENT_TYPE: $BC_DEPLOYMENT_TYPE"
     exit 1
@@ -230,11 +240,24 @@ trap "rm -f $TEMP_BODY" EXIT
 
 # Publish the app
 echo "Uploading app to Business Central..."
-RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$FULL_URL" \
-    -H "$AUTH_HEADER" \
-    -H "Content-Type: multipart/form-data; boundary=$BOUNDARY" \
-    -H "Accept: application/json" \
-    --data-binary "@$TEMP_BODY")
+
+# Build headers based on deployment type
+if [ "$BC_DEPLOYMENT_TYPE" = "local" ]; then
+    # Local deployment requires NAVUserPassword authentication scheme
+    RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$FULL_URL" \
+        -H "$AUTH_HEADER" \
+        -H "Authorization-Scheme: NAVUserPassword" \
+        -H "Content-Type: multipart/form-data; boundary=$BOUNDARY" \
+        -H "Accept: application/json" \
+        --data-binary "@$TEMP_BODY")
+else
+    # Online deployment uses standard OAuth Bearer token
+    RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$FULL_URL" \
+        -H "$AUTH_HEADER" \
+        -H "Content-Type: multipart/form-data; boundary=$BOUNDARY" \
+        -H "Accept: application/json" \
+        --data-binary "@$TEMP_BODY")
+fi
 
 # Extract HTTP status code
 HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)

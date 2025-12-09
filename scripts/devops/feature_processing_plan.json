@@ -1,0 +1,198 @@
+[
+  {
+    "feature_id": 29,
+    "feature_title": "Product Attributes",
+    "epic_id": 69,
+    "epic_title": "PIM",
+    "wiki_path": "wiki/PIM/Product Attributes.md"
+  },
+  {
+    "feature_id": 33,
+    "feature_title": "MOQ",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/MOQ.md"
+  },
+  {
+    "feature_id": 34,
+    "feature_title": "Standard order quantities",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/Standard order quantities.md"
+  },
+  {
+    "feature_id": 35,
+    "feature_title": "Vendor Costing",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/Vendor Costing.md"
+  },
+  {
+    "feature_id": 36,
+    "feature_title": "Purchase Agreemeents",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/Purchase Agreemeents.md"
+  },
+  {
+    "feature_id": 37,
+    "feature_title": "Vendor Pricing",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/Vendor Pricing.md"
+  },
+  {
+    "feature_id": 38,
+    "feature_title": "Lead times",
+    "epic_id": 4,
+    "epic_title": "Vendor Management",
+    "wiki_path": "wiki/Vendor Management/Lead times.md"
+  },
+  {
+    "feature_id": 200,
+    "feature_title": "Variant management",
+    "epic_id": 199,
+    "epic_title": "Product / Variant Management",
+    "wiki_path": "wiki/Product / Variant Management/Variant management.md"
+  },
+  {
+    "feature_id": 201,
+    "feature_title": "Licensing / Royalty reporting",
+    "epic_id": 6,
+    "epic_title": "Licensing/Royalties",
+    "wiki_path": "wiki/Licensing/Royalties/Licensing / Royalty reporting.md"
+  },
+  {
+    "feature_id": 202,
+    "feature_title": "Sample product status",
+    "epic_id": 7,
+    "epic_title": "Sample Management",
+    "wiki_path": "wiki/Sample Management/Sample product status.md"
+  },
+  {
+    "feature_id": 203,
+    "feature_title": "CE Integration for call center",
+    "epic_id": 8,
+    "epic_title": "CRM/Call Center",
+    "wiki_path": "wiki/CRM/Call Center/CE Integration for call center.md"
+  },
+  {
+    "feature_id": 204,
+    "feature_title": "Bulk Order draw down pages and automation",
+    "epic_id": 9,
+    "epic_title": "Bulk Order",
+    "wiki_path": "wiki/Bulk Order/Bulk Order draw down pages and automation.md"
+  },
+  {
+    "feature_id": 205,
+    "feature_title": "gift card table and page",
+    "epic_id": 12,
+    "epic_title": "Gift Cards",
+    "wiki_path": "wiki/Gift Cards/gift card table and page.md"
+  },
+  {
+    "feature_id": 206,
+    "feature_title": "Create catalog and or assortments pages",
+    "epic_id": 13,
+    "epic_title": "Catalogs and assortments",
+    "wiki_path": "wiki/Catalogs and assortments/Create catalog and or assortments pages.md"
+  },
+  {
+    "feature_id": 207,
+    "feature_title": "Open to buy",
+    "epic_id": 14,
+    "epic_title": "Planning",
+    "wiki_path": "wiki/Planning/Open to buy.md"
+  },
+  {
+    "feature_id": 208,
+    "feature_title": "custom product identifier and description",
+    "epic_id": 15,
+    "epic_title": "Custom/Special Orders",
+    "wiki_path": "wiki/Custom/Special Orders/custom product identifier and description.md"
+  },
+  {
+    "feature_id": 209,
+    "feature_title": "VAS attributes at SO header and lines plus customer requirements storage",
+    "epic_id": 16,
+    "epic_title": "Value Added Services - Upcharge",
+    "wiki_path": "wiki/Value Added Services - Upcharge/VAS attributes at SO header and lines plus customer requirements storage.md"
+  },
+  {
+    "feature_id": 210,
+    "feature_title": "advanced kitting logic",
+    "epic_id": 17,
+    "epic_title": "Bundling/Kitting",
+    "wiki_path": "wiki/Bundling/Kitting/advanced kitting logic.md"
+  },
+  {
+    "feature_id": 211,
+    "feature_title": "Soft allocation",
+    "epic_id": 18,
+    "epic_title": "Allocation",
+    "wiki_path": "wiki/Allocation/Soft allocation.md"
+  },
+  {
+    "feature_id": 212,
+    "feature_title": "Inventory allocation framework",
+    "epic_id": 19,
+    "epic_title": "Inventory Allocation per Channel",
+    "wiki_path": "wiki/Inventory Allocation per Channel/Inventory allocation framework.md"
+  },
+  {
+    "feature_id": 213,
+    "feature_title": "Automated order release",
+    "epic_id": 20,
+    "epic_title": "Automated Release",
+    "wiki_path": "wiki/Automated Release/Automated order release.md"
+  },
+  {
+    "feature_id": 214,
+    "feature_title": "Advanced warehousing for retail / apparel",
+    "epic_id": 22,
+    "epic_title": "WMS Enhancements",
+    "wiki_path": "wiki/WMS Enhancements/Advanced warehousing for retail / apparel.md"
+  },
+  {
+    "feature_id": 215,
+    "feature_title": "3Pl integration framework",
+    "epic_id": 23,
+    "epic_title": "Integration Framework 3PLs",
+    "wiki_path": "wiki/Integration Framework 3PLs/3Pl integration framework.md"
+  },
+  {
+    "feature_id": 216,
+    "feature_title": "Consignment module",
+    "epic_id": 24,
+    "epic_title": "Retail/Consignment Stores",
+    "wiki_path": "wiki/Retail/Consignment Stores/Consignment module.md"
+  },
+  {
+    "feature_id": 217,
+    "feature_title": "Automated Transfer Order creation logic",
+    "epic_id": 25,
+    "epic_title": "Retail Replanishment",
+    "wiki_path": "wiki/Retail Replanishment/Automated Transfer Order creation logic.md"
+  },
+  {
+    "feature_id": 218,
+    "feature_title": "DOM engine",
+    "epic_id": 26,
+    "epic_title": "DOM",
+    "wiki_path": "wiki/DOM/DOM engine.md"
+  },
+  {
+    "feature_id": 219,
+    "feature_title": "Retail / Apparel specific mass end of the season return features",
+    "epic_id": 27,
+    "epic_title": "Returns",
+    "wiki_path": "wiki/Returns/Retail / Apparel specific mass end of the season return features.md"
+  },
+  {
+    "feature_id": 220,
+    "feature_title": "Charge back workspace - see F&O",
+    "epic_id": 28,
+    "epic_title": "Charge Backs",
+    "wiki_path": "wiki/Charge Backs/Charge back workspace - see F&O.md"
+  }
+]

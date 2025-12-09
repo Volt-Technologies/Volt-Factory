@@ -62,6 +62,10 @@ COMPILER_PATH="${BC_COMPILER_PATH:-$WORKSPACE_ROOT/scripts/compiler/extension/bi
 PACKAGE_CACHE_PATH="${BC_PACKAGE_CACHE:-}"  # Will be set per-app if not specified
 OUTPUT_DIR="${BC_OUTPUT_DIR:-}"  # Will be set per-app if not specified
 
+# Set compiler options
+BC_WARN_AS_ERROR="${BC_WARN_AS_ERROR:-false}"  # Treat warnings as errors (default: false)
+BC_LOG_LEVEL="${BC_LOG_LEVEL:-Verbose}"  # Log level: Verbose, Normal, Warning, Error (default: Verbose)
+
 # Allow overriding paths via parameters
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -252,16 +256,62 @@ for app_json in "${APP_JSON_FILES[@]}"; do
     echo "  Output:        $APP_OUTPUT"
     echo ""
 
+    # Check if LinterCop analyzer is available
+    # First check in the win32 folder (same as compiler, for proper dependency resolution)
+    LINTERCOP_PATH="$COMPILER_PATH/BusinessCentral.LinterCop.dll"
+    HAS_LINTERCOP=false
+
+    # Check if LinterCop is disabled via environment variable
+    if [ "$BC_DISABLE_LINTERCOP" = "true" ]; then
+        echo "  LinterCop:     Disabled (BC_DISABLE_LINTERCOP=true)"
+    elif [ -f "$LINTERCOP_PATH" ]; then
+        HAS_LINTERCOP=true
+    else
+        # Fall back to Analyzers folder
+        LINTERCOP_PATH="$WORKSPACE_ROOT/scripts/compiler/extension/bin/Analyzers/BusinessCentral.LinterCop.dll"
+        if [ -f "$LINTERCOP_PATH" ]; then
+            HAS_LINTERCOP=true
+        fi
+    fi
+
+    # Build compiler options
+    COMPILER_OPTIONS=""
+
+    # Add log level parameter
+    if [ -n "$BC_LOG_LEVEL" ]; then
+        COMPILER_OPTIONS="$COMPILER_OPTIONS //loglevel:$BC_LOG_LEVEL"
+        echo "  Log Level:     $BC_LOG_LEVEL"
+    fi
+
+    # Add warn as error parameter
+    if [ "$BC_WARN_AS_ERROR" = "true" ]; then
+        COMPILER_OPTIONS="$COMPILER_OPTIONS //warnaserror+"
+        echo "  Warn as Error: Enabled"
+    fi
+
     # Run compilation
     if [ "$OS_NAME" = "win32" ]; then
         # Convert Unix paths to Windows paths for the compiler
         WIN_APP_DIR=$(cygpath -w "$APP_DIR" 2>/dev/null || echo "$APP_DIR" | sed 's|^/\([a-z]\)/|\U\1:/|')
         WIN_APP_PACKAGE_CACHE=$(cygpath -w "$APP_PACKAGE_CACHE" 2>/dev/null || echo "$APP_PACKAGE_CACHE" | sed 's|^/\([a-z]\)/|\U\1:/|')
         WIN_APP_OUTPUT=$(cygpath -w "$APP_OUTPUT" 2>/dev/null || echo "$APP_OUTPUT" | sed 's|^/\([a-z]\)/|\U\1:/|')
-        ./$COMPILER_EXE /project:"$WIN_APP_DIR" /packagecachepath:"$WIN_APP_PACKAGE_CACHE" /out:"$WIN_APP_OUTPUT"
+
+        # Add LinterCop analyzer if available
+        if [ "$HAS_LINTERCOP" = true ]; then
+            WIN_LINTERCOP_PATH=$(cygpath -w "$LINTERCOP_PATH" 2>/dev/null || echo "$LINTERCOP_PATH" | sed 's|^/\([a-z]\)/|\U\1:/|')
+            echo "  LinterCop:     $WIN_LINTERCOP_PATH"
+            ./$COMPILER_EXE /project:"$WIN_APP_DIR" /packagecachepath:"$WIN_APP_PACKAGE_CACHE" /out:"$WIN_APP_OUTPUT" /analyzer:"$WIN_LINTERCOP_PATH" $COMPILER_OPTIONS
+        else
+            ./$COMPILER_EXE /project:"$WIN_APP_DIR" /packagecachepath:"$WIN_APP_PACKAGE_CACHE" /out:"$WIN_APP_OUTPUT" $COMPILER_OPTIONS
+        fi
     else
         # Linux and macOS use Unix paths directly
-        ./$COMPILER_EXE /project:"$APP_DIR" /packagecachepath:"$APP_PACKAGE_CACHE" /out:"$APP_OUTPUT"
+        if [ "$HAS_LINTERCOP" = true ]; then
+            echo "  LinterCop:     $LINTERCOP_PATH"
+            ./$COMPILER_EXE /project:"$APP_DIR" /packagecachepath:"$APP_PACKAGE_CACHE" /out:"$APP_OUTPUT" /analyzer:"$LINTERCOP_PATH" $COMPILER_OPTIONS
+        else
+            ./$COMPILER_EXE /project:"$APP_DIR" /packagecachepath:"$APP_PACKAGE_CACHE" /out:"$APP_OUTPUT" $COMPILER_OPTIONS
+        fi
     fi
 
     COMPILE_RESULT=$?

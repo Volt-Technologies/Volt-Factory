@@ -45,6 +45,8 @@ The command uses git rebase to maintain a clean, linear history:
 - Fetches from the template repository
 - Rebases your current branch onto `volt-factory-template/main`
 - Preserves your local commits on top of template updates
+- Automatically resolves known conflicts
+- Force-pushes safely using `--force-with-lease`
 
 ## Usage
 
@@ -93,6 +95,8 @@ Add to `.claude/settings.local.json`:
   "permissions": {
     "allow": [
       "Bash(git:*)",
+      "Read",
+      "Edit",
       "SlashCommand(/update_volt_factory)"
     ]
   }

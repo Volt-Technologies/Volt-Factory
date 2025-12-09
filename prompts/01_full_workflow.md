@@ -184,7 +184,7 @@ This feature will be developed through a multi-agent workflow following Business
 **Responsibilities**:
 1. Create comprehensive end-user documentation for the newly developed features
 2. Document all modules and functionality that were implemented
-3. Generate step-by-step user guides with screenshots captured via Playwright
+3. Generate step-by-step user guides with screenshots captured via Chrome DevTools MCP
 4. Organize documentation in the appropriate module structure within the `docs/Documentation` folder
 5. Update the SUMMARY.md file to include the new documentation pages
 6. Document:

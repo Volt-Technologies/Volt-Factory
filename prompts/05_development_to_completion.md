@@ -110,11 +110,13 @@ After completing all implementations, request compilation and publishing (Phase 
 1. Execute all unit tests via Business Central's AL Test Tool web interface
 2. Monitor test execution (may take 10-20+ minutes)
 3. Capture comprehensive test results:
-   - Total passed/failed test counts
+   - Total passed/failed test counts (deduplicated from multiple runs)
    - Detailed error messages for each failure
    - Stack traces and assertion failures
    - Test codeunit and test procedure names
    - Execution times
+
+**Note on Test Execution**: BCContainerHelper runs tests multiple times (typically 2x) as standard behavior. The test runner automatically deduplicates results and reports only unique tests with the best result from all runs. Tests use isolation mode `130451` (Test Runner - Isol. Disabled) which means data may persist between runs - ensure tests have proper cleanup logic in setup/teardown.
 
 **Iteration Cycle**:
 4. If tests fail:
@@ -134,7 +136,7 @@ After completing all implementations, request compilation and publishing (Phase 
 **Responsibilities**:
 1. Create comprehensive end-user documentation for the newly implemented features
 2. Document all modules and functionality that were developed
-3. Generate step-by-step user guides with screenshots captured via Playwright
+3. Generate step-by-step user guides with screenshots captured via Chrome DevTools MCP
 4. Organize documentation in the appropriate module structure within `docs/Documentation` folder
 5. Update the SUMMARY.md file to include new documentation pages
 6. Document:

@@ -34,26 +34,29 @@
       "mcp__azureDevOps__list_work_items",
       "mcp__azureDevOps__get_work_item",
       "Bash(uvx:*)",
-      "mcp__serena__activate_project",
-      "mcp__serena__check_onboarding_performed",
       "WebFetch(domain:github.com)",
       "WebSearch",
       "WebFetch(domain:alguidelines.dev)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "mcp__serena__list_dir",
       "Bash(set:*)",
-      "Bash(export AL_EXTENSION_PATH=\"C:\\Users\\Usuario\\Repositories\\V\\Volt-Factory\\scripts\\compiler\\extension\")"
+      "Bash(export AL_EXTENSION_PATH=\"C:\\Users\\Usuario\\Repositories\\V\\Volt-Factory\\scripts\\compiler\\extension\")",
+      "mcp__azureDevOps__search_work_items",
+      "mcp__azureDevOps__get_project_details",
+      "mcp__azureDevOps__list_organizations",
+      "mcp__azureDevOps__list_projects",
+      "Bash(tree:*)",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "al-mcp-server",
     "azureDevOps",
     "microsoft_docs_mcp",
-    "playwright",
+    "chrome-devtools",
     "sequential-thinking",
     "objid"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

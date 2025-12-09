@@ -92,7 +92,7 @@ For each documentation page, create:
 #### **Workflow Guides**
 For each user workflow/use case:
 - Step-by-step instructions
-- Screenshots of each step (captured via Playwright)
+- Screenshots of each step (captured via Chrome DevTools MCP)
 - Field descriptions relevant to the workflow
 - Validation rules and requirements
 - Business rules that apply
@@ -116,7 +116,7 @@ For each user workflow/use case:
 - FAQs
 
 ### 4. Capture Screenshots
-Using Playwright automation:
+Using Chrome DevTools MCP automation:
 - Navigate to the Business Central web interface
 - Navigate to each page where the feature appears
 - Capture high-quality screenshots of:
@@ -205,7 +205,7 @@ And in `SUMMARY.md`:
 
 ## Notes
 
-- **Playwright Integration**: The `gitbook-documentation-builder` agent uses Playwright to automatically capture screenshots from the Business Central web interface
+- **Chrome DevTools MCP Integration**: The `gitbook-documentation-builder` agent uses Chrome DevTools MCP to automatically capture screenshots from the Business Central web interface
 - **GitBook Format**: All documentation uses GitBook-flavored markdown with proper formatting
 - **Module Organization**: Documentation should be organized by Business Central module (Sales, Purchase, Inventory, etc.)
 - **User Perspective**: Write from the end-user's perspective, not the developer's - assume no technical knowledge

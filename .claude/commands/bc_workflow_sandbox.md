@@ -12,9 +12,42 @@ This command executes a complete end-to-end workflow for sandbox development: co
 
 The complete sandbox workflow includes:
 
-1. **Compile**: Build all BC apps from source
-2. **Publish**: Deploy to sandbox using dev mode
-3. **Verify**: Confirm successful installation
+1. **Version Increment**: Automatically increment app version by 1 (e.g., 1.0.0.5 → 1.0.0.6)
+2. **Compile**: Build all BC apps from source with new version
+3. **Publish**: Deploy to sandbox using dev mode
+4. **Verify**: Confirm successful installation
+
+### IMPORTANT: Automatic Version Increment
+
+**ALWAYS increment the version number before compilation:**
+- Read the current version from `app.json`
+- Increment the last digit by 1 (e.g., 1.0.0.5 → 1.0.0.6)
+- Update `app.json` with the new version
+- Then proceed with compilation
+
+**Why this is required:**
+- Business Central rejects duplicate package IDs with same version
+- Dev mode does not automatically replace existing versions
+- Manual version management prevents deployment conflicts
+- Each deployment should have a unique version number
+
+**Example:**
+```bash
+# Before workflow: Check current version
+Current version in app.json: 1.0.0.5
+
+# Step 1: Increment version
+Update app.json: 1.0.0.5 → 1.0.0.6
+
+# Step 2: Compile with new version
+bc_compile
+
+# Step 3: Publish
+bc_publish_sandbox
+
+# Step 4: Verify
+bash scripts/bc-verify-app.sh
+```
 
 ## How It Works
 
@@ -42,16 +75,19 @@ Uses dev mode publishing for speed:
 ## Execution
 
 ### Run Complete Workflow
-Simply run the three commands in sequence:
+Simply run the four commands in sequence:
 
 ```bash
-# Step 1: Compile all apps
+# Step 1: Increment version
+bash scripts/bc-increment-version.sh BC
+
+# Step 2: Compile all apps
 bc_compile
 
-# Step 2: Publish to sandbox
+# Step 3: Publish to sandbox
 bc_publish_sandbox
 
-# Step 3: Verify installation
+# Step 4: Verify installation
 bash scripts/bc-verify-app.sh
 ```
 
@@ -59,10 +95,19 @@ Or execute manually:
 
 ```bash
 # Run all steps
+bash scripts/bc-increment-version.sh BC && \
 bash scripts/compile.sh && \
 bash scripts/bc-publish-sandbox-dev.sh && \
 bash scripts/bc-verify-app.sh
 ```
+
+**Helper Script:**
+The `bc-increment-version.sh` script automates version management:
+- Reads current version from app.json
+- Increments last digit by 1
+- Updates app.json with new version
+- Creates backup before modification
+- Verifies the change was successful
 
 ## Common Scenarios
 
@@ -70,25 +115,31 @@ bash scripts/bc-verify-app.sh
 User: "Compile and publish my changes"
 
 **Steps:**
-1. Run compilation command
-2. Wait for successful compile
-3. Run publish command
-4. Wait for successful publish
-5. Run verification
-6. Confirm app is installed
-7. Report "App deployed and verified successfully"
+1. Read current version from BC/app.json
+2. Increment version by 1 (e.g., 1.0.0.5 → 1.0.0.6)
+3. Update app.json with new version
+4. Run compilation command
+5. Wait for successful compile
+6. Run publish command
+7. Wait for successful publish
+8. Run verification
+9. Confirm app is installed with new version
+10. Report "App v1.0.0.6 deployed and verified successfully"
 
 **Expected Output:**
 ```
+=== Version Increment ===
+Updated version: 1.0.0.5 → 1.0.0.6
+
 === Compiling BC Apps ===
-✓ BC compiled successfully (256K)
+✓ Volt Apparel v1.0.0.6 compiled successfully (1.1M)
 
 === Publishing to Sandbox ===
 ✓ App published successfully
 
 === Verifying Installation ===
 ✓ App is installed
-Version: 1.0.0.0
+Version: 1.0.0.6
 State: Installed
 ```
 
@@ -96,31 +147,33 @@ State: Installed
 User: "I made changes, deploy everything"
 
 **Steps:**
-1. Compile all apps from source
-2. Publish updated apps
-3. Verify new version is installed
-4. Report results with version numbers
+1. Increment version number in app.json
+2. Compile all apps from source with new version
+3. Publish updated apps
+4. Verify new version is installed
+5. Report results with version numbers
 
 ### Scenario 3: Multiple Apps
 User: "Deploy all my apps"
 
 **Steps:**
-1. Compile finds all app.json files
-2. Compiles each app
-3. For each compiled app:
+1. For each app found:
+   - Read and increment version in app.json
+   - Compile the app with new version
    - Publish to sandbox
    - Verify installation
-4. Report summary of all apps
+2. Report summary of all apps with their new versions
 
 ### Scenario 4: Quick Fix and Deploy
 User: "I fixed a bug, push it now"
 
 **Steps:**
-1. Run compilation (quick for small changes)
-2. Publish immediately to sandbox
-3. Verify installation
-4. Confirm fix is deployed
-5. Suggest testing the fix
+1. Increment version number (e.g., 1.0.0.6 → 1.0.0.7)
+2. Run compilation (quick for small changes)
+3. Publish immediately to sandbox
+4. Verify installation
+5. Confirm fix is deployed with new version
+6. Suggest testing the fix
 
 ## Configuration
 
@@ -243,30 +296,41 @@ Some steps completed:
 
 ## Best Practices
 
-### 1. Run After Every Change
+### 1. ALWAYS Increment Version First
+**Critical workflow requirement:**
+- Never skip version increment
+- Automated version bump prevents deployment conflicts
+- Read current version → Add 1 → Update app.json
+- Example: 1.0.0.5 → 1.0.0.6 → 1.0.0.7 → ...
+- BC will reject duplicate versions with HTTP 422 error
+
+### 2. Run After Every Change
 Make this workflow muscle memory:
 - Make code changes
-- Run workflow
+- Increment version automatically
+- Run compilation
+- Run publishing
 - Test in BC
 - Iterate
 
-### 2. Check Verification
+### 3. Check Verification
 Always confirm verification succeeds:
 - Ensures app is actually installed
-- Confirms version number is correct
+- Confirms version number is correct (matches incremented version)
 - Detects silent failures
 
-### 3. Watch for Warnings
+### 4. Watch for Warnings
 Pay attention to compilation warnings:
 - May indicate future problems
 - Fix warnings proactively
 - Keep code clean
 
-### 4. Use Version Numbers
-Track changes with versions:
-- Update version in app.json before workflow
-- Verify correct version after deployment
-- Makes debugging easier
+### 5. Track Version History
+Maintain version discipline:
+- Each deployment gets unique version
+- Never reuse version numbers
+- Keep changelog of what changed in each version
+- Makes debugging and rollback easier
 
 ## Integration with Development Flow
 

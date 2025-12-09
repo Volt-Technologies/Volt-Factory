@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "BusinessCentral.LinterCop/1.0.0": {
+        "dependencies": {
+          "Microsoft.Dynamics.Nav.Analyzers.Common": "17.0.28.34589"
+        },
+        "runtime": {
+          "BusinessCentral.LinterCop.dll": {}
+        }
+      },
+      "Microsoft.Dynamics.Nav.Analyzers.Common/17.0.28.34589": {
+        "runtime": {
+          "Microsoft.Dynamics.Nav.Analyzers.Common.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BusinessCentral.LinterCop/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Dynamics.Nav.Analyzers.Common/17.0.28.34589": {
+      "type": "package",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

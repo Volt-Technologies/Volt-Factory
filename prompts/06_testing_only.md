@@ -170,6 +170,6 @@ After all tests pass, you can:
 - **No Manual Intervention Needed**: The agents will continue iterating until success
 - **Test Coverage**: This workflow executes all tests in the `BC Test` folder - ensure your test coverage is comprehensive
 - **Environment**: Tests run against the published app in the configured Business Central environment
-- **Web Interface**: The `bc-test-runner` uses Playwright to interact with the BC AL Test Tool web interface
+- **Web Interface**: The `bc-test-runner` uses Chrome DevTools MCP to interact with the BC AL Test Tool web interface
 - **Detailed Reporting**: Each test failure includes stack traces and assertion details to aid in debugging
 - **Test Isolation**: Each test should be independent and not rely on other tests' state
