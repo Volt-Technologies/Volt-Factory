@@ -1,0 +1,52 @@
+{
+    "CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShort><ObjectId>.al",
+    "CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShort><BaseId>-Ext<ObjectId>.al",
+    "CRS.OnSaveAlFileAction": "Rename",
+    "CRS.FileNamePatternPageCustomizations": "<ObjectTypeShort><BaseId>-PageCust.<ObjectNameShort><ObjectId>.al",
+    "CRS.ExtensionObjectNamePattern": null,
+    "CRS.ObjectNamePrefix": "VOL",
+    "CRS.RenameWithGit": true,
+    "al.enableCodeAnalysis": true,
+    "al.codeAnalyzers": [
+        "${CodeCop}",
+        "${UICop}",
+        "${PerTenantExtensionCop}",
+        "${analyzerFolder}BusinessCentral.LinterCop.dll"
+    ],
+    "al.ruleSetPath": "./.vscode/BC.ruleset.json",
+    "al.backgroundCodeAnalysis": "Project",
+    "al.compilationOptions": { 
+        "parallel": true
+    },
+    "git.autofetch": true,
+    "files.autoSave": "off",//optional
+    "al.enableCodeActions": true,//optional
+    "alOutline.defaultAppArea": "All",
+    "alObjectDesigner.useCRS": true,
+    "CRS.DisableDefaultAlSnippets": true,
+    "al.incrementalBuild": true,//only pipelines
+    "[al]": {
+        "editor.wordBasedSuggestions": "off",
+        "editor.suggestSelection": "first",
+        "editor.formatOnSave": true
+    },
+    "alOutline.addToolTipsToPageFields": true,
+    "alOutline.defaultDataClassification": "CustomerContent",
+    "alOutline.defaultRemoveUnusedVariablesSettings": 
+    {   "removeGlobalVariables": true,
+        "removeLocalVariables": true,
+        "removeLocalMethodParameters": false
+    },
+    "alOutline.codeActionsOnSave": [
+        "SortVariables",
+        "SortTableFields",
+        "FormatDocument",
+        "SortTriggers"
+    ],
+    "alOutline.pageActionToolTip": "Executes the %1 action",
+    "alOutline.pageFieldToolTip": "Specifies the value of the %1 field",
+    "al.snapshotDebuggingPath": "./.snapshot",
+    "NAB.DTS ProjectId": "0?rpid=42520",
+    "NAB.UseDTS": true,
+    "al-test-runner.sendDebugTelemetry": false
+}

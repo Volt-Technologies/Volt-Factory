@@ -1,0 +1,51 @@
+{
+    "name": "BC",
+    "description": "Business Central Ruleset",
+    "rules": [
+        {
+            "id": "AA0215",
+            "justification": "Names are correct",
+            "action": "None"
+        },
+        {
+            "id": "AA0247",
+            "justification": "We do not use namespaces yet",
+            "action": "None"
+        },
+        {
+            "id": "LC0010",
+            "justification": "complexity",
+            "action": "None"
+        },
+        {
+            "id": "LC0068",
+            "justification": "permissions",
+            "action": "None"
+        },
+        {
+            "id": "LC0035",
+            "justification": "AllowInCustomizations ",
+            "action": "None"
+        },
+        {
+            "id": "LC0026",
+            "justification": "ToolTip must end with a dot",
+            "action": "None"
+        },
+        {
+            "id": "LC0090",
+            "justification": "Show Cognitive Complexity diagnostics for methods above threshold",
+            "action": "None"
+        },
+        {
+            "id": "LC0064",
+            "justification": "Missing ToolTip property on table field.",
+            "action": "None"
+        },
+        {
+            "id": "LC0045",
+            "justification": "Zero (0) Enum value should be reserved for Empty Value.",
+            "action": "None"
+        }
+    ]
+}
