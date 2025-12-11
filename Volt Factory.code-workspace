@@ -1,7 +1,16 @@
 {
     "folders": [
         {
-            "path": "./"
+            "path": "./",
+            "name": "Root"
+        },
+        {
+            "path": "./BC",
+            "name": "BC"
+        },
+        {
+            "path": "./BC Test",
+            "name": "BC Test"
         }
     ],
 	"settings": {
