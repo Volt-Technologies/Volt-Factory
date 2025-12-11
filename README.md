@@ -2,14 +2,6 @@
 
 An AI-powered development framework for Microsoft Dynamics 365 Business Central, built on Claude Code with specialized MCP servers. Volt Factory provides complete automation from requirements gathering to production deployment, with enforced coding standards and comprehensive project management integration.
 
-## TODO
-
-- [ ] Configure Azure DevOps Pipeline for wiki sync (see [WIKI-SYNC-SETUP.md](WIKI-SYNC-SETUP.md))
-  - Update `azure-pipelines-wiki-sync.yml` with GitHub service connection name
-  - Update repository org/name in pipeline configuration
-  - Create pipeline in Azure DevOps
-  - Grant Build Service permissions to wiki repository
-
 ## What is Volt Factory?
 
 Volt Factory is a comprehensive development ecosystem that transforms Business Central AL development through:
