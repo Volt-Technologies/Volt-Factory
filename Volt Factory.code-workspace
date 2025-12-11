@@ -1,31 +1,7 @@
 {
     "folders": [
         {
-            "name": ".claude",
-            "path": ".claude"
-        },
-        {
-            "name": "scripts",
-            "path": "scripts"
-        },
-        {
-            "name": "BC",
-            "path": "BC"
-        },
-        {
-            "path": "BC Test"
-        },
-        {
-            "path": "docs"
-        },
-        {
-            "path": "factory"
-        },
-        {
-            "path": "factory_docs"
-        },
-        {
-            "path": ".venv"
+            "path": "./"
         }
     ],
 	"settings": {
