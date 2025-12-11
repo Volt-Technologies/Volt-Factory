@@ -34,7 +34,7 @@ This command verifies the installation status of Business Central apps by queryi
 ## Execution Steps
 
 ### 1. Run Verification Script
-Execute: `bash scripts/bc-verify-app.sh`
+Execute: `bash .claude/scripts/bc-verify-app.sh`
 
 The script will:
 - Load configuration from `.env`
@@ -56,26 +56,26 @@ The output shows:
 
 ### Scenario 1: Verify After Publishing
 User: "Check if my app was published successfully"
-1. Run: `bash scripts/bc-verify-app.sh`
+1. Run: `bash .claude/scripts/bc-verify-app.sh`
 2. Script auto-detects app ID from local app.json
 3. Queries BC environment
 4. Shows installation status
 
 ### Scenario 2: Check Specific App
 User: "Check status of app with ID xyz"
-1. Run: `bash scripts/bc-verify-app.sh --app-id "xyz-guid"`
+1. Run: `bash .claude/scripts/bc-verify-app.sh --app-id "xyz-guid"`
 2. Queries for specific app
 3. Shows detailed status
 
 ### Scenario 3: List All Apps
 User: "Show me all installed extensions"
-1. Run: `bash scripts/bc-verify-app.sh --all`
+1. Run: `bash .claude/scripts/bc-verify-app.sh --all`
 2. Lists all extensions in environment
 3. Shows name and basic info for each
 
 ### Scenario 4: Check Different Environment
 User: "Verify app in production environment"
-1. Run: `bash scripts/bc-verify-app.sh --environment "Production"`
+1. Run: `bash .claude/scripts/bc-verify-app.sh --environment "Production"`
 2. Queries production environment
 3. Shows app status in production
 
@@ -83,7 +83,7 @@ User: "Verify app in production environment"
 User: "Check if PTE installation completed"
 1. Publish with PTE mode: `bc_publish_sandbox_pte`
 2. Wait a few minutes
-3. Run: `bash scripts/bc-verify-app.sh`
+3. Run: `bash .claude/scripts/bc-verify-app.sh`
 4. Check if state is "Installed"
 5. Repeat if still "Installing" or "Pending"
 
@@ -164,7 +164,7 @@ Common states you may see:
 - Verify credentials in `.env`
 - For OAuth: Check tenant ID, client ID, and secret
 - For Basic: Check username and password
-- Test with: `bash scripts/bc-auth.sh test`
+- Test with: `bash .claude/scripts/bc-auth.sh test`
 
 ### Permission Errors
 - Admin Center API requires specific permissions
@@ -205,7 +205,7 @@ The specified app is not installed in this environment.
 
 Try:
   - Publish the app: bc_publish_sandbox
-  - Check all apps: bash scripts/bc-verify-app.sh --all
+  - Check all apps: bash .claude/scripts/bc-verify-app.sh --all
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -214,14 +214,14 @@ Try:
 ### Typical Workflow
 1. **Compile**: `bc_compile`
 2. **Publish**: `bc_publish_sandbox`
-3. **Verify**: `bash scripts/bc-verify-app.sh`
+3. **Verify**: `bash .claude/scripts/bc-verify-app.sh`
 4. **Confirm**: Check state is "Installed"
 
 ### PTE Workflow
 1. **Compile**: `bc_compile`
 2. **Publish**: `bc_publish_sandbox_pte`
 3. **Wait**: PTE installation takes time
-4. **Verify**: `bash scripts/bc-verify-app.sh`
+4. **Verify**: `bash .claude/scripts/bc-verify-app.sh`
 5. **Monitor**: Repeat until state is "Installed"
 
 ### Troubleshooting Workflow

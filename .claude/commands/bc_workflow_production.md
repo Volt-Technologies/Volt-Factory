@@ -138,7 +138,7 @@ The script will:
 
 1. **Check Installation Status**:
    ```bash
-   bash scripts/bc-verify-app.sh --environment "Production"
+   bash .claude/scripts/bc-verify-app.sh --environment "Production"
    ```
 
 2. **Verify Details**:

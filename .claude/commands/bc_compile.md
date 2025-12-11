@@ -25,7 +25,7 @@ The script reads configuration from the `.env` file in the repository root:
 - **BC_OUTPUT_DIR**: Custom output directory (optional, defaults to app folder)
 
 ### Compilation Process
-1. Run the `scripts/compile.sh` script
+1. Run the `.claude/scripts/compile.sh` script
 2. The script will:
    - Load configuration from `.env` file
    - Detect the operating system (Windows/Linux/macOS)
@@ -45,13 +45,13 @@ Each app is compiled to:
 ### Basic Usage
 Simply run the compile command - it will use defaults from `.env`:
 ```bash
-bash scripts/compile.sh
+bash .claude/scripts/compile.sh
 ```
 
 ### Advanced Usage
 Override configuration with command-line parameters:
 ```bash
-bash scripts/compile.sh --appsroot "path/to/apps" --compiler "path/to/compiler"
+bash .claude/scripts/compile.sh --appsroot "path/to/apps" --compiler "path/to/compiler"
 ```
 
 Available parameters:
@@ -91,4 +91,4 @@ Then all apps under `MyApps/` will be discovered and compiled.
 - The script is backward compatible - works with single app or multiple apps
 - Compilation continues even if one app fails, allowing you to see all errors
 - Dependencies should be placed in each app's `.alpackages` folder
-- The AL compiler is already included in `scripts/compiler/` for all platforms
+- The AL compiler is already included in `.claude/scripts/compiler/` for all platforms

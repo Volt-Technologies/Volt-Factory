@@ -7,8 +7,8 @@
 echo "=== Business Central launch.json Configuration Extractor ==="
 echo ""
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Default launch.json location
 BC_APPS_ROOT="${BC_APPS_ROOT:-BC}"
@@ -153,10 +153,10 @@ echo "   - Add your Azure AD app credentials"
 echo "   - Save the file"
 echo ""
 echo "3. Validate configuration:"
-echo "   bash scripts/bc-config-validate.sh"
+echo "   bash .claude/scripts/bc-config-validate.sh"
 echo ""
 echo "4. Test authentication:"
-echo "   bash scripts/bc-auth.sh test"
+echo "   bash .claude/scripts/bc-auth.sh test"
 echo ""
 echo "5. Start publishing:"
 echo "   bc_compile"

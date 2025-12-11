@@ -2,12 +2,12 @@
 
 # Business Central Version Increment Script
 # Automatically increments the version number in app.json by 1
-# Usage: bash scripts/bc-increment-version.sh [app-path]
+# Usage: bash .claude/scripts/bc-increment-version.sh [app-path]
 
 set -e
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Default app path
 APP_PATH="${1:-BC}"

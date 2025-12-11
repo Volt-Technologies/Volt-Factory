@@ -7,8 +7,8 @@
 # Exit on error
 set -e
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Token cache file
 TOKEN_CACHE_FILE="$WORKSPACE_ROOT/.bc_token_cache"

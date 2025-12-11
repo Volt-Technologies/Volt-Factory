@@ -57,7 +57,7 @@ Before running the command:
 - Schedule deployment window with stakeholders
 
 ### 2. Run Production Publishing Script
-Execute: `bash scripts/bc-publish-production-pte.sh`
+Execute: `bash .claude/scripts/bc-publish-production-pte.sh`
 
 The script will:
 - Load configuration from `.env`
@@ -137,7 +137,7 @@ BC_COMPANY_ID=<production-company-id>
 ### Scenario 1: Standard Production Deployment
 User: "Deploy app to production"
 1. Run comprehensive pre-deployment checks
-2. Execute: `bash scripts/bc-publish-production-pte.sh`
+2. Execute: `bash .claude/scripts/bc-publish-production-pte.sh`
 3. Review deployment checklist
 4. Type "DEPLOY" to confirm
 5. Follow manual deployment instructions

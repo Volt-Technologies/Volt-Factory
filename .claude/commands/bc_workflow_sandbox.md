@@ -46,7 +46,7 @@ bc_compile
 bc_publish_sandbox
 
 # Step 4: Verify
-bash scripts/bc-verify-app.sh
+bash .claude/scripts/bc-verify-app.sh
 ```
 
 ## How It Works
@@ -79,7 +79,7 @@ Simply run the four commands in sequence:
 
 ```bash
 # Step 1: Increment version
-bash scripts/bc-increment-version.sh BC
+bash .claude/scripts/bc-increment-version.sh BC
 
 # Step 2: Compile all apps
 bc_compile
@@ -88,17 +88,17 @@ bc_compile
 bc_publish_sandbox
 
 # Step 4: Verify installation
-bash scripts/bc-verify-app.sh
+bash .claude/scripts/bc-verify-app.sh
 ```
 
 Or execute manually:
 
 ```bash
 # Run all steps
-bash scripts/bc-increment-version.sh BC && \
-bash scripts/compile.sh && \
-bash scripts/bc-publish-sandbox-dev.sh && \
-bash scripts/bc-verify-app.sh
+bash .claude/scripts/bc-increment-version.sh BC && \
+bash .claude/scripts/compile.sh && \
+bash .claude/scripts/bc-publish-sandbox-dev.sh && \
+bash .claude/scripts/bc-verify-app.sh
 ```
 
 **Helper Script:**
@@ -213,7 +213,7 @@ Use PTE mode instead of dev mode:
 bc_compile
 bc_publish_sandbox_pte
 # Wait a few minutes for async installation
-bash scripts/bc-verify-app.sh
+bash .claude/scripts/bc-verify-app.sh
 ```
 
 ### Compile Only
@@ -350,9 +350,9 @@ For automated pipelines:
 # CI/CD pipeline script
 
 # Run complete workflow
-bash scripts/compile.sh || exit 1
-bash scripts/bc-publish-sandbox-dev.sh || exit 1
-bash scripts/bc-verify-app.sh || exit 1
+bash .claude/scripts/compile.sh || exit 1
+bash .claude/scripts/bc-publish-sandbox-dev.sh || exit 1
+bash .claude/scripts/bc-verify-app.sh || exit 1
 
 echo "CI/CD deployment successful"
 ```

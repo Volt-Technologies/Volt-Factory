@@ -27,9 +27,9 @@ Follow these steps:
    - If no container exists: Proceed with creation
 
 3. **Create Container** (if needed):
-   - Verify `scripts/create-bc-container.ps1` exists
+   - Verify `.claude/scripts/create-bc-container.ps1` exists
    - If not, inform user to run the bc-docker-container-creator agent first
-   - Execute: `pwsh -ExecutionPolicy Bypass -File "scripts\create-bc-container.ps1" -ContainerName "bc-{{arg1}}"`
+   - Execute: `pwsh -ExecutionPolicy Bypass -File ".claude\scripts\create-bc-container.ps1" -ContainerName "bc-{{arg1}}"`
    - Monitor the creation process
 
 4. **Update Environment**:
@@ -54,7 +54,7 @@ Follow these steps:
 - Reuse existing containers when possible (just start them)
 - Update `.env` with the new container name after creation
 - Never create feature-specific PowerShell scripts
-- Use only the reusable `scripts/create-bc-container.ps1`
+- Use only the reusable `.claude/scripts/create-bc-container.ps1`
 
 ## Error Handling
 

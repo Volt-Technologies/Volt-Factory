@@ -32,7 +32,7 @@ Before publishing, verify the app is compiled:
 - If no .app files found, run `bc_compile` first
 
 ### 2. Run the Publishing Script
-Execute: `bash scripts/bc-publish-sandbox-dev.sh`
+Execute: `bash .claude/scripts/bc-publish-sandbox-dev.sh`
 
 The script will:
 - Load configuration from `.env`
@@ -76,25 +76,25 @@ BC_ENVIRONMENT_NAME=<your-instance-name>
 User: "Publish my app to sandbox"
 1. Check if .app file exists
 2. If not, run `bc_compile`
-3. Run `bash scripts/bc-publish-sandbox-dev.sh`
+3. Run `bash .claude/scripts/bc-publish-sandbox-dev.sh`
 4. Report results
 
 ### Scenario 2: Publish with Force Sync
 User: "Publish with force sync"
 1. Ensure app is compiled
-2. Run `bash scripts/bc-publish-sandbox-dev.sh --force-sync`
+2. Run `bash .claude/scripts/bc-publish-sandbox-dev.sh --force-sync`
 3. Report results
 
 ### Scenario 3: Publish Specific App
 User: "Publish the CustomerManagement app"
 1. Find the specific .app file
-2. Run `bash scripts/bc-publish-sandbox-dev.sh --app-path "path/to/app.app"`
+2. Run `bash .claude/scripts/bc-publish-sandbox-dev.sh --app-path "path/to/app.app"`
 3. Report results
 
 ### Scenario 4: Publish to Different Environment
 User: "Publish to my dev sandbox"
 1. Ensure app is compiled
-2. Run `bash scripts/bc-publish-sandbox-dev.sh --environment "DevSandbox"`
+2. Run `bash .claude/scripts/bc-publish-sandbox-dev.sh --environment "DevSandbox"`
 3. Report results
 
 ## Advanced Options
@@ -114,7 +114,7 @@ The publishing script supports additional flags:
 - Verify credentials in `.env`
 - For OAuth: Check tenant ID, client ID, and client secret
 - For Basic: Check username and password
-- Run `bash scripts/bc-auth.sh test` to test authentication
+- Run `bash .claude/scripts/bc-auth.sh test` to test authentication
 
 ### Environment Errors
 - Verify BC_ENVIRONMENT_TYPE=sandbox in `.env`

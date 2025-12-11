@@ -81,7 +81,7 @@ The PTE publishing workflow is a **complete 4-step automated process** that hand
 
 Simply run:
 ```bash
-bash scripts/bc-publish-sandbox-pte.sh
+bash .claude/scripts/bc-publish-sandbox-pte.sh
 ```
 
 The script automatically:
@@ -195,14 +195,14 @@ BC_COMPANY_ID=<your-company-id>
 User: "Test PTE deployment in sandbox"
 1. Ensure app is compiled
 2. Verify BC_COMPANY_ID is set in .env
-3. Run `bash scripts/bc-publish-sandbox-pte.sh`
+3. Run `bash .claude/scripts/bc-publish-sandbox-pte.sh`
 4. Monitor installation progress
 5. Verify with `bc_verify` command
 
 ### Scenario 2: PTE with Specific Company
 User: "Deploy to specific company as PTE"
 1. Get company ID from BC (Companies → API Setup)
-2. Run `bash scripts/bc-publish-sandbox-pte.sh --company-id "GUID"`
+2. Run `bash .claude/scripts/bc-publish-sandbox-pte.sh --company-id "GUID"`
 3. Monitor installation
 
 ### Scenario 3: Test Extension Upgrade
@@ -210,7 +210,7 @@ User: "Test upgrading extension"
 1. Publish initial version with PTE mode
 2. Update app.json version
 3. Recompile: `bc_compile`
-4. Publish new version: `bash scripts/bc-publish-sandbox-pte.sh`
+4. Publish new version: `bash .claude/scripts/bc-publish-sandbox-pte.sh`
 5. Verify upgrade process
 
 ## Advanced Options
@@ -237,7 +237,7 @@ The publishing script supports flags:
 - Verify credentials in `.env`
 - For OAuth: Check tenant ID, client ID, and secret
 - For Basic: Check username and password
-- Test with: `bash scripts/bc-auth.sh test`
+- Test with: `bash .claude/scripts/bc-auth.sh test`
 
 ### Upload Errors
 - Check app.json is valid

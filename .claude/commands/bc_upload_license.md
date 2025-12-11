@@ -33,12 +33,12 @@ The script reads configuration from the `.env` file:
 
 ### Basic Usage (uses defaults from .env)
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/bc-upload-license.ps1
+powershell -ExecutionPolicy Bypass -File .claude/scripts/bc-upload-license.ps1
 ```
 
 ### Custom Container and License
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/bc-upload-license.ps1 -ContainerName "bc-my-container" -LicenseFile "C:\path\to\license.bclicense"
+powershell -ExecutionPolicy Bypass -File .claude/scripts/bc-upload-license.ps1 -ContainerName "bc-my-container" -LicenseFile "C:\path\to\license.bclicense"
 ```
 
 ## Parameters

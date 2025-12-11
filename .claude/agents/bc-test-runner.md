@@ -126,7 +126,7 @@ Where:
 
 **Execution:**
 ```bash
-pwsh -ExecutionPolicy Bypass -File "scripts/bc-run-tests-simple.ps1" \
+pwsh -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests-simple.ps1" \
   -TestCodeunitIdRange "70200..70249" \
   -ContainerName "bc-product-attributes" \
   -CompanyName "CRONUS International Ltd."

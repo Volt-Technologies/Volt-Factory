@@ -33,8 +33,8 @@ esac
 echo "Detected OS: $OS_NAME"
 echo ""
 
-# Define workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Define workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Load .env file if it exists
 if [ -f "$WORKSPACE_ROOT/.env" ]; then
@@ -58,7 +58,7 @@ fi
 
 # Set default paths (can be overridden by .env or command-line params)
 BC_APPS_ROOT="${BC_APPS_ROOT:-BC}"
-COMPILER_PATH="${BC_COMPILER_PATH:-$WORKSPACE_ROOT/scripts/compiler/extension/bin/$OS_NAME}"
+COMPILER_PATH="${BC_COMPILER_PATH:-$WORKSPACE_ROOT/.claude/scripts/compiler/extension/bin/$OS_NAME}"
 PACKAGE_CACHE_PATH="${BC_PACKAGE_CACHE:-}"  # Will be set per-app if not specified
 OUTPUT_DIR="${BC_OUTPUT_DIR:-}"  # Will be set per-app if not specified
 
@@ -268,7 +268,7 @@ for app_json in "${APP_JSON_FILES[@]}"; do
         HAS_LINTERCOP=true
     else
         # Fall back to Analyzers folder
-        LINTERCOP_PATH="$WORKSPACE_ROOT/scripts/compiler/extension/bin/Analyzers/BusinessCentral.LinterCop.dll"
+        LINTERCOP_PATH="$WORKSPACE_ROOT/.claude/scripts/compiler/extension/bin/Analyzers/BusinessCentral.LinterCop.dll"
         if [ -f "$LINTERCOP_PATH" ]; then
             HAS_LINTERCOP=true
         fi

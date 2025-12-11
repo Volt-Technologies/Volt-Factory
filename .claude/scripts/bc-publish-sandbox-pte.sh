@@ -10,8 +10,8 @@ echo ""
 # Exit on error
 set -e
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Default values
 APP_PATH=""
@@ -101,7 +101,7 @@ if [ -z "$COMPANY_ID" ]; then
     echo "Company ID not specified, attempting to fetch from BC API..."
 
     # Get authentication header early
-    AUTH_HEADER_TEMP=$(bash "$WORKSPACE_ROOT/scripts/bc-auth.sh" get-header 2>/dev/null)
+    AUTH_HEADER_TEMP=$(bash "$WORKSPACE_ROOT/.claude/scripts/bc-auth.sh" get-header 2>/dev/null)
 
     if [ $? -eq 0 ] && [ -n "$AUTH_HEADER_TEMP" ]; then
         # Construct companies API URL
@@ -217,7 +217,7 @@ echo ""
 
 # Get authentication
 echo "Authenticating..."
-AUTH_HEADER=$(bash "$WORKSPACE_ROOT/scripts/bc-auth.sh" get-header)
+AUTH_HEADER=$(bash "$WORKSPACE_ROOT/.claude/scripts/bc-auth.sh" get-header)
 
 if [ $? -ne 0 ]; then
     echo "Error: Authentication failed"

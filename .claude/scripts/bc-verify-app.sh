@@ -10,8 +10,8 @@ echo ""
 # Exit on error
 set -e
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Default values
 APP_ID=""
@@ -149,7 +149,7 @@ fi
 
 # Get authentication
 echo "Authenticating..."
-AUTH_HEADER=$(bash "$WORKSPACE_ROOT/scripts/bc-auth.sh" get-header)
+AUTH_HEADER=$(bash "$WORKSPACE_ROOT/.claude/scripts/bc-auth.sh" get-header)
 
 if [ $? -ne 0 ]; then
     echo "Error: Authentication failed"
@@ -285,7 +285,7 @@ elif [ "$HTTP_STATUS" = "404" ]; then
     echo ""
     echo "Try:"
     echo "  - Publish the app: bc_publish_sandbox"
-    echo "  - Check all apps: bash scripts/bc-verify-app.sh --all"
+    echo "  - Check all apps: bash .claude/scripts/bc-verify-app.sh --all"
     echo "  - Verify app ID in app.json"
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

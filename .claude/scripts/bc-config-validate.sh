@@ -6,8 +6,8 @@
 echo "=== Business Central Configuration Validator ==="
 echo ""
 
-# Determine workspace root
-WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Determine workspace root (repo root, two directories up from scripts)
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Colors for output (if supported)
 RED='\033[0;31m'
@@ -191,9 +191,9 @@ test_authentication() {
     echo "Testing Authentication..."
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    if ! bash "$WORKSPACE_ROOT/scripts/bc-auth.sh" test > /dev/null 2>&1; then
+    if ! bash "$WORKSPACE_ROOT/.claude/scripts/bc-auth.sh" test > /dev/null 2>&1; then
         print_error "Authentication test failed"
-        echo "  Run: bash scripts/bc-auth.sh test"
+        echo "  Run: bash .claude/scripts/bc-auth.sh test"
         echo "  For detailed error information"
     else
         print_success "Authentication test passed"
@@ -304,7 +304,7 @@ main() {
         echo "You're ready to:"
         echo "  • Compile apps: bc_compile"
         echo "  • Publish to sandbox: bc_publish_sandbox"
-        echo "  • Verify apps: bash scripts/bc-verify-app.sh"
+        echo "  • Verify apps: bash .claude/scripts/bc-verify-app.sh"
         echo ""
         exit 0
     fi

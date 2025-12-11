@@ -149,13 +149,13 @@ Call the PowerShell script directly for more options:
 
 ```powershell
 # Generate detailed report
-powershell scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -ReportType Detailed
+powershell .claude/scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -ReportType Detailed
 
 # Custom output path
-powershell scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -OutputPath "my-test-results"
+powershell .claude/scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -OutputPath "my-test-results"
 
 # Skip BCContainerHelper (use Chrome DevTools instead)
-powershell scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -SkipBCContainerHelper
+powershell .claude/scripts/bc-run-tests.ps1 -TestCodeunitIdRange "70200..70249" -SkipBCContainerHelper
 ```
 
 ## Benefits Over Chrome DevTools
