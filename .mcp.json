@@ -42,21 +42,6 @@
       ],
       "env": {}
     },
-    "serena": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/SShadowS/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "ide-assistant",
-        "--project",
-        "C:/Users/Usuario/Repositories/V/Volt-Factory"
-      ],
-      "env": {}
-    },
     "objid": {
       "command": "npx",
       "args": ["-y", "@sshadows/objid-mcp"],
