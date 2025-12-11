@@ -479,53 +479,6 @@ Launch gitbook-documentation-builder agent:
 /bc_verify
 ```
 
-### Using Workflow Prompts
-
-The `prompts/` directory contains ready-to-use workflow prompts for different development scenarios. Each prompt is designed to be copied and pasted directly into Claude Code or given to a global agent.
-
-**[prompts/README.md](prompts/README.md)** - Complete workflow guide with usage instructions
-
-#### Available Workflow Scenarios
-
-**1. [Full Workflow](prompts/01_full_workflow.md)** - Complete end-to-end development
-- Business Requirement → Functional Design → Technical Design → Development → Testing → Documentation
-- Use when starting from scratch with a business requirement
-
-**2. [Business to Functional Design](prompts/02_business_to_functional_design.md)** - Design phase only
-- Business Requirement → Functional Design ✋ (STOP)
-- Use when you need functional specifications without proceeding to implementation
-
-**3. [Functional to Technical Design](prompts/03_functional_to_technical_design.md)** - Technical specs only
-- Existing Functional Design → Technical Design ✋ (STOP)
-- Use when you have functional design and need detailed technical specifications
-
-**4. [Functional to Completion](prompts/04_functional_to_completion.md)** - Complete from functional design
-- Existing Functional Design → Technical Design → Development → Testing → Documentation
-- Use when functional design is complete and you want full implementation
-
-**5. [Development to Completion](prompts/05_development_to_completion.md)** - Implementation from technical specs
-- Existing Technical Design → Development → Testing → Documentation
-- Use when technical specifications are ready for development
-
-**6. [Testing Only](prompts/06_testing_only.md)** - Test execution and iteration
-- Existing Code (compiled) → Testing → (iteration loop if failures)
-- Use when code is ready and you need to run and validate tests
-
-**7. [Documentation Only](prompts/07_documentation_only.md)** - Generate user documentation
-- Existing Feature (implemented & tested) → Documentation
-- Use when features are complete and need end-user documentation
-
-#### How to Use
-
-1. **Choose the appropriate workflow** based on your starting point (see [prompts/README.md](prompts/README.md))
-2. **Open the corresponding prompt file** (e.g., `prompts/03_functional_to_technical_design.md`)
-3. **Copy the entire content** of the file
-4. **Customize** the feature description to match your specific requirements
-5. **Paste into Claude Code** or provide to your global agent
-6. **Execute** and let the Volt-Factory agents handle the workflow
-
-These templates ensure consistent, high-quality results and allow you to start from any point in the development lifecycle.
-
 ## Compilation & Publishing
 
 ### Multi-App Compilation
@@ -545,12 +498,12 @@ These templates ensure consistent, high-quality results and allow you to start f
 
 **Via Command Line**:
 ```bash
-bash scripts/compile.sh
+bash .claude/scripts/compile.sh
 ```
 
 **With custom parameters**:
 ```bash
-bash scripts/compile.sh --appsroot "MyApps" --output "build"
+bash .claude/scripts/compile.sh --appsroot "MyApps" --output "build"
 ```
 
 ### Publishing Modes
@@ -580,16 +533,21 @@ bash scripts/compile.sh --appsroot "MyApps" --output "build"
 - Guided deployment process
 - Verification support
 
-### Publishing Scripts
+### PowerShell Scripts (Docker Containers)
+
+Scripts for BC Docker container management (located in `.claude/scripts/`):
 
 | Script | Purpose |
 |--------|---------|
-| `bc-publish-sandbox-dev.sh` | Dev mode publishing |
-| `bc-publish-sandbox-pte.sh` | PTE mode with monitoring |
-| `bc-publish-production-pte.sh` | Production validation |
-| `bc-verify-app.sh` | Installation verification |
-| `bc-auth.sh` | Authentication handler |
-| `bc-config-validate.sh` | Config validation |
+| `bc-create-container.ps1` | Create BC Docker containers |
+| `bc-publish-app.ps1` | Publish apps to containers |
+| `bc-run-tests.ps1` | Execute AL tests |
+| `bc-verify-app.ps1` | Verify app installation |
+| `bc-assign-permissions.ps1` | Assign user permissions |
+| `bc-upload-license.ps1` | Upload BC license |
+
+All scripts read configuration from `.env` file - no hardcoded values.
+See `.claude/scripts/README.md` for detailed usage.
 
 ## AL Object ID Management
 
@@ -740,7 +698,10 @@ All commands use `bc_` prefix for discoverability:
 | `/bc_verify` | Verify app installation status |
 | `/bc_workflow_sandbox` | Complete sandbox workflow |
 | `/bc_workflow_production` | Complete production workflow |
-| `/bc_start_serena` | Start Serena UVX MCP server |
+| `/bc_upload_license` | Upload BC license to Docker container |
+| `/bc_run_tests` | Run AL tests in container |
+| `/bc_feature_add` | Add a new feature to tracking |
+| `/bc_create_feature_docker` | Create Docker container for a feature |
 | `/update_volt_factory` | Update from Volt Factory template repository |
 
 Commands are defined in [.claude/commands/](.claude/commands/).
@@ -837,8 +798,21 @@ Volt-Factory/
 │   │   ├── bc_verify.md
 │   │   ├── bc_workflow_sandbox.md
 │   │   ├── bc_workflow_production.md
-│   │   ├── bc_start_serena.md
 │   │   └── update_volt_factory.md
+│   │
+│   ├── scripts/                      # PowerShell scripts for BC Docker
+│   │   ├── README.md                 # Script documentation
+│   │   ├── bc-create-container.ps1   # Create BC Docker containers
+│   │   ├── bc-publish-app.ps1        # Publish apps to containers
+│   │   ├── bc-run-tests.ps1          # Execute AL tests
+│   │   ├── bc-verify-app.ps1         # Verify app installation
+│   │   ├── bc-assign-permissions.ps1 # Assign user permissions
+│   │   ├── bc-upload-license.ps1     # Upload BC license
+│   │   └── compiler/                 # AL compiler (cross-platform)
+│   │       └── extension/bin/
+│   │           ├── win32/alc.exe     # Windows compiler
+│   │           ├── linux/alc         # Linux compiler
+│   │           └── darwin/alc        # macOS compiler
 │   │
 │   └── al_guidelines/                # AL coding standards
 │       ├── BestPractices/            # 30+ formatting and quality rules
@@ -877,22 +851,6 @@ Volt-Factory/
 │   │   └── *.Test.al
 │   └── .alpackages/
 │
-├── scripts/                          # Build and publish scripts
-│   ├── compile.sh                    # Multi-app compilation
-│   ├── bc-auth.sh                    # Authentication handler
-│   ├── bc-publish-sandbox-dev.sh     # Dev mode publishing
-│   ├── bc-publish-sandbox-pte.sh     # PTE mode publishing
-│   ├── bc-publish-production-pte.sh  # Production publishing
-│   ├── bc-verify-app.sh              # Installation verification
-│   ├── bc-config-validate.sh         # Config validation
-│   ├── bc-extract-launch-config.sh   # launch.json extractor
-│   │
-│   └── compiler/                     # AL compiler (cross-platform)
-│       └── extension/bin/
-│           ├── win32/alc.exe         # Windows compiler
-│           ├── linux/alc             # Linux compiler
-│           └── darwin/alc            # macOS compiler
-│
 ├── factory/                          # Design output directory
 │   ├── 1research/                    # Business research output
 │   ├── 2functional/                  # Functional design docs
@@ -903,23 +861,7 @@ Volt-Factory/
 │   ├── Home/
 │   └── Documentation/
 │
-├── prompts/                          # Workflow prompt templates
-│   ├── README.md                     # Workflow guide and documentation
-│   ├── 01_full_workflow.md           # Complete end-to-end workflow
-│   ├── 02_business_to_functional_design.md    # Business → Functional design
-│   ├── 03_functional_to_technical_design.md   # Functional → Technical design
-│   ├── 04_functional_to_completion.md         # Functional design → Completion
-│   ├── 05_development_to_completion.md        # Technical design → Completion
-│   ├── 06_testing_only.md            # Testing workflow with iteration
-│   └── 07_documentation_only.md      # Documentation generation
-│
-├── factory_docs/                     # Technical guides
-│   ├── PUBLISHING.md                 # Publishing guide
-│   ├── ENVIRONMENTS.md               # Environment configuration
-│   └── AUTHENTICATION.md             # Authentication setup
-│
-└── .serena/                          # Serena MCP configuration
-    └── project.yml                   # Project settings
+└── license.bclicense                 # BC license file (optional)
 ```
 
 ## Authentication Setup
@@ -968,15 +910,7 @@ Volt-Factory/
    BC_LOCAL_SERVER_URL=http://localhost:7048
    ```
 
-See [factory_docs/AUTHENTICATION.md](factory_docs/AUTHENTICATION.md) for detailed setup.
-
 ## Documentation
-
-### Technical Guides
-
-- **[PUBLISHING.md](factory_docs/PUBLISHING.md)** - Complete publishing documentation
-- **[ENVIRONMENTS.md](factory_docs/ENVIRONMENTS.md)** - Environment configuration guide
-- **[AUTHENTICATION.md](factory_docs/AUTHENTICATION.md)** - OAuth and Basic Auth setup
 
 ### Agent Documentation
 
@@ -1037,7 +971,7 @@ All command documentation in [.claude/commands/](.claude/commands/):
 
 - Review agent documentation in [.claude/agents/](.claude/agents/)
 - Check command documentation in [.claude/commands/](.claude/commands/)
-- Review technical guides in [factory_docs/](factory_docs/)
+- Check script documentation in [.claude/scripts/README.md](.claude/scripts/README.md)
 - Check compilation/publishing output for detailed errors
 - Verify MCP server installations
 
