@@ -109,12 +109,163 @@ Where:
 
 ## Test Execution Method Selection
 
-**CRITICAL**: Choose the test execution method based on environment type and availability.
+**CRITICAL**: Choose the test execution method based on `BC_DEPLOYMENT_TYPE` in `.env` file.
 
-### Primary Method: BCContainerHelper PowerShell (Docker/Local)
+### Method 1: OData Web Service API (Online/Cloud) - RECOMMENDED FOR SAAS
+
+**Use OData API when:**
+- `BC_DEPLOYMENT_TYPE=online` in .env
+- Testing against Business Central SaaS/Online environments
+- Automated CI/CD pipelines
+
+**Advantages:**
+- ⚡ **Fast** - Direct API calls, no browser overhead
+- ✅ **Reliable** - No UI timing issues
+- ✅ **Structured JSON output** - Easy to parse results
+- ✅ **CI/CD ready** - Perfect for automation
+- ✅ **No browser required** - Works headless
+
+**Prerequisites:**
+1. BC Test app published with `VOL Test Runner WS` codeunit (78000)
+2. `TestRunner` web service registered in BC (Web Services page, OData V4 enabled)
+3. Azure AD App Registration with `Dynamics 365 Business Central` API permissions
+4. User in BC with `TestVolt` permission set (60000) assigned to the Azure AD app
+5. `.env` configured with `BC_TENANT_ID`, `BC_CLIENT_ID`, `BC_CLIENT_SECRET`
+
+**Execution using unified executor:**
+```powershell
+# Run specific test codeunit
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-executor.ps1" -TestCodeunitId 60000
+
+# List available test codeunits
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-executor.ps1" -Action List
+
+# Health check
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-executor.ps1" -Action Ping
+
+# Run all tests for an extension
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-executor.ps1" -Action RunExtension -ExtensionId "your-extension-guid"
+```
+
+**Direct OData script (alternative):**
+```powershell
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests-odata.ps1" -TestCodeunitId 60000 -OutputFormat Detailed
+```
+
+**OData Response Format:**
+```json
+{
+    "suite": "SINGLE",
+    "timestamp": "2025-12-12T00:08:25.584Z",
+    "totalTests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "notExecuted": 0,
+    "success": true,
+    "codeunits": [
+        {
+            "codeunitId": 60000,
+            "codeunitName": "VOL Furniture Tests",
+            "result": "Success",
+            "startTime": "2025-12-12T00:08:24.237Z",
+            "finishTime": "2025-12-12T00:08:25.507Z",
+            "tests": [
+                {
+                    "method": "TestCreateFurnitureRecord",
+                    "name": "TestCreateFurnitureRecord",
+                    "result": "Success",
+                    "startTime": "2025-12-12T00:08:24.3Z",
+                    "finishTime": "2025-12-12T00:08:24.797Z"
+                },
+                {
+                    "method": "TestUpdateFurnitureRecord",
+                    "name": "TestUpdateFurnitureRecord",
+                    "result": "Failure",
+                    "startTime": "2025-12-12T00:08:24.86Z",
+                    "finishTime": "2025-12-12T00:08:24.907Z",
+                    "errorMessage": "Assertion failed: Expected X but got Y",
+                    "errorCallStack": "..."
+                }
+            ]
+        }
+    ]
+}
+```
+
+**Result Values:**
+- `Success`: Test passed
+- `Failure`: Test failed with assertion or error
+- `Skipped`: Test was skipped
+- `NotExecuted`: Test was not run
+
+**Available OData API Endpoints:**
+
+| Function | Description | Parameters | Returns |
+|----------|-------------|------------|---------|
+| `Ping` | Health check | None | Status JSON |
+| `ListTestCodeunits` | List all test codeunits | None | Array of codeunits |
+| `ListTestSuites` | List all test suites | None | Array of suites |
+| `RunTestCodeunit` | Run specific codeunit | `codeunitId` (integer) | Test results JSON |
+| `RunTestsByExtension` | Run all tests for an app | `extensionId` (GUID) | Test results JSON |
+| `RunTestSuite` | Run a named test suite | `suiteName` (string) | Test results JSON |
+| `GetTestResults` | Get results without running | `suiteName` (string) | Test results JSON |
+
+**PowerShell OAuth and API Call Examples:**
+```powershell
+# 1. Get OAuth Token
+$tokenEndpoint = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+$tokenBody = @{
+    client_id     = $clientId
+    client_secret = $clientSecret
+    scope         = 'https://api.businesscentral.dynamics.com/.default'
+    grant_type    = 'client_credentials'
+}
+$tokenResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $tokenBody -ContentType 'application/x-www-form-urlencoded'
+$accessToken = $tokenResponse.access_token
+
+# 2. Standard Headers
+$headers = @{
+    'Authorization' = "Bearer $accessToken"
+    'Content-Type'  = 'application/json'
+    'Accept'        = 'application/json'
+}
+$encodedCompany = [uri]::EscapeDataString($companyName)
+$baseUrl = "https://api.businesscentral.dynamics.com/v2.0/$tenantId/$environmentName/ODataV4"
+
+# 3. Ping Health Check
+$pingUrl = "$baseUrl/TestRunner_Ping?company=$encodedCompany"
+$response = Invoke-RestMethod -Uri $pingUrl -Method POST -Headers $headers -Body '{}'
+
+# 4. Run Test Codeunit (with adequate timeout)
+$runUrl = "$baseUrl/TestRunner_RunTestCodeunit?company=$encodedCompany"
+$body = '{"codeunitId": 60000}'
+$response = Invoke-RestMethod -Uri $runUrl -Method POST -Headers $headers -Body $body -TimeoutSec 600
+```
+
+**Troubleshooting OData:**
+- **403 Forbidden**: Assign `TestVolt` permission set to Azure AD app user in BC
+- **404 Not Found**: Register `TestRunner` web service in BC Web Services page
+- **401 Unauthorized**: Check Azure AD credentials in `.env`
+- **500 Internal Server Error**:
+  - Check BC event log for detailed error
+  - Verify test codeunit exists and has `Subtype = Test`
+  - Check for runtime errors in test code
+
+**Debugging Tips:**
+1. **Test Ping first**: Always start with `TestRunner_Ping` to verify connectivity
+2. **List codeunits**: Use `TestRunner_ListTestCodeunits` to verify test codeunits are visible
+3. **Check company name**: Ensure company name exactly matches (case-sensitive, URL-encoded)
+4. **Timeout**: Test execution may take several minutes - use adequate timeout (300-600 seconds)
+
+See `BC Test/TEST_RUNNER_API.md` for complete OData API documentation.
+
+---
+
+### Method 2: BCContainerHelper PowerShell (Docker/Local)
 
 **Use BCContainerHelper when:**
-- BC_DEPLOYMENT_TYPE=local in .env
+- `BC_DEPLOYMENT_TYPE=local` in .env
 - Docker container is running locally
 - PowerShell Core 7+ (pwsh) is available
 
@@ -126,7 +277,7 @@ Where:
 
 **Execution:**
 ```bash
-pwsh -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests-simple.ps1" \
+pwsh -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests.ps1" \
   -TestCodeunitIdRange "70200..70249" \
   -ContainerName "bc-product-attributes" \
   -CompanyName "CRONUS International Ltd."
@@ -140,13 +291,15 @@ pwsh -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests-simple.ps1" \
 
 **When BCContainerHelper fails or is unavailable**, fall back to Chrome DevTools method below.
 
-### Fallback Method: Chrome DevTools (SaaS/Online)
+---
+
+### Method 3: Chrome DevTools (Fallback/Visual Verification)
 
 **Use Chrome DevTools when:**
-- BC_DEPLOYMENT_TYPE=online in .env
+- OData API is not available or fails
 - BCContainerHelper is not available or fails
-- Testing in SaaS/Online BC environments
-- Visual verification is needed
+- Visual verification of test execution is needed
+- Debugging test failures interactively
 
 **Execution continues with AL Test Tool UI automation below:**
 
@@ -281,11 +434,54 @@ Before executing ANY test:
 
 ## Decision-Making Framework
 
+### Method Selection Flowchart
+
+```
+START: Need to run BC tests
+    │
+    ▼
+┌─────────────────────────────────┐
+│ Read BC_DEPLOYMENT_TYPE in .env │
+└─────────────────────────────────┘
+    │
+    ├── "online" ───────────────────────────────────────┐
+    │                                                    ▼
+    │                              ┌─────────────────────────────────────┐
+    │                              │ Use OData API Method                │
+    │                              │ Script: bc-test-executor.ps1        │
+    │                              │         bc-run-tests-odata.ps1      │
+    │                              └─────────────────────────────────────┘
+    │                                        │
+    │                                        ▼
+    │                              ┌─────────────────────────────────────┐
+    │                              │ OData Failed? (403/404/500)         │
+    │                              └─────────────────────────────────────┘
+    │                                        │
+    │                                        ├── Yes ──► Use Chrome DevTools
+    │                                        └── No  ──► Return Results ✓
+    │
+    └── "local" ────────────────────────────────────────┐
+                                                         ▼
+                                   ┌─────────────────────────────────────┐
+                                   │ Use BCContainerHelper Method        │
+                                   │ Script: bc-run-tests.ps1            │
+                                   └─────────────────────────────────────┘
+                                             │
+                                             ▼
+                                   ┌─────────────────────────────────────┐
+                                   │ BCContainerHelper Failed?           │
+                                   └─────────────────────────────────────┘
+                                             │
+                                             ├── Yes ──► Use Chrome DevTools
+                                             └── No  ──► Return Results ✓
+```
+
 ### Before Starting
 - [ ] Have I verified this is NOT a Production environment?
+- [ ] Have I checked `BC_DEPLOYMENT_TYPE` in `.env` to select the right method?
 - [ ] Do I have all required URL parameters (tenant ID, environment, company)?
-- [ ] Do I know the correct codeunit range to test?
-- [ ] Is the Playwright MCP tool available and functioning?
+- [ ] Do I know the correct codeunit ID to test?
+- [ ] For online: Is the TestRunner web service registered and TestVolt permissions assigned?
 
 ### During Execution
 - [ ] Are test codeunits loading successfully?
@@ -315,5 +511,39 @@ Request human intervention or escalate to the calling agent when:
 - Browser automation encounters persistent errors
 - Test execution never completes after reasonable time
 - URL parameters provided appear invalid or incomplete
+
+## Key Files Reference
+
+| File | Description |
+|------|-------------|
+| `BC Test/src/VOLTestRunnerWS.Codeunit.al` | Test runner web service codeunit (ID 78000) |
+| `BC Test/src/VOLFurnitureTests.Codeunit.al` | Example test codeunit |
+| `BC Test/src/TestVolt.permissionset.al` | Permission set for test execution (ID 60000) |
+| `BC Test/WS.xml` | Web service export file for importing TestRunner |
+| `.claude/scripts/bc-run-tests-odata.ps1` | OData test runner PowerShell script |
+| `.claude/scripts/bc-test-executor.ps1` | Unified test executor (auto-detects deployment type) |
+| `.claude/scripts/bc-run-tests.ps1` | Local/Docker test runner using BCContainerHelper |
+| `BC Test/TEST_RUNNER_API.md` | Complete OData API documentation |
+| `BC Test/TEST_IMPLEMENTATION_SUMMARY.md` | Test implementation patterns and examples |
+
+## Test Implementation Patterns
+
+When reviewing test code or understanding test results, be aware of these common patterns:
+
+**Custom Assertion Helpers (no external dependencies):**
+- `AssertAreEqual(Text, Text, ErrorMessage)` - Compare text values
+- `AssertAreEqual(Decimal, Decimal, ErrorMessage)` - Compare numeric values
+- `AssertIsTrue(Boolean, ErrorMessage)` - Verify true conditions
+- `AssertIsFalse(Boolean, ErrorMessage)` - Verify false conditions
+
+**Test Data Management Helpers:**
+- `Initialize()` - Test setup and cleanup preparation
+- `GetNextTestCode()` - Generate unique test codes using Random()
+- `CreateTestFurniture()` - Create standard test records
+
+**Test Isolation:**
+- Each test is independent and can run in any order
+- Test data uses randomized codes to avoid conflicts
+- Initialize() ensures proper test environment setup
 
 Remember: Your primary goal is to provide reliable, comprehensive test results while maintaining absolute safety through production environment protection. Be thorough, patient, and precise in your execution and reporting.
