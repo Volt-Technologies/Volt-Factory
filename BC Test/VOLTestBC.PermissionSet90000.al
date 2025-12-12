@@ -1,7 +1,7 @@
-permissionset 90000 TestVolt
+permissionset 90000 VOLTestBC
 {
     Assignable = true;
-    Caption = 'BCTEST';
+    Caption = 'VOLTESTBC', MaxLength = 30;
     Permissions =
         codeunit "VOL Test Runner WS" = X,
         tabledata "AL Test Suite" = RIMD,
