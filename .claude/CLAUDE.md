@@ -7,7 +7,13 @@ Whenver you are asked to develop any AL change, either a new feature, fix a bug 
 5. Then run the automated tests, Use the bc-test-runner agent for that.
 6. Only when you have passed all automated tests, then you can consider your job done. If not, based on the errors, you will have to go back to point 1, and code, compile, publish and run the tests again until the tests pass.
 
-
+It is mandatory you create create the AL objects grouped by global feature, with objects organizes in subfolders uch as:
+    src/
+        [Feature A]/
+            table/
+            tableextension/
+            page/
+            codeunit/
 Do not ever change the format of a file to be able to compile the BC app.
 Do not remove dependencies in the Test app
 You will need to download symbols for the first time, if you get a missing object error
