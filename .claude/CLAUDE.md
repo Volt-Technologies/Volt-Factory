@@ -6,3 +6,8 @@ Whenver you are asked to develop any AL change, either a new feature, fix a bug 
 4. Once the main code has been coded, compiled, and published, you will need to create the automated tests for what you have developed, to make sure it works the way you expected it to work. Publishing is NOT ENOUGH to consider your job done. Therefore, you will now need to use the Test app, and in the same way, yo uwill need to code the automated tests, compile the Test app, publish it. As you can see, you need to follow the same logic where if you get an error compiling the test app, you will need to rework on it, until it compiles and publishes. 
 5. Then run the automated tests, Use the bc-test-runner agent for that.
 6. Only when you have passed all automated tests, then you can consider your job done. If not, based on the errors, you will have to go back to point 1, and code, compile, publish and run the tests again until the tests pass.
+
+
+Do not ever change the format of a file to be able to compile the BC app.
+Do not remove dependencies in the Test app
+You will need to download symbols for the first time, if you get a missing object error
