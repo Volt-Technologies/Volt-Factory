@@ -1,7 +1,7 @@
 permissionset 90000 TestVolt
 {
     Assignable = true;
-    Caption = 'BCTEST'
+    Caption = 'BCTEST';
     Permissions =
         codeunit "VOL Test Runner WS" = X,
         tabledata "AL Test Suite" = RIMD,
