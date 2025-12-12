@@ -14,6 +14,8 @@ It is mandatory you create create the AL objects grouped by global feature, with
             tableextension/
             page/
             codeunit/
+
+Mandatory to have created or updated the permissionset before compiling
 Do not ever change the format of a file to be able to compile the BC app.
 Do not remove dependencies in the Test app
 You will need to download symbols for the first time, if you get a missing object error
