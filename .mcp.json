@@ -8,31 +8,9 @@
       ],
       "env": {}
     },
-    "azureDevOps": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@tiberriver256/mcp-server-azure-devops"
-      ],
-      "env": {
-        "AZURE_DEVOPS_ORG_URL": "https://dev.azure.com/VoltBC/",
-        "AZURE_DEVOPS_AUTH_METHOD": "pat",
-        "AZURE_DEVOPS_PAT": "2IuiGd1v9AbXnysPidVeJ6mejeozYRveBFbodMeqeoCIXK8NDlSKJQQJ99BJACAAAAAyZ7RBAAASAZDO3Ebp",
-        "AZURE_DEVOPS_DEFAULT_PROJECT": "Factory"
-      }
-    },
     "microsoft_docs_mcp": {
       "type": "http",
       "url": "https://learn.microsoft.com/api/mcp"
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--extension"
-      ],
-      "env": {}
     },
     "sequential-thinking": {
       "type": "stdio",
@@ -41,13 +19,6 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ],
       "env": {}
-    },
-    "objid": {
-      "command": "npx",
-      "args": ["-y", "@sshadows/objid-mcp"],
-      "env": {
-        "MCP_MODE": "lite"
-      }
     }
   }
 }
