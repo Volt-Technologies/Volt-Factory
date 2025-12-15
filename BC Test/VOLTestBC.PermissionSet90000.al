@@ -4,6 +4,7 @@ permissionset 90000 VOLTestBC
     Caption = 'VOLTESTBC', MaxLength = 30;
     Permissions =
         codeunit "VOL Test Runner WS" = X,
+        codeunit "VOL Report Test Helper" = X,
         tabledata "AL Test Suite" = RIMD,
         tabledata "Test Method Line" = RIMD,
         tabledata "CAL Test Line" = RIMD,

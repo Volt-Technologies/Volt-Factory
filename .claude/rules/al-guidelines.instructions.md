@@ -21,6 +21,10 @@ Before implementing AL code, review the following domain-specific guidelines tha
 - [AL Error Handling](./al-error-handling.instructions.md) - Error patterns and telemetry
 - [AL Events Guidelines](./al-events.instructions.md) - Event-driven development
 - [AL Testing Guidelines](./al-testing.instructions.md) - Test implementation patterns
+- [AL RDLC Report Development](./al-rdlc-report-development.instructions.md) - Report AL object development
+- [AL RDLC Layout Structure](./al-rdlc-layout-structure.instructions.md) - RDLC XML structure and syntax
+- [AL RDLC Report Testing](./al-rdlc-report-testing.instructions.md) - Report testing patterns
+- [AL RDLC from PDF Mock-up](./al-rdlc-from-pdf-mockup.instructions.md) - Build RDLC from PDF examples
 - [Existing Prefix Guidelines](./prefix.md) - Volt-specific prefix requirements
 - [Existing Naming Guidelines](./names.md) - Volt-specific naming conventions
 - [Existing Object Creation Guidelines](./objectcreation.md) - Volt object creation patterns
