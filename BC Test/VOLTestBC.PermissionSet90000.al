@@ -5,6 +5,7 @@ permissionset 90000 VOLTestBC
     Permissions =
         codeunit "VOL Test Runner WS" = X,
         codeunit "VOL Report Test Helper" = X,
+        codeunit "VOL Posted Sales Invoice Test" = X,
         tabledata "AL Test Suite" = RIMD,
         tabledata "Test Method Line" = RIMD,
         tabledata "CAL Test Line" = RIMD,
