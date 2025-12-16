@@ -191,6 +191,215 @@ codeunit 90000 "VOL Test Runner WS"
         exit(ResultText);
     end;
 
+    /// <summary>
+    /// Runs a report and returns the PDF as Base64 encoded string.
+    /// This function is exposed as a web service for direct report testing.
+    /// </summary>
+    /// <param name="ReportId">The ID of the report to run (e.g., 50000).</param>
+    /// <param name="TableNo">The table number of the record (e.g., 112 for Sales Invoice Header).</param>
+    /// <param name="RecordSystemId">The SystemId (GUID) of the record to use as data source.</param>
+    /// <returns>JSON string with success status, PDF Base64 content, and metadata.</returns>
+    procedure RunReportAsPdf(ReportId: Integer; TableNo: Integer; RecordSystemId: Text): Text
+    var
+        ReportTestHelper: Codeunit "VOL Report Test Helper";
+        JsonObj: JsonObject;
+        PdfBase64: Text;
+        Success: Boolean;
+        ErrorText: Text;
+        StartTime: DateTime;
+        EndTime: DateTime;
+        ResultText: Text;
+        RecordGuid: Guid;
+    begin
+        StartTime := CurrentDateTime;
+
+        // Convert string to GUID
+        if not Evaluate(RecordGuid, RecordSystemId) then begin
+            JsonObj.Add('success', false);
+            JsonObj.Add('error', 'Invalid SystemId format: ' + RecordSystemId);
+            JsonObj.WriteTo(ResultText);
+            exit(ResultText);
+        end;
+
+        // Try to generate PDF
+        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, RecordGuid, PdfBase64);
+
+        if not Success then
+            ErrorText := GetLastErrorText();
+
+        EndTime := CurrentDateTime;
+
+        // Build JSON response
+        JsonObj.Add('reportId', ReportId);
+        JsonObj.Add('tableNo', TableNo);
+        JsonObj.Add('recordSystemId', RecordSystemId);
+        JsonObj.Add('success', Success);
+        JsonObj.Add('startTime', Format(StartTime, 0, 9));
+        JsonObj.Add('endTime', Format(EndTime, 0, 9));
+        JsonObj.Add('durationMs', EndTime - StartTime);
+
+        if Success then begin
+            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            JsonObj.Add('pdfBase64', PdfBase64);
+            JsonObj.Add('hasPdfContent', PdfBase64 <> '');
+        end else
+            JsonObj.Add('error', ErrorText);
+
+        JsonObj.WriteTo(ResultText);
+        exit(ResultText);
+    end;
+
+    /// <summary>
+    /// Lists all available reports in the system.
+    /// </summary>
+    /// <returns>JSON array of report information (ID, name, caption).</returns>
+    procedure ListAvailableReports(): Text
+    var
+        AllObjWithCaption: Record "AllObjWithCaption";
+        JsonArray: JsonArray;
+        JsonObj: JsonObject;
+        ResultText: Text;
+    begin
+        AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Report);
+        if AllObjWithCaption.FindSet() then
+            repeat
+                Clear(JsonObj);
+                JsonObj.Add('id', AllObjWithCaption."Object ID");
+                JsonObj.Add('name', AllObjWithCaption."Object Name");
+                JsonObj.Add('caption', AllObjWithCaption."Object Caption");
+                JsonArray.Add(JsonObj);
+            until AllObjWithCaption.Next() = 0;
+
+        JsonArray.WriteTo(ResultText);
+        exit(ResultText);
+    end;
+
+    /// <summary>
+    /// Tests a report by finding the first available record and generating PDF.
+    /// Useful for quick report validation without specifying a specific record.
+    /// </summary>
+    /// <param name="ReportId">The ID of the report to test.</param>
+    /// <param name="TableNo">The table number to find a record from.</param>
+    /// <returns>JSON string with test results and PDF Base64 content.</returns>
+    procedure TestReportWithFirstRecord(ReportId: Integer; TableNo: Integer): Text
+    var
+        RecRef: RecordRef;
+        ReportTestHelper: Codeunit "VOL Report Test Helper";
+        JsonObj: JsonObject;
+        PdfBase64: Text;
+        Success: Boolean;
+        ErrorText: Text;
+        ResultText: Text;
+        SystemId: Guid;
+    begin
+        // Open table and find first record
+        RecRef.Open(TableNo);
+        if not RecRef.FindFirst() then begin
+            JsonObj.Add('success', false);
+            JsonObj.Add('error', 'No records found in table ' + Format(TableNo));
+            JsonObj.WriteTo(ResultText);
+            exit(ResultText);
+        end;
+
+        // Get SystemId from RecordRef
+        SystemId := RecRef.Field(RecRef.SystemIdNo()).Value();
+
+        // Try to generate PDF
+        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, SystemId, PdfBase64);
+
+        if not Success then
+            ErrorText := GetLastErrorText();
+
+        // Build JSON response
+        JsonObj.Add('reportId', ReportId);
+        JsonObj.Add('tableNo', TableNo);
+        JsonObj.Add('recordSystemId', Format(SystemId));
+        JsonObj.Add('recordNo', Format(RecRef.RecordId));
+        JsonObj.Add('success', Success);
+
+        if Success then begin
+            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            JsonObj.Add('pdfBase64', PdfBase64);
+            JsonObj.Add('hasPdfContent', PdfBase64 <> '');
+        end else
+            JsonObj.Add('error', ErrorText);
+
+        JsonObj.WriteTo(ResultText);
+        exit(ResultText);
+    end;
+
+    /// <summary>
+    /// Tests a report by automatically finding the first posted sales invoice.
+    /// This function is designed for RDLC report testing - it finds test data automatically
+    /// and captures detailed error information if report generation fails.
+    /// </summary>
+    /// <param name="ReportId">The ID of the report to test (e.g., 50000 for VOL Posted Sales Invoice).</param>
+    /// <returns>JSON string with test results, PDF Base64 content (if successful), and detailed error information (if failed).</returns>
+    procedure TestReportWithFirstPostedSalesInvoice(ReportId: Integer): Text
+    var
+        SalesInvoiceHeader: Record "Sales Invoice Header";
+        ReportTestHelper: Codeunit "VOL Report Test Helper";
+        JsonObj: JsonObject;
+        PdfBase64: Text;
+        Success: Boolean;
+        ErrorText: Text;
+        ErrorDetails: Text;
+        StartTime: DateTime;
+        EndTime: DateTime;
+        ResultText: Text;
+        SystemId: Guid;
+    begin
+        StartTime := CurrentDateTime;
+
+        // Find first posted sales invoice
+        if not SalesInvoiceHeader.FindFirst() then begin
+            JsonObj.Add('success', false);
+            JsonObj.Add('error', 'No posted sales invoices found in the system');
+            JsonObj.Add('reportId', ReportId);
+            JsonObj.Add('tableNo', Database::"Sales Invoice Header");
+            JsonObj.WriteTo(ResultText);
+            exit(ResultText);
+        end;
+
+        SystemId := SalesInvoiceHeader.SystemId;
+
+        // Try to generate PDF with error handling
+        ClearLastError();
+        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, Database::"Sales Invoice Header", SystemId, PdfBase64);
+
+        if not Success then begin
+            ErrorText := GetLastErrorText();
+            ErrorDetails := GetLastErrorCallStack();
+        end;
+
+        EndTime := CurrentDateTime;
+
+        // Build JSON response
+        JsonObj.Add('reportId', ReportId);
+        JsonObj.Add('tableNo', Database::"Sales Invoice Header");
+        JsonObj.Add('recordSystemId', Format(SystemId));
+        JsonObj.Add('recordNo', SalesInvoiceHeader."No.");
+        JsonObj.Add('customerNo', SalesInvoiceHeader."Sell-to Customer No.");
+        JsonObj.Add('postingDate', Format(SalesInvoiceHeader."Posting Date", 0, 9));
+        JsonObj.Add('success', Success);
+        JsonObj.Add('startTime', Format(StartTime, 0, 9));
+        JsonObj.Add('endTime', Format(EndTime, 0, 9));
+        JsonObj.Add('durationMs', EndTime - StartTime);
+
+        if Success then begin
+            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            JsonObj.Add('pdfBase64', PdfBase64);
+            JsonObj.Add('hasPdfContent', PdfBase64 <> '');
+        end else begin
+            JsonObj.Add('error', ErrorText);
+            if ErrorDetails <> '' then
+                JsonObj.Add('errorDetails', ErrorDetails);
+        end;
+
+        JsonObj.WriteTo(ResultText);
+        exit(ResultText);
+    end;
+
     local procedure BuildTestResultsJson(SuiteName: Code[10]): Text
     var
         TestMethodLine: Record "Test Method Line";

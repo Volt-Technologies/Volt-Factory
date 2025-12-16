@@ -27,6 +27,10 @@ codeunit 90200 "VOL Report Test Helper"
         InStr: InStream;
         OutStr: OutStream;
         Base64Convert: Codeunit "Base64 Convert";
+        LastError: Text;
+        SalesInvoiceHeader: Record "Sales Invoice Header";
+        RecordNo: Code[20];
+        FieldRef: FieldRef;
     begin
         ValidateReportExists(ReportId);
         ValidateTableNo(TableNo);
@@ -35,9 +39,33 @@ codeunit 90200 "VOL Report Test Helper"
         if not RecRef.GetBySystemId(RecordSystemId) then
             Error(RecordNotFoundErr, TableNo, RecordSystemId);
 
+        // If it's Sales Invoice Header, set explicit filter on RecordRef
+        // This ensures Report.SaveAs only processes this specific invoice
+        if TableNo = Database::"Sales Invoice Header" then begin
+            SalesInvoiceHeader.GetBySystemId(RecordSystemId);
+            RecordNo := SalesInvoiceHeader."No.";
+
+            // Reset and set filter on RecordRef to only this invoice
+            RecRef.Reset();
+            if RecRef.FieldExist(1) then begin // Field 1 is typically "No."
+                FieldRef := RecRef.Field(1);
+                FieldRef.SetRange(RecordNo);
+            end;
+
+            // Also filter by SystemId to be absolutely sure
+            FieldRef := RecRef.Field(RecRef.SystemIdNo());
+            FieldRef.SetRange(RecordSystemId);
+        end;
+
         TempBlob.CreateOutStream(OutStr);
-        if not Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef) then
-            Error(ReportGenerationFailedErr, ReportId);
+        ClearLastError();
+        if not Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef) then begin
+            LastError := GetLastErrorText();
+            if LastError <> '' then
+                Error('%1 %2', ReportGenerationFailedErr, LastError)
+            else
+                Error(ReportGenerationFailedErr, ReportId);
+        end;
 
         TempBlob.CreateInStream(InStr);
         exit(Base64Convert.ToBase64(InStr));
@@ -60,8 +88,13 @@ codeunit 90200 "VOL Report Test Helper"
         ValidateReportExists(ReportId);
 
         TempBlob.CreateOutStream(OutStr);
-        if not Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef) then
-            Error(ReportGenerationFailedErr, ReportId);
+        ClearLastError();
+        if not Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef) then begin
+            if GetLastErrorText <> '' then
+                Error('%1 %2', ReportGenerationFailedErr, GetLastErrorText())
+            else
+                Error(ReportGenerationFailedErr, ReportId);
+        end;
 
         TempBlob.CreateInStream(InStr);
         exit(Base64Convert.ToBase64(InStr));
@@ -92,8 +125,13 @@ codeunit 90200 "VOL Report Test Helper"
             Error(RecordNotFoundErr, TableNo, RecordSystemId);
 
         TempBlob.CreateOutStream(OutStr);
-        if not Report.SaveAs(ReportId, RequestPageXml, ReportFormat::Pdf, OutStr, RecRef) then
-            Error(ReportGenerationFailedErr, ReportId);
+        ClearLastError();
+        if not Report.SaveAs(ReportId, RequestPageXml, ReportFormat::Pdf, OutStr, RecRef) then begin
+            if GetLastErrorText <> '' then
+                Error('%1 %2', ReportGenerationFailedErr, GetLastErrorText())
+            else
+                Error(ReportGenerationFailedErr, ReportId);
+        end;
 
         TempBlob.CreateInStream(InStr);
         exit(Base64Convert.ToBase64(InStr));

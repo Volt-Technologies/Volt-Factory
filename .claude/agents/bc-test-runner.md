@@ -210,6 +210,301 @@ powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-run-tests-odata.ps1
 | `RunTestsByExtension` | Run all tests for an app | `extensionId` (GUID) | Test results JSON |
 | `RunTestSuite` | Run a named test suite | `suiteName` (string) | Test results JSON |
 | `GetTestResults` | Get results without running | `suiteName` (string) | Test results JSON |
+| `ListAvailableReports` | List all reports in system | None | Array of reports |
+| `RunReportAsPdf` | Generate PDF for specific record | `reportId`, `tableNo`, `recordSystemId` | PDF Base64 + metadata |
+| `TestReportWithFirstRecord` | Test report with first record | `reportId`, `tableNo` | PDF Base64 + metadata |
+| `TestReportWithFirstPostedSalesInvoice` | **RDLC Testing**: Auto-find invoice and test | `reportId` | PDF Base64 + detailed errors |
+
+**RDLC Report Testing (Recommended Approach):**
+
+For testing RDLC reports, **DO NOT use AL Test Tool automated tests**. Instead, use the web service functions directly:
+
+1. **Use `TestReportWithFirstPostedSalesInvoice`** - Automatically finds the first posted sales invoice and tests the report
+   - No need to provide SystemId manually
+   - Captures detailed error information
+   - Returns PDF Base64 if successful
+   - Returns full error details if failed
+
+**CRITICAL: PDF Output Validation and Reasoning**
+
+After generating a PDF report, you MUST validate that the output makes logical sense:
+
+1. **Data Integrity Checks:**
+   - Verify that line items shown belong to the header document (check Document No. matches)
+   - Ensure totals in the header match the sum of line items
+   - Verify that only relevant lines are displayed (not ALL records from the ERP)
+   - Check that filtered data respects the report's data source filters
+   - **Count pages**: Invoice reports should typically be 1-2 pages. If you see 10+ pages, data filtering is likely broken
+   - **Count product lines**: Compare with expected number. If PDF shows many more lines than expected, filtering failed
+   - **Verify invoice numbers**: Use regex to find all invoice numbers in PDF. Should only find the one being tested
+
+2. **Common Data Source Issues:**
+   - **Showing ALL lines instead of filtered lines**: This indicates a missing or incorrect `DataItemLink` in the AL report object OR improper RecordRef filtering when calling Report.SaveAs
+   - **Wrong totals**: May indicate missing aggregation logic or incorrect field references
+   - **Missing data**: May indicate incorrect field names or dataitem relationships
+   - **Too many pages**: Usually means DataItemLink isn't working or RecordRef filter isn't set before Report.SaveAs
+
+3. **AL vs RDLC Responsibilities:**
+   - **AL Report Object (`*.Report.al`)**: Controls DATA SOURCE, filtering, relationships, and data retrieval
+     - `DataItemLink` - Links child dataitems to parent (e.g., `"Document No." = field("No.")`)
+       - **CRITICAL**: DataItemLink syntax must be exact: `DataItemLink = "Document No." = field("No.");`
+       - This automatically filters child records to only those matching the parent
+     - `DataItemTableView` - Defines sorting and filtering (e.g., `sorting("Document No.", "Line No.")`)
+     - `RequestFilterFields` - Fields users can filter on
+     - Column definitions - What data fields are available
+     - Triggers (`OnAfterGetRecord`, `OnPreDataItem`) - Data processing logic
+   
+   - **RDLC Layout File (`*.Report.rdlc`)**: Controls VISUAL PRESENTATION, layout, styling, and formatting
+     - Field visibility (showing/hiding fields)
+     - Colors, fonts, borders, backgrounds
+     - Element positioning and spacing
+     - Grouping and sorting for display purposes
+     - Conditional formatting (colors based on values)
+     - Page layout and sections
+     - **Grouping by invoice number**: Use TablixRowHierarchy with Group expressions to group by invoice
+     - **Page breaks between invoices**: Add `<PageBreak><BreakLocation>Between</BreakLocation></PageBreak>` in Group element
+     - **IMPORTANT**: RDLC grouping CANNOT fix data filtering issues - it only organizes data that's already filtered
+
+4. **When to Fix What:**
+   - **Data showing ALL records**: 
+     - **FIRST**: Check if RecordRef filter is set before Report.SaveAs (in test helper codeunit)
+     - **THEN**: Fix `DataItemLink` or `DataItemTableView` in AL report object
+   - **Wrong data relationships**: Fix `DataItemLink` syntax in AL report object
+   - **Missing fields**: Add columns to AL report object dataset
+   - **Visual layout issues**: Fix RDLC layout file
+   - **Colors/styling wrong**: Fix RDLC layout file
+   - **Fields not visible**: Fix RDLC layout file (visibility properties)
+   - **Too many pages with same invoice**: Usually RecordRef filter issue in test helper
+
+5. **Critical: RecordRef Filtering When Calling Reports**
+
+When calling `Report.SaveAs` with a RecordRef, you MUST set explicit filters to ensure only the intended record is processed:
+
+```al
+// CORRECT APPROACH - Set explicit filters
+RecRef.Open(TableNo);
+if not RecRef.GetBySystemId(RecordSystemId) then
+    Error(RecordNotFoundErr, TableNo, RecordSystemId);
+
+// For Sales Invoice Header reports, set explicit filter
+if TableNo = Database::"Sales Invoice Header" then begin
+    SalesInvoiceHeader.GetBySystemId(RecordSystemId);
+    RecordNo := SalesInvoiceHeader."No.";
+    
+    // Reset and set filter on RecordRef to only this invoice
+    RecRef.Reset();
+    if RecRef.FieldExist(1) then begin // Field 1 is typically "No."
+        FieldRef := RecRef.Field(1);
+        FieldRef.SetRange(RecordNo);
+    end;
+    
+    // Also filter by SystemId to be absolutely sure
+    FieldRef := RecRef.Field(RecRef.SystemIdNo());
+    FieldRef.SetRange(RecordSystemId);
+end;
+
+// Now call Report.SaveAs - it will only process the filtered record
+Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef);
+```
+
+**Why this is necessary:**
+- `Report.SaveAs` uses the RecordRef's current filter/view to determine which records to process
+- If no filter is set, it may process ALL records matching the RecordRef's current state
+- DataItemLink will filter lines per header, but if multiple headers are processed, you'll get multiple invoices
+- Setting explicit filters ensures only ONE header is processed, and DataItemLink ensures only its lines are shown
+
+6. **RDLC Grouping for Multiple Invoices:**
+
+If you need to support multiple invoices in one PDF (batch printing), use RDLC grouping:
+
+```xml
+<TablixRowHierarchy>
+  <TablixMembers>
+    <TablixMember>
+      <Group Name="InvoiceGroup">
+        <GroupExpressions>
+          <GroupExpression>=Fields!No_Header.Value</GroupExpression>
+        </GroupExpressions>
+        <PageBreak>
+          <BreakLocation>Between</BreakLocation>
+          <ResetPageNumber>true</ResetPageNumber>
+        </PageBreak>
+      </Group>
+      <TablixMembers>
+        <!-- Detail rows here -->
+      </TablixMembers>
+    </TablixMember>
+  </TablixMembers>
+</TablixRowHierarchy>
+```
+
+**Important Notes:**
+- Grouping by invoice number creates a new page for each invoice
+- PageBreak Between ensures each invoice starts on a new page
+- ResetPageNumber resets page numbers to 1 for each invoice
+- **DO NOT use aggregate functions in GroupExpressions** (e.g., `First()` will cause errors)
+- Use direct field reference: `Fields!No_Header.Value` not `First(Fields!No_Header.Value)`
+
+7. **Validation Workflow:**
+   ```
+   Generate PDF → Analyze PDF Content → Check Data Logic:
+   
+   ✓ Does the invoice number match between header and lines?
+   ✓ Do line totals sum to header totals?
+   ✓ Are only relevant lines shown (not all ERP records)?
+   ✓ Is the data correctly filtered?
+   ✓ Page count reasonable? (1-2 pages for single invoice)
+   ✓ Product line count matches expected?
+   
+   If NO → Check RecordRef filtering in test helper → Fix AL Report Object (data source)
+   If YES → Check Visual Layout → Fix RDLC if needed
+   ```
+
+8. **PDF Analysis Tools:**
+
+Use Python with PyMuPDF (fitz) to analyze PDFs:
+
+```python
+import fitz
+import re
+
+pdf = fitz.open('report.pdf')
+pages = len(pdf)
+text = pdf[0].get_text()
+
+# Count invoice numbers
+invoice_nos = re.findall(r'PS-INV\d+', text)
+unique_invoices = sorted(set(invoice_nos))
+
+# Count product lines
+product_lines = [l for l in text.split('\n') if 'Product' in l]
+
+print(f"Pages: {pages}")
+print(f"Unique invoices: {unique_invoices}")
+print(f"Product lines: {len(product_lines)}")
+```
+
+**Expected Results:**
+- Single invoice test: 1-2 pages, 1 unique invoice, reasonable number of product lines
+- If you see 10+ pages or many product lines: Data filtering is broken
+- If you see multiple invoice numbers: RecordRef filter is not working
+
+**Example PowerShell call:**
+```powershell
+$url = "$baseUrl/TestRunner_TestReportWithFirstPostedSalesInvoice?company=$encodedCompany"
+$body = '{"reportId": 50000}'
+$response = Invoke-RestMethod -Uri $url -Method POST -Headers $headers -Body $body
+$result = $response.value | ConvertFrom-Json
+
+if ($result.success) {
+    Write-Host "✓ PDF generated: $($result.pdfSizeBytes) bytes" -ForegroundColor Green
+} else {
+    Write-Host "✗ Error: $($result.error)" -ForegroundColor Red
+    Write-Host "Details: $($result.errorDetails)" -ForegroundColor Red
+}
+```
+
+**Why use web service for RDLC testing:**
+- ✅ **Direct PDF generation** - Tests actual report rendering, not just code logic
+- ✅ **Automatic test data** - Finds appropriate records automatically
+- ✅ **Error capture** - Captures full error messages and call stacks
+- ✅ **No AL Test Tool needed** - Faster and more reliable
+- ✅ **CI/CD friendly** - Easy to automate and integrate
+
+**PowerShell Scripts for RDLC Report Testing:**
+
+Two ready-to-use PowerShell scripts are available in `.claude/scripts/` for testing RDLC reports:
+
+1. **`bc-test-report-rdlc-auto.ps1`** - **RECOMMENDED for Posted Sales Invoice Reports**
+   - Automatically finds the first posted sales invoice in the system
+   - Tests the report with that invoice
+   - Saves the generated PDF to `pdfs/` folder
+   - Best for: Testing invoice reports during development/debugging
+   
+   **Usage:**
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-report-rdlc-auto.ps1"
+   ```
+   
+   **When to use:**
+   - After modifying RDLC layout files
+   - After fixing report compilation errors
+   - During iterative report development
+   - When you need quick PDF verification
+   - When testing invoice-specific reports (Report ID 50000)
+   
+   **After running, validate the PDF:**
+   - Check page count (should be 1-2 pages for single invoice)
+   - Verify only one invoice number appears
+   - Count product lines (should match expected for that invoice)
+   - If you see 10+ pages or many lines: Data filtering is broken
+
+2. **`bc-test-report-rdlc-api.ps1`** - **For Testing Any Report with Any Table**
+   - Tests a report with the first record from a specified table
+   - More flexible - works with any table/report combination
+   - Saves the generated PDF to `pdfs/` folder
+   - Best for: Testing reports that don't use posted invoices
+   
+   **Usage:**
+   ```powershell
+   # Edit the script to set reportId and tableNo, then run:
+   powershell -ExecutionPolicy Bypass -File ".claude/scripts/bc-test-report-rdlc-api.ps1"
+   ```
+   
+   **When to use:**
+   - Testing reports for other document types (purchase orders, quotes, etc.)
+   - Testing reports that use different source tables
+   - When you need to test with specific table data
+   - For custom report testing scenarios
+
+**Both scripts:**
+- ✅ Load configuration from `.env` file automatically
+- ✅ Handle OAuth authentication
+- ✅ Display detailed error messages if report generation fails
+- ✅ Save PDFs to `pdfs/` folder with timestamped filenames
+- ✅ Show success/failure status with color-coded output
+- ✅ Work with Business Central Online (SaaS) environments
+
+**Critical Implementation Detail - RecordRef Filtering:**
+
+The test helper codeunit (`VOLReportTestHelper`) MUST set explicit filters on the RecordRef before calling `Report.SaveAs`. This is critical for ensuring only the intended record is processed:
+
+```al
+// In VOLReportTestHelper.RunReportAsPdfBase64:
+RecRef.Open(TableNo);
+if not RecRef.GetBySystemId(RecordSystemId) then
+    Error(RecordNotFoundErr, TableNo, RecordSystemId);
+
+// CRITICAL: Set explicit filter for Sales Invoice Header
+if TableNo = Database::"Sales Invoice Header" then begin
+    SalesInvoiceHeader.GetBySystemId(RecordSystemId);
+    RecordNo := SalesInvoiceHeader."No.";
+    
+    RecRef.Reset();
+    if RecRef.FieldExist(1) then begin
+        FieldRef := RecRef.Field(1); // Field 1 is "No."
+        FieldRef.SetRange(RecordNo);
+    end;
+    
+    FieldRef := RecRef.Field(RecRef.SystemIdNo());
+    FieldRef.SetRange(RecordSystemId);
+end;
+
+Report.SaveAs(ReportId, '', ReportFormat::Pdf, OutStr, RecRef);
+```
+
+**Why this is necessary:**
+- Without explicit filters, Report.SaveAs may process ALL records matching the RecordRef's current state
+- DataItemLink filters lines per header, but if multiple headers are processed, you get multiple invoices
+- Setting filters ensures only ONE header is processed, and DataItemLink ensures only its lines are shown
+
+**Workflow for RDLC Report Development:**
+1. Modify RDLC layout file (`.rdlc`) or AL report code
+2. Compile and publish BC app using `bc-app-compiler`
+3. Run `bc-test-report-rdlc-auto.ps1` to test the report
+4. Check the generated PDF in `pdfs/` folder
+5. If errors occur, review error messages and fix RDLC/AL code
+6. Repeat steps 2-5 until PDF generates successfully
 
 **PowerShell OAuth and API Call Examples:**
 ```powershell
@@ -523,6 +818,8 @@ Request human intervention or escalate to the calling agent when:
 | `.claude/scripts/bc-run-tests-odata.ps1` | OData test runner PowerShell script |
 | `.claude/scripts/bc-test-executor.ps1` | Unified test executor (auto-detects deployment type) |
 | `.claude/scripts/bc-run-tests.ps1` | Local/Docker test runner using BCContainerHelper |
+| `.claude/scripts/bc-test-report-rdlc-auto.ps1` | **RDLC Testing**: Auto-find posted invoice and test report |
+| `.claude/scripts/bc-test-report-rdlc-api.ps1` | **RDLC Testing**: Test any report with any table |
 | `BC Test/TEST_RUNNER_API.md` | Complete OData API documentation |
 | `BC Test/TEST_IMPLEMENTATION_SUMMARY.md` | Test implementation patterns and examples |
 
@@ -547,3 +844,79 @@ When reviewing test code or understanding test results, be aware of these common
 - Initialize() ensures proper test environment setup
 
 Remember: Your primary goal is to provide reliable, comprehensive test results while maintaining absolute safety through production environment protection. Be thorough, patient, and precise in your execution and reporting.
+
+---
+
+## QUICK REFERENCE: RDLC Report Testing Knowledge
+
+### Critical Success Factors
+
+1. **RecordRef Filtering is MANDATORY**
+   - Always set explicit filters on RecordRef before calling `Report.SaveAs`
+   - Filter by "No." field AND SystemId for Sales Invoice Header
+   - Without filters, Report.SaveAs may process ALL records
+
+2. **PDF Validation Checklist**
+   - ✅ Page count: Should be 1-2 pages for single invoice (not 10+)
+   - ✅ Invoice numbers: Only ONE unique invoice number should appear
+   - ✅ Product lines: Count should match expected for that invoice
+   - ✅ Totals: Header total should match sum of line items
+   - ✅ Data integrity: All lines belong to the header invoice
+
+3. **AL vs RDLC Fix Locations**
+   - **Data filtering issues** → Fix AL Report Object OR Test Helper Codeunit
+   - **Visual/layout issues** → Fix RDLC Layout File
+   - **Too many pages** → Usually RecordRef filter issue (Test Helper)
+   - **Wrong data** → Usually DataItemLink issue (AL Report Object)
+
+4. **Common Patterns**
+
+   **Correct DataItemLink:**
+   ```al
+   dataitem(SalesInvoiceLine; "Sales Invoice Line")
+   {
+       DataItemLink = "Document No." = field("No.");
+       DataItemTableView = sorting("Document No.", "Line No.");
+   }
+   ```
+
+   **Correct RecordRef Filtering:**
+   ```al
+   RecRef.Reset();
+   FieldRef := RecRef.Field(1); // "No." field
+   FieldRef.SetRange(RecordNo);
+   FieldRef := RecRef.Field(RecRef.SystemIdNo());
+   FieldRef.SetRange(RecordSystemId);
+   ```
+
+   **Correct RDLC Grouping (for batch printing):**
+   ```xml
+   <Group Name="InvoiceGroup">
+     <GroupExpressions>
+       <GroupExpression>=Fields!No_Header.Value</GroupExpression>
+     </GroupExpressions>
+     <PageBreak>
+       <BreakLocation>Between</BreakLocation>
+     </PageBreak>
+   </Group>
+   ```
+
+5. **Diagnostic Questions**
+   - How many pages? (Expected: 1-2 for single invoice)
+   - How many unique invoice numbers? (Expected: 1)
+   - How many product lines? (Expected: matches invoice)
+   - Do totals match? (Expected: yes)
+   - Are all lines for the correct invoice? (Expected: yes)
+
+6. **Troubleshooting Flow**
+   ```
+   PDF shows too many pages/lines?
+   ↓
+   Check RecordRef filtering in test helper
+   ↓
+   If correct, check DataItemLink in AL report
+   ↓
+   If correct, check RDLC grouping (if multiple invoices needed)
+   ↓
+   Verify PDF content matches expectations
+   ```
