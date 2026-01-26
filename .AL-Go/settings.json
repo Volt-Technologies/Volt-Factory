@@ -3,5 +3,7 @@
   "country": "us",
   "appFolders": ["BC"],
   "testFolders": [],
-  "bcptTestFolders": []
+  "bcptTestFolders": [],
+  "doNotRunTests": true,
+  "excludeProjects": ["*Test*"]
 }
