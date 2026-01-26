@@ -1,132 +1,148 @@
 ---
 name: bc-developer
-description: Develop Business Central AL code including tables, pages, codeunits, reports, and extensions. Use when implementing BC features, modifications, or enhancements. Handles object ID allocation, AL guidelines compliance, unit test creation, and coordinates with compilation/testing skills for verification.
+description: Complete Business Central AL development toolkit. Includes AL code development, compilation using embedded alc.exe, publishing to BC environments (online/local Docker), automated testing, and container management. Uses @volt-technologies/volt-bc-tools package.
 license: MIT
-compatibility: Requires volt-technologies/volt-bc-tools package. Uses mcp__objid tools for object ID allocation.
-metadata:
-  author: volt-technologies
-  version: "1.0.0"
-allowed-tools: Bash(node:*) Bash(npx:*) Read Edit Write Glob Grep mcp__objid__allocate_id mcp__objid__config mcp__objid__analyze_workspace
+compatibility: Windows required for local Docker. Node.js 18+ and @volt-technologies/volt-bc-tools package.
+allowed-tools: Bash(npx:*) Bash(node:*) Read Edit Write Glob Grep mcp__objid__allocate_id mcp__objid__config mcp__objid__analyze_workspace mcp__ide__getDiagnostics
 ---
 
 # BC Developer Skill
 
-Develop Business Central AL code using `volt-technologies/volt-bc-tools` and AL best practices.
+Complete Business Central AL development toolkit using `@volt-technologies/volt-bc-tools`.
 
-## Prerequisites
+## Capabilities
 
-1. **AL Guidelines**: Read `.claude/al-guidelines/` before coding
-2. **Object ID Config**: `.objidconfig` in BC app folder
-3. **Feature Ranges**: Check `BC/FeatureRanges.md` for ID ranges
+| Area | Description |
+|------|-------------|
+| **AL Development** | Write tables, pages, codeunits, reports, enums following AL guidelines |
+| **Compilation** | Compile AL code using embedded alc.exe compiler with LinterCop |
+| **Publishing** | Deploy apps to BC Online (SaaS) or local Docker containers |
+| **Testing** | Execute automated tests via OData or Docker |
+| **Containers** | Create and manage BC Docker containers for development |
+
+## Quick Start
+
+### Compile All Apps
+```bash
+npx ts-node .claude/skills/bc-developer/scripts/compile.ts --all
+```
+
+### Publish to Environment
+```bash
+npx ts-node .claude/skills/bc-developer/scripts/publish.ts "./output/App.app"
+```
+
+### Run Tests
+```bash
+npx ts-node .claude/skills/bc-developer/scripts/run-tests.ts --range "70200..70249"
+```
+
+### Manage Container
+```bash
+npx ts-node .claude/skills/bc-developer/scripts/container.ts create --name "bc-feature"
+```
+
+## Scripts Reference
+
+| Script | Purpose | Example |
+|--------|---------|---------|
+| `compile.ts` | Compile AL apps | `--all` or `--app-path "./BC"` |
+| `publish.ts` | Publish .app files | `"./output/App.app" --sync-mode ForceSync` |
+| `run-tests.ts` | Execute tests | `--range "70200..70249"` |
+| `container.ts` | Docker management | `create --name "bc-test"` |
+| `verify.ts` | Verify installation | `--app-name "My App"` |
+
+## Embedded Compiler
+
+The skill includes a complete AL compiler in `scripts/compiler/`:
+
+```
+scripts/compiler/extension/bin/
+├── win32/alc.exe        # Windows compiler
+└── Analyzers/           # LinterCop, CodeCop, UICop, etc.
+```
+
+## Configuration
+
+All scripts read from `.env` at the repository root:
+
+```env
+# Deployment type
+BC_DEPLOYMENT_TYPE=online          # or 'local' for Docker
+BC_ENVIRONMENT_TYPE=sandbox        # or 'production'
+BC_ENVIRONMENT_NAME=Sandbox
+
+# Online authentication
+BC_TENANT_ID=your-tenant-guid
+BC_CLIENT_ID=your-app-client-id
+BC_CLIENT_SECRET=your-app-client-secret
+
+# Local Docker
+CURRENT_FEATURE_CONTAINER=bc-feature-name
+BC_LOCAL_USERNAME=admin
+BC_LOCAL_PASSWORD=your-password
+
+# App configuration
+BC_APPS_ROOT=BC
+BC_COMPANY_NAME=CRONUS USA, Inc.
+```
 
 ## Development Workflow
 
-### Step 1: Read AL Guidelines
+### 1. Write AL Code
 
-**MANDATORY** - Read these files before writing any AL code:
+Follow guidelines in `.claude/al-guidelines/`:
+- Use VOL prefix for custom objects
+- Tables singular, list pages plural
+- Always create List + Card pages
+- Update permissionset with new objects
 
-```
-.claude/al-guidelines/
-├── prefix.md               # VOL prefix requirements
-├── names.md                # Naming conventions
-├── objectcreation.md       # Object creation patterns
-├── permissionset.md        # Permission set requirements
-└── lintercop/_index.md     # LinterCop rules
-```
+### 2. Allocate Object IDs
 
-### Step 2: Allocate Object IDs
-
-**CRITICAL**: Always allocate IDs before creating objects.
+**MANDATORY**: Use `mcp__objid__allocate_id` before creating objects:
 
 ```
-Use mcp__objid__allocate_id with:
-- mode: "reserve"
-- appPath: "C:\path\to\BC"
-- object_type: "table" | "page" | "codeunit" | etc.
-- preferred_range: {from: XXXXX, to: XXXXX}
-- object_metadata: {name: "VOL Object Name", file: "src/Feature/File.al"}
-```
-
-### Step 3: Implement AL Code
-
-Write code in `BC/src/[Feature]/[ObjectType]/`:
-```
-BC/src/
-├── ProductVariants/
-│   ├── table/
-│   ├── page/
-│   ├── codeunit/
-│   └── enum/
-└── Common/
-    └── permissionset/
-```
-
-### Step 4: Create Unit Tests
-
-Write tests in `BC Test/src/`:
-```al
-codeunit 70200 "VOL Feature Tests"
-{
-    Subtype = Test;
-
-    [Test]
-    procedure TestFeatureBehavior()
-    begin
-        // Arrange
-        // Act
-        // Assert
-    end;
+mode: "reserve"
+appPath: "C:\path\to\BC"
+object_type: "table"
+preferred_range: {from: 70100, to: 70199}
+object_metadata: {
+  name: "VOL Product Variant",
+  file: "src/ProductVariants/VOLProductVariant.Table.al"
 }
 ```
 
-### Step 5: Compile & Publish
+### 3. Compile
 
-Use bc-compiler skill:
 ```bash
-npx volt-bc dev compile --all
-npx volt-bc dev publish "./output/App.app"
+npx ts-node .claude/skills/bc-developer/scripts/compile.ts --all
 ```
 
-### Step 6: Run Tests
+### 4. Publish
 
-Use bc-test-runner skill:
 ```bash
-npx volt-bc dev test --codeunit 70200
+npx ts-node .claude/skills/bc-developer/scripts/publish.ts "./output/App.app"
 ```
 
-## AL Coding Standards
+### 5. Test
 
-### Naming Conventions
+```bash
+npx ts-node .claude/skills/bc-developer/scripts/run-tests.ts --range "70200..70249"
+```
 
-| Object Type | Convention | Example |
-|-------------|------------|---------|
-| Table | Singular, VOL prefix | `VOL Product Variant` |
-| List Page | Plural | `VOL Product Variants` |
-| Card Page | Singular + Card | `VOL Product Variant Card` |
-| Codeunit | Action-based | `VOL Product Variant Mgt.` |
-| Enum | Singular | `VOL Variant Status` |
+### 6. Iterate
 
-### Key LinterCop Rules
+If tests fail, fix code and repeat from step 3.
 
-**Must Follow**:
-- **LC0001**: FlowFields MUST have `Editable = false`
-- **LC0003**: Use object names, NOT IDs in declarations
-- **LC0040**: Always specify `RunTrigger` parameter
-- **LC0081**: Use `IsEmpty()` not `Count() > 0`
+## Object Creation Pattern
 
-**Code Style**:
-- NO inline `//` comments - use XML documentation
-- NO literal strings - use Label variables (Lbl, Err, Msg)
-- Caption and ToolTip at table field level, not pages
-- `ApplicationArea = All` at object level
+For each new table:
 
-### Object Creation Pattern
-
-For every table, create:
-1. Table with `LookupPageId`
-2. List Page with `CardPageId`
-3. Card Page
-4. Add all objects to permissionset
+1. **Allocate IDs** for table, list page, card page
+2. **Create table** with LookupPageId, DrillDownPageId
+3. **Create list page** with CardPageId
+4. **Create card page**
+5. **Update permissionset** with all objects
 
 ```al
 table 70100 "VOL Product Variant"
@@ -134,159 +150,77 @@ table 70100 "VOL Product Variant"
     Caption = 'Product Variant';
     DataClassification = CustomerContent;
     LookupPageId = "VOL Product Variants";
-
-    fields
-    {
-        field(1; "Code"; Code[20])
-        {
-            Caption = 'Code';
-            ToolTip = 'Specifies the variant code.';
-        }
-    }
+    DrillDownPageId = "VOL Product Variants";
 }
 
 page 70100 "VOL Product Variants"
 {
     PageType = List;
-    ApplicationArea = All;
     SourceTable = "VOL Product Variant";
     CardPageId = "VOL Product Variant Card";
-    Caption = 'Product Variants';
 }
 
 page 70101 "VOL Product Variant Card"
 {
     PageType = Card;
-    ApplicationArea = All;
     SourceTable = "VOL Product Variant";
-    Caption = 'Product Variant Card';
 }
 ```
 
-## Implementation Checklist
+## LinterCop Rules (Critical)
 
-### Error Conditions & Validation
-- [ ] Implement all validation rules from technical design
-- [ ] Use OnValidate triggers for field validation
-- [ ] Create validation codeunits for complex rules
-- [ ] Use clear Error() messages
-- [ ] Document error codes in implementation summary
+| Rule | Severity | Description |
+|------|----------|-------------|
+| LC0001 | Warning | FlowFields MUST have `Editable = false` |
+| LC0003 | Warning | Use object names, NOT IDs |
+| LC0040 | Info | Always specify RunTrigger parameter |
+| LC0081 | Info | Use `IsEmpty()` not `Count() > 0` |
 
-### Unit Tests
-- [ ] Create test codeunit with `Subtype = Test`
-- [ ] Implement happy path scenarios
-- [ ] Test edge cases and boundaries
-- [ ] Test error conditions
-- [ ] Use descriptive test names
+## Troubleshooting
 
-### Permission Set
-- [ ] Add all new objects to VOL permission set
-- [ ] Include TableData permissions
-- [ ] Test with restricted user
+### Compilation Errors
 
-## Object ID Ranges
+**Missing symbols**: Download symbols or check .alpackages folder
 
-Check `BC/FeatureRanges.md`:
-```
-#Common
-70000 - 70099
+**AL0118 - Member not found**: Check field name spelling, verify dependencies
 
-#Product Variants
-70100 - 70199
+### Publishing Errors
 
-#Customer Portal
-70200 - 70299
-```
+**Authentication failed**: Verify credentials in .env
 
-Use `preferred_range` parameter when allocating IDs.
+**Schema sync conflict**: Use `--sync-mode ForceSync`
 
-## Error Handling Pattern
+### Container Errors
 
-```al
-procedure ValidateQuantity(Quantity: Decimal)
-var
-    QuantityMustBePositiveErr: Label 'Quantity must be positive. Current value: %1', Comment = '%1 = Quantity';
-begin
-    if Quantity <= 0 then
-        Error(QuantityMustBePositiveErr, Quantity);
-end;
-```
+**Docker not running**: Start Docker Desktop first
 
-## Test Pattern
+**Container won't start**: Check logs with `docker logs <name>`
 
-```al
-codeunit 70200 "VOL Product Variant Tests"
-{
-    Subtype = Test;
-    TestPermissions = Disabled;
-
-    var
-        Assert: Codeunit Assert;
-        LibraryRandom: Codeunit "Library - Random";
-
-    [Test]
-    procedure TestCreateVariant_ValidData_Succeeds()
-    var
-        ProductVariant: Record "VOL Product Variant";
-    begin
-        // [GIVEN] Valid variant data
-        // [WHEN] Creating variant
-        ProductVariant.Init();
-        ProductVariant.Code := 'TEST001';
-        ProductVariant.Insert(true);
-
-        // [THEN] Variant exists
-        Assert.IsTrue(ProductVariant.Get('TEST001'), 'Variant should exist');
-    end;
-
-    [Test]
-    procedure TestValidateQuantity_Negative_ThrowsError()
-    var
-        VariantMgt: Codeunit "VOL Product Variant Mgt.";
-    begin
-        // [GIVEN] Negative quantity
-        // [WHEN] Validating
-        // [THEN] Error is thrown
-        asserterror VariantMgt.ValidateQuantity(-1);
-        Assert.ExpectedError('Quantity must be positive');
-    end;
-}
-```
-
-## Integration with Other Skills
-
-### Complete Development Cycle
-
-1. **bc-developer** → Write AL code and tests
-2. **bc-compiler** → Compile and publish apps
-3. **bc-test-runner** → Execute and validate tests
-4. Repeat if failures occur
-
-### Coordination Pattern
+## File Structure
 
 ```
-Implement Feature
-    ↓
-Allocate Object IDs (mcp__objid__allocate_id)
-    ↓
-Write AL Code (tables, pages, codeunits)
-    ↓
-Update Permission Set
-    ↓
-Write Unit Tests
-    ↓
-Invoke bc-compiler skill → Compile & Publish
-    ↓
-Invoke bc-test-runner skill → Run Tests
-    ↓
-If tests fail → Fix code → Repeat
-    ↓
-If tests pass → Feature Complete ✓
+scripts/
+├── compiler/           # Embedded AL compiler
+│   └── extension/bin/  # alc.exe and analyzers
+├── compile.ts          # Compilation script
+├── publish.ts          # Publishing script
+├── run-tests.ts        # Test execution
+├── container.ts        # Container management
+├── verify.ts           # App verification
+└── README.md           # Script documentation
 ```
 
-## References
+## Package Dependency
 
-- [AL Guidelines Index](.claude/al-guidelines/_index.md)
-- [LinterCop Rules](.claude/al-guidelines/lintercop/_index.md)
-- [Best Practices](.claude/al-guidelines/BestPractices/_index.md)
-- [Patterns](.claude/al-guidelines/patterns/_index.md)
+This skill requires `@volt-technologies/volt-bc-tools`:
+
+```bash
+npm install @volt-technologies/volt-bc-tools
+```
+
+The package provides:
+- `ALCompiler` - Compile AL code
+- `AppPublisher` - Publish apps
+- `TestRunner` - Run tests
+- `ContainerManager` - Manage Docker containers
+- `EnvLoader` - Load .env configuration

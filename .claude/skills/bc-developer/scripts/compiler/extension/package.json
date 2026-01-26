@@ -1,0 +1,2655 @@
+{
+  "name": "al",
+  "displayName": "AL Language extension for Microsoft Dynamics 365 Business Central",
+  "description": "Development tools for Dynamics 365 Business Central",
+  "version": "17.0.1869541",
+  "publisher": "ms-dynamics-smb",
+  "icon": "img/AL_ext_logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/AL.git"
+  },
+  "preview": false,
+  "keywords": [
+    "Dynamics 365 Business Central",
+    "AL",
+    "SMB",
+    "ERP"
+  ],
+  "bugs": {
+    "url": "https://github.com/microsoft/al/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "galleryBanner": {
+    "color": "#0060A0",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Debuggers",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "workspaceContains:app.json",
+    "onDebugInitialConfigurations:al",
+    "onDebugResolve:al",
+    "onUri",
+    "workspaceContains:.vscode/alRequest.json"
+  ],
+  "main": "./dist/extension",
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Business Central Light",
+        "uiTheme": "vs",
+        "path": "./themes/BC_light.json"
+      },
+      {
+        "label": "Business Central Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/BC_dark.json"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "explorer",
+        "contents": "You can [open a folder containing an AL project](command:vscode.openFolder), or create a new AL project.\n[Create AL Project](command:al.go)\n\nLearn more about Dynamics 365 Business Central development [here](https://learn.microsoft.com/training/paths/development-get-started-business-central?wt.mc_id=d365bc_inproduct_alextension).",
+        "when": "workspaceFolderCount == 0"
+      }
+    ],
+    "languages": [
+      {
+        "id": "al",
+        "extensions": [
+          ".al",
+          ".dal"
+        ],
+        "aliases": [
+          "AL"
+        ],
+        "configuration": "./al.configuration.json",
+        "icon": {
+          "light": "./img/AL_file_logo.svg",
+          "dark": "./img/AL_file_logo.svg"
+        },
+        "semanticHighlighting": true
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "al_build",
+        "displayName": "Build AL Project",
+        "toolReferenceName": "al_build",
+        "tags": [
+          "editors",
+          "build"
+        ],
+        "modelDescription": "Builds the current AL project with a single command. The AL compiler checks for errors and warnings, ensuring your code is correct and up to date, and then generates a deployable .app file. Agents should use this tool to quickly validate and package AL projects, streamlining the development workflow and reducing manual steps.",
+        "userDescription": "Build the current AL project.",
+        "icon": "$(package)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_downloadsymbols",
+        "tags": [
+          "downloadsymbols"
+        ],
+        "toolReferenceName": "al_download_symbols",
+        "displayName": "Download AL Symbols",
+        "modelDescription": "Automatically downloads all dependent symbols required by the current AL project. This ensures your project has access to the latest symbols from referenced apps and the platform, enabling accurate IntelliSense, validation, and builds. Agents should use this tool to keep dependencies up to date and avoid missing symbol errors during development. System symbols are downloaded automatically if platform and application exist in the app.json file.",
+        "userDescription": "Download Symbols for the current AL project.",
+        "icon": "$(file-symlink-file)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_getpackagedependencies",
+        "displayName": "Get AL Package Dependencies",
+        "toolReferenceName": "al_get_package_dependencies",
+        "tags": [
+          "symbols",
+          "dependencies"
+        ],
+        "modelDescription": "Automatically retrieves all dependent apps required by the current AL project or a specified package. This ensures your project has access to the latest symbols from referenced apps and the platform, enabling accurate IntelliSense, validation, and builds. Agents should use this tool to keep dependencies up to date and avoid missing symbol errors during development.",
+        "userDescription": "Get Package Dependencies for an AL package.",
+        "icon": "$(type-hierarchy-sub)",
+        "canBeReferencedInPrompt": false,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "packageName": {
+              "type": "string",
+              "description": "Package Name to return dependencies for - example 'MyGreatApp'. If not provided, dependencies for the current project will be returned."
+            }
+          }
+        }
+      },
+      {
+        "name": "al_downloadsource",
+        "displayName": "Download Source",
+        "toolReferenceName": "al_download_source",
+        "tags": [
+          "source",
+          "download"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Invokes the extension command to download AL source code for the workspace from the Business Central environment set in your launch.json, returning success or failure.",
+        "userDescription": "Download source code for the current AL project (wrapper around AL: Download Source).",
+        "icon": "$(cloud-download)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_clearcredentialscache",
+        "displayName": "Clear Credentials Cache",
+        "toolReferenceName": "al_clear_credentials_cache",
+        "tags": [
+          "auth",
+          "cache"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Clears cached authentication credentials via the AL extension command.",
+        "userDescription": "Clear cached authentication credentials (wrapper around AL: Clear credentials cache).",
+        "icon": "$(trash)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_insertevent",
+        "displayName": "Insert Event",
+        "toolReferenceName": "al_insert_event",
+        "tags": [
+          "events",
+          "code"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Inserts an event subscriber or publisher via the AL extension command.",
+        "userDescription": "Insert an AL event (wrapper around AL: Find Event / Insert Event).",
+        "icon": "$(symbol-event)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_clearprofilecodelenses",
+        "displayName": "Clear Profile Code Lenses",
+        "toolReferenceName": "al_clear_profile_codelenses",
+        "tags": [
+          "profile",
+          "maintenance"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Clears profile code lenses in the current AL workspace.",
+        "userDescription": "Clear profile code lenses (wrapper around AL: Clear Profile Code Lenses).",
+        "icon": "$(eye-closed)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_initalizesnapshotdebugging",
+        "displayName": "Initialize Snapshot Debugging",
+        "toolReferenceName": "al_initalize_snapshot_debugging",
+        "tags": [
+          "snapshot",
+          "debug"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Initializes a snapshot debugging session via the AL extension command.",
+        "userDescription": "Initialize a snapshot debugging session (wrapper around AL: Initialize snapshot debugging).",
+        "icon": "$(debug-start)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_finishsnapshotdebugging",
+        "displayName": "Finish Snapshot Debugging",
+        "toolReferenceName": "al_finish_snapshot_debugging",
+        "tags": [
+          "snapshot",
+          "debug"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Finishes an active snapshot debugging session via the AL extension command.",
+        "userDescription": "Finish the current snapshot debugging session (wrapper around AL: Finish snapshot debugging).",
+        "icon": "$(debug-stop)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_go",
+        "displayName": "Go (Navigate / Initialize)",
+        "toolReferenceName": "al_go",
+        "tags": [
+          "project",
+          "navigation"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Executes the AL: Go! command to initialize an AL project. This command is used to start a new AL project.",
+        "userDescription": "Run the AL: Go! command (initialize a project).",
+        "icon": "$(rocket)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_newproject",
+        "displayName": "New AL Project",
+        "toolReferenceName": "al_new_project",
+        "tags": [
+          "project",
+          "scaffold"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Creates a new AL project using the AL: New Project command.",
+        "userDescription": "Create a new AL project.",
+        "icon": "$(new-file)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_incrementalpublish",
+        "displayName": "Incremental Publish",
+        "toolReferenceName": "al_incremental_publish",
+        "tags": [
+          "publish",
+          "deployment"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Performs a rapid application publish with debugging. By enabling delta compilation, RAD allows developers to focus on changes made to application objects, reducing build and publish times for large projects. (wrapper around AL: Rapid Application Publish with debugging).",
+        "userDescription": "Incrementally publish the current AL project with debugging enabled.",
+        "icon": "$(cloud-upload)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_debugWithoutpublish",
+        "displayName": "Debug Without Publish",
+        "toolReferenceName": "al_debug_without_publish",
+        "tags": [
+          "debug",
+          "run"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Starts a debug session without publishing (wrapper around AL: Debug without publishing).",
+        "userDescription": "Start a debug session without publishing the extension.",
+        "icon": "$(debug-alt)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_buildall",
+        "displayName": "Build All Projects",
+        "toolReferenceName": "al_build_all",
+        "tags": [
+          "build",
+          "compile",
+          "package",
+          "dependencies",
+          "workspace",
+          "all",
+          "tree"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Builds all AL projects in the workspace including the complete dependency tree. This command builds not just the active project but all dependent projects as well, ensuring the entire solution is compiled together. Use this when you need to build the complete workspace or when working with multi-project solutions. The tool automatically attempts to download required Business Central system symbols before building. Agents should use this for comprehensive workspace builds that include all dependencies.",
+        "userDescription": "Build all AL projects in the workspace including dependencies. Use this to build the entire solution with its full dependency tree.",
+        "icon": "$(package)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_generatecpuprofilefile",
+        "displayName": "Generate CPU Profile File",
+        "toolReferenceName": "al_generate_cpu_profile_file",
+        "tags": [
+          "profile",
+          "performance"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Generates a CPU profile file for performance analysis.",
+        "userDescription": "Generate a CPU profile file (wrapper around AL: Generate profile file).",
+        "icon": "$(pulse)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_generatemanifest",
+        "displayName": "Generate Manifest",
+        "toolReferenceName": "al_generate_manifest",
+        "tags": [
+          "manifest",
+          "metadata"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Generates a manifest file for the current AL project.",
+        "userDescription": "Generate a manifest file (wrapper around AL: Generate manifest).",
+        "icon": "$(file-code)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_generatepermissionsetforextensionobjects",
+        "displayName": "Generate Permission Set (Extension Objects)",
+        "toolReferenceName": "al_generate_permission_set_for_extension_objects",
+        "tags": [
+          "permissions",
+          "security"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Generates a permission set AL object for current extension objects.",
+        "userDescription": "Generate a permission set AL object containing current extension objects (wrapper around AL: Generate permission set as AL object).",
+        "icon": "$(shield)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_generatepermissionsetforextensionobjectsasxml",
+        "displayName": "Generate Permission Set XML (Extension Objects)",
+        "toolReferenceName": "al_generate_permission_set_for_extension_objects_as_xml",
+        "tags": [
+          "permissions",
+          "security"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Generates a permission set XML file for current extension objects.",
+        "userDescription": "Generate a permission set XML file containing current extension objects (wrapper around AL: Generate permission set as XML).",
+        "icon": "$(shield)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_openeventrecorder",
+        "displayName": "Open Event Recorder",
+        "toolReferenceName": "al_open_event_recorder",
+        "tags": [
+          "events",
+          "diagnostics"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Opens the AL Event Recorder UI (wrapper around AL: Open Event Recorder).",
+        "userDescription": "Open the AL Event Recorder interface to capture runtime events.",
+        "icon": "$(record)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_openPageDesigner",
+        "displayName": "Open Page Designer",
+        "toolReferenceName": "al_open_page_designer",
+        "tags": [
+          "design",
+          "ui"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Opens the AL Page Designer (wrapper around AL: Open Page Designer).",
+        "userDescription": "Open the AL Page Designer interface for the current page context.",
+        "icon": "$(layout)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_package",
+        "displayName": "Package AL Project",
+        "toolReferenceName": "al_package",
+        "tags": [
+          "package",
+          "build"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Packages the AL project (wrapper around AL: Package).",
+        "userDescription": "Create an app package for the current AL project.",
+        "icon": "$(archive)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_publish",
+        "displayName": "Publish AL Package",
+        "toolReferenceName": "al_publish",
+        "tags": [
+          "publish",
+          "deployment"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Publishes the built AL package to the target environment (wrapper around AL: Publish).",
+        "userDescription": "Publish the AL package to the configured Business Central environment.",
+        "icon": "$(cloud-upload)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_publishwithoutdebug",
+        "displayName": "Publish AL Package (No Debug)",
+        "toolReferenceName": "al_publish_without_debug",
+        "tags": [
+          "publish",
+          "deployment"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Publishes the AL package without starting a debug session (wrapper around AL: Publish without debugging).",
+        "userDescription": "Publish the AL package without initiating a debug session.",
+        "icon": "$(cloud-upload)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_publishexistingextension",
+        "displayName": "Publish Existing Extension",
+        "toolReferenceName": "al_publish_existing_extension",
+        "tags": [
+          "publish",
+          "deployment"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Publishes an already packaged existing extension and starts debugging (wrapper around AL: Publish Existing Extension).",
+        "userDescription": "Publish an existing packaged AL extension to the target environment with debugging.",
+        "icon": "$(cloud-upload)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "al_viewsnapshots",
+        "displayName": "Open Snapshots",
+        "toolReferenceName": "al_view_snapshots",
+        "tags": [
+          "debug",
+          "snapshot"
+        ],
+        "modelDescription": "Inputs: none. Outputs: { success: boolean, error?: string }. Opens the snapshots view (wrapper around AL: Snapshots).",
+        "userDescription": "Open the AL snapshots interface.",
+        "icon": "$(history)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "al",
+        "label": "AL",
+        "path": "./file-icons/al-icon-theme.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "al",
+        "path": "./snippets/al.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/codeunit.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/interface.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/controladdin.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/dotnet.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/enum.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/enumextension.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/page.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/pageextension.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/query.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/report.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/reportextension.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/table.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/tableextension.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/xmlport.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/pagecustomization.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/permissionset.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/permissionsetextension.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/profile.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/profileextension.json"
+      },
+      {
+        "language": "json",
+        "path": "./snippets/ruleset.json"
+      },
+      {
+        "language": "xml",
+        "path": "./snippets/xml.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/entitlement.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "al",
+        "scopeName": "source.al",
+        "path": "./syntaxes/alsyntax.tmlanguage",
+        "unbalancedBracketScopes": [
+          "identifier.quoted.double.al"
+        ]
+      }
+    ],
+    "configuration": {
+      "title": "AL Language extension configuration",
+      "properties": {
+        "al.editorServicesPath": {
+          "type": "string",
+          "default": "bin/",
+          "description": "Path to Editor Services host executable."
+        },
+        "al.useLegacyRuntime": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the .NET Framework runtime for hosting the language service instead of the .NET 5+ runtime. Enabling this option might result in a reduced level of performance.",
+          "deprecationMessage": "Deprecated: From extension version 11.0, this option no longer has any effect."
+        },
+        "al.editorServicesLogLevel": {
+          "enum": [
+            "Verbose",
+            "Normal",
+            "Warning",
+            "Error"
+          ],
+          "enumDescriptions": [
+            "Captures every log message; this will generate a lot of data.",
+            "Captures normal, warning, and error messages.",
+            "Captures warning and error messages.",
+            "Captures only error messages."
+          ],
+          "default": "Normal",
+          "description": "Sets the logging verbosity level for the AL Language Editor Services host executable. Possible values are 'Verbose', 'Normal', 'Warning', and 'Error'"
+        },
+        "al.packageCachePath": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "./.alpackages"
+          ],
+          "description": "Sets the directory paths where reference symbol packages are located. If more than one path is specified, downloaded symbols will be placed into the first path.",
+          "scope": "resource"
+        },
+        "al.snapshotOutputPath": {
+          "type": "string",
+          "default": "./.snapshots",
+          "description": "Sets the directory path where snapshot files are saved.",
+          "scope": "resource"
+        },
+        "al.statementLensMin": {
+          "type": "number",
+          "default": 500,
+          "description": "Defines the lower limit for time spent on statement execution, which will be shown when opening a code file through the AL profiler.",
+          "scope": "resource",
+          "minimum": 100
+        },
+        "al.areProfileLensesSupported": {
+          "type": "boolean",
+          "description": "Specifies whether statement lenses are supported for the profiler.",
+          "scope": "resource",
+          "default": true
+        },
+        "al.incognito": {
+          "type": "boolean",
+          "description": "Specifies whether to open the browser in Incognito/InPrivate mode when launching the application from Visual Studio Code. This option will take effect only if the 'al.browser' option is set to a non-default value.",
+          "scope": "resource"
+        },
+        "al.browser": {
+          "enum": [
+            "Chrome",
+            "Edge",
+            "EdgeBeta",
+            "Firefox",
+            "SystemDefault"
+          ],
+          "description": "Specifies the browser in which to open the Business Central client when launching the application from Visual Studio Code",
+          "scope": "resource",
+          "default": "SystemDefault"
+        },
+        "al.enableCodeAnalysis": {
+          "type": "boolean",
+          "description": "Specifies whether the code analysis should be performed for all source files in the opened folder",
+          "scope": "resource"
+        },
+        "al.backgroundCodeAnalysis": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "enum": [
+            false,
+            true,
+            "File",
+            "Project",
+            "None"
+          ],
+          "description": "Specifies whether the code analysis should be performed in the background and the scope of the analysis. The 'false' value is equivalent to 'None' and the 'true' value is equivalent to 'File' for backwards compatibility.",
+          "scope": "resource",
+          "default": "File"
+        },
+        "al.enableExternalRulesets": {
+          "type": "boolean",
+          "description": "Allows the use of urls as the location of project rulesets or included rulesets.",
+          "scope": "resource",
+          "default": true
+        },
+        "al.outputAnalyzerStatistics": {
+          "type": "boolean",
+          "description": "Specifies whether code analyzer performance statistics will be output when running a build.",
+          "scope": "resource",
+          "default": false
+        },
+        "al.incrementalBuild": {
+          "type": "boolean",
+          "description": "Specifies whether the compiler should reuse the existing background compilation for creating the package.",
+          "scope": "resource"
+        },
+        "al.codeAnalyzers": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "${CodeCop}",
+                  "${AppSourceCop}",
+                  "${PerTenantExtensionCop}",
+                  "${UICop}"
+                ],
+                "enumDescriptions": [
+                  "CodeCop is an analyzer that enforces the official AL coding guidelines.",
+                  "AppSourceCop is an analyzer that enforces rules that must be respected by extensions meant to be published to Microsoft AppSource.",
+                  "PerTenantExtensionCop is an analyzer that enforces rules that must be respected by extensions meant to be installed for individual tenants.",
+                  "UICop is an analyzer that enforces rules that must be respected by extensions meant to customize the web client."
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Sets the list of paths to code analyzers to use for performing code analysis.",
+          "scope": "resource"
+        },
+        "al.ruleSetPath": {
+          "type": "string",
+          "default": null,
+          "description": "Sets the path to the file containing the customized rules to use when running code analysis. The path can be a filesystem path or a fully qualified remote url.",
+          "scope": "resource"
+        },
+        "al.namespaceTemplate": {
+          "type": "string",
+          "default": null,
+          "description": "Specifies the default namespace template to be used when creating new files or adding namespaces via code actions.",
+          "scope": "resource"
+        },
+        "al.enableCodeActions": {
+          "type": "boolean",
+          "description": "Specifies whether the code actions should be enabled for all source files in the current project.",
+          "scope": "resource",
+          "default": true
+        },
+        "al.enableScriptIntelliSense": {
+          "type": "boolean",
+          "description": "Specifies whether IntelliSense should be enabled for control addin script files. Set to false if it interferes with advanced JavaScript or TypeScript configurations.",
+          "default": true
+        },
+        "al.assemblyProbingPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "./.netpackages"
+          ],
+          "description": "Sets the list of directory paths where the compiler should search for referenced .NET assemblies.",
+          "scope": "resource"
+        },
+        "al.snapshotDebuggingPath": {
+          "type": "string",
+          "default": "./.snapshot",
+          "description": "Sets the directory path where the snapshot debugger sources are located.",
+          "scope": "resource"
+        },
+        "al.compilationOptions": {
+          "type": "object",
+          "description": "Specify compilation options.",
+          "scope": "resource",
+          "default": {},
+          "properties": {
+            "generateReportLayout": {
+              "type": "boolean",
+              "default": true,
+              "description": "Controls whether the compiler will generate Report Layout files when building the package."
+            },
+            "parallel": {
+              "type": "boolean",
+              "default": true,
+              "description": "Specifies whether the compiler should use multiple threads when building the project."
+            },
+            "maxDegreeOfParallelism": {
+              "type": "number",
+              "default": 2,
+              "description": "Specifies the maximum number of concurrent tasks the compiler should use when compiling the project.",
+              "minimum": 1
+            },
+            "delayAfterLastDocumentChange": {
+              "type": "number",
+              "default": 800,
+              "description": "Specifies the number of milliseconds to wait after the last buffer changes before getting document diagnostics. After changing the value of this option, you must restart Visual Studio Code for it to take effect."
+            },
+            "delayAfterLastProjectChange": {
+              "type": "number",
+              "default": 4000,
+              "description": "Specifies the number of milliseconds to wait after the last buffer changes before getting complete diagnostics. After changing the value of this option, you must restart Visual Studio Code for it to take effect."
+            },
+            "continueBuildOnError": {
+              "type": "boolean",
+              "default": false,
+              "description": "Specifies if build should continue even if errors are found. The default and recommended value from a performance point of view is \"false\". Set the value to true to continue building the project, even if errors are found. It requires \"al.incrementalBuild\" to be false."
+            },
+            "outFolder": {
+              "type": "string",
+              "description": "Specifies the folder where the compiler should place the resulting .app file. If not specified, the compiler will place the resulting .app file in the project folder."
+            }
+          }
+        },
+        "al.showHomeAtStartup": {
+          "enum": [
+            "Always",
+            "WhenUpdated",
+            "Never"
+          ],
+          "enumDescriptions": [
+            "Show on every startup.",
+            "Show if there is updated news.",
+            "Never show the AL Developer Home."
+          ],
+          "description": "Specifies whether the AL Developer Home is shown at startup",
+          "default": "WhenUpdated"
+        },
+        "al.showExplorerAtStartup": {
+          "enum": [
+            "Always",
+            "Once",
+            "Never"
+          ],
+          "enumDescriptions": [
+            "Show on every startup.",
+            "Show it only on first launch.",
+            "Never show the AL Developer Home."
+          ],
+          "description": "Specifies whether the AL Explorer is shown at startup",
+          "default": "Once"
+        },
+        "al.snapshotDebuggerLinesHitDecoration": {
+          "type": "object",
+          "description": "Specifies the decoration values for a line that is hit by the snapshot debugger.",
+          "scope": "resource",
+          "default": {
+            "gutterColor": "#B48F08"
+          },
+          "properties": {
+            "gutterColor": {
+              "type": "string",
+              "default": "#B48F08",
+              "description": "Defines the gutter indicator color to use for showing the lines hit by the snapshot debugger. Accepts valid color names, hex codes, and rgba() values."
+            }
+          }
+        },
+        "al.appLocalFolderPaths": {
+          "type": "array",
+          "description": "Specifies a list of local app repositories and their corresponding directory paths. This setting helps in organizing and managing multiple AL repositories by defining where each repository is stored on the local machine.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "appId": {
+                "type": "string",
+                "description": "The app id."
+              },
+              "localFolderPath": {
+                "type": "string",
+                "description": "The local directory path where the app is located."
+              }
+            }
+          },
+          "default": [],
+          "scope": "application"
+        },
+        "al.profilerColors": {
+          "type": "object",
+          "description": "Specifies the colors used to define the application types in the profiler output. Accepts valid color names, hex codes, and rgba() values",
+          "scope": "resource",
+          "default": {},
+          "properties": {
+            "systemApplication": {
+              "type": "string",
+              "default": "green",
+              "description": "The color used for methods defined in the System Application."
+            },
+            "baseApplication": {
+              "type": "string",
+              "default": "magenta",
+              "description": "The color used for methods defined in the Base Application."
+            },
+            "extension": {
+              "type": "string",
+              "default": "yellow",
+              "description": "The color used for methods defined by other apps."
+            },
+            "system": {
+              "type": "string",
+              "default": "blue",
+              "description": "The color used for methods defined in the built-in system application."
+            },
+            "apps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the application."
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "The color of the application in the profiler file."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "al.algoSuggestedFolder": {
+          "type": "string",
+          "default": null,
+          "description": "Sets the suggested folder when using AL:Go! command."
+        },
+        "al.inlayhints.parameterNames.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable inlay hints for parameter names."
+        },
+        "al.inlayhints.functionReturnTypes.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable inlay hints for implicit return types on function signatures."
+        },
+        "al.semanticFolding.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable folding ranges given from the AL extension. Reload Visual Studio Code after changing this setting."
+        },
+        "al.extendGoToSymbolInWorkspace.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable a new implementation of symbol search."
+        },
+        "al.extendGoToSymbolInWorkspace.ResultLimit": {
+          "type": "integer",
+          "default": 100,
+          "description": "Sets the maximum number of symbol search."
+        },
+        "al.extendGoToSymbolInWorkspace.IncludeSymbolFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable search in symbol files"
+        },
+        "al.publisher": {
+          "type": "string",
+          "default": "Default Publisher",
+          "description": "Sets the publisher name."
+        },
+        "al.rootNamespace": {
+          "type": "string",
+          "default": null,
+          "description": "Sets the root namespace name."
+        },
+        "al.useInteractiveLogin": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether to use interactive login or device code login for Microsoft Entra ID authentication."
+        },
+        "al.entraIdAuthentication": {
+          "type": "object",
+          "description": "Configuration setting overrides for Microsoft Entra ID authentication.",
+          "default": {},
+          "properties": {
+            "endpoint": {
+              "type": "string",
+              "default": "",
+              "description": "Sets the authentication endpoint for Microsoft Entra ID."
+            },
+            "clientId": {
+              "type": "string",
+              "default": "",
+              "description": "Sets the client ID for Microsoft Entra ID authentication. This is used to identify the application making the authentication request."
+            },
+            "redirectionUri": {
+              "type": "string",
+              "default": "",
+              "description": "Sets the redirection URI for Microsoft Entra ID authentication."
+            },
+            "scope": {
+              "type": "string",
+              "default": "",
+              "description": "Sets the scope for Microsoft Entra ID authentication."
+            }
+          }
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[al]": {
+        "editor.wordBasedSuggestions": "off",
+        "editor.suggestSelection": "first",
+        "editor.formatOnSave": true,
+        "editor.semanticHighlighting.enabled": true,
+        "editor.inlayHints.fontSize": 12,
+        "editor.bracketPairColorization.independentColorPoolPerBracketType": true
+      }
+    },
+    "commands": [
+      {
+        "title": "Go!",
+        "command": "al.go",
+        "category": "AL"
+      },
+      {
+        "title": "New Project",
+        "command": "al.newproject",
+        "category": "AL"
+      },
+      {
+        "title": "Package",
+        "command": "al.package",
+        "category": "AL"
+      },
+      {
+        "title": "Package full dependency tree for active project",
+        "command": "al.fullPackage",
+        "category": "AL"
+      },
+      {
+        "title": "Publish with debugging",
+        "command": "al.publish",
+        "category": "AL"
+      },
+      {
+        "title": "Publish without debugging",
+        "command": "al.publishNoDebug",
+        "category": "AL"
+      },
+      {
+        "title": "Rapid Application Publish with debugging",
+        "command": "al.incrementalPublish",
+        "category": "AL"
+      },
+      {
+        "title": "Rapid Application Publish without debugging",
+        "command": "al.incrementalPublishNoDebug",
+        "category": "AL"
+      },
+      {
+        "title": "Debug without publishing",
+        "command": "al.onlyDebug",
+        "category": "AL"
+      },
+      {
+        "title": "Initialize snapshot debugging",
+        "command": "al.initalizeSnapshotDebugging",
+        "category": "AL"
+      },
+      {
+        "title": "Finish snapshot debugging on the server",
+        "command": "al.finishSnapshotDebugging",
+        "category": "AL"
+      },
+      {
+        "title": "Show all snapshots",
+        "command": "al.snapshots",
+        "category": "AL"
+      },
+      {
+        "title": "Generate profile file",
+        "command": "al.generateCpuProfileFile",
+        "category": "AL"
+      },
+      {
+        "title": "Clear credentials cache",
+        "command": "al.clearCredentialsCache",
+        "category": "AL"
+      },
+      {
+        "title": "Generate manifest",
+        "command": "al.generateManifest",
+        "category": "AL"
+      },
+      {
+        "title": "Download symbols",
+        "command": "al.downloadSymbols",
+        "category": "AL"
+      },
+      {
+        "title": "Download source code",
+        "command": "al.downloadSource",
+        "category": "AL"
+      },
+      {
+        "title": "Generate permission set as AL object containing current extension objects",
+        "command": "al.generatePermissionSetForExtensionObjects",
+        "category": "AL"
+      },
+      {
+        "title": "Generate permission set as XML file containing current extension objects",
+        "command": "al.generatePermissionSetForExtensionObjectsAsXml",
+        "category": "AL"
+      },
+      {
+        "title": "Publish and open in the designer",
+        "command": "al.openPageDesigner",
+        "category": "AL"
+      },
+      {
+        "title": "Open Externally",
+        "command": "al.openExternally",
+        "category": "AL"
+      },
+      {
+        "title": "Open Events Recorder",
+        "command": "al.openEventRecorder",
+        "category": "AL"
+      },
+      {
+        "title": "Find Event",
+        "command": "al.insertEvent",
+        "category": "AL"
+      },
+      {
+        "title": "Publish extension without building",
+        "command": "al.publishExistingExtension",
+        "category": "AL"
+      },
+      {
+        "title": "Explorer",
+        "command": "al.explorer",
+        "category": "AL"
+      },
+      {
+        "title": "Home",
+        "command": "al.home",
+        "category": "AL"
+      },
+      {
+        "title": "Clear Profile Code Lenses",
+        "command": "al.clearProfileCodeLenses",
+        "category": "AL"
+      },
+      {
+        "title": "Publish full dependency tree for active project",
+        "command": "al.fullDependencyPublish",
+        "category": "AL"
+      },
+      {
+        "title": "Refresh active AL Explorer tab",
+        "command": "al.explorer_refresh",
+        "category": "AL"
+      },
+      {
+        "title": "Reset settings for AL Explorer",
+        "command": "al.explorer_reset_layout",
+        "category": "AL"
+      },
+      {
+        "title": "Refresh all tests",
+        "command": "al.tests.refreshAll",
+        "category": "AL"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "al.package",
+        "key": "Ctrl+Shift+B",
+        "when": "alExtensionActive"
+      },
+      {
+        "command": "al.fullPackage",
+        "key": "alt+Shift+B",
+        "when": "alExtensionActive"
+      },
+      {
+        "command": "al.go",
+        "key": "Alt+A Alt+L"
+      },
+      {
+        "command": "al.newproject",
+        "key": "Alt+A Alt+P"
+      },
+      {
+        "command": "al.publish",
+        "key": "F5",
+        "mac": "F5",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.publishExistingExtension",
+        "key": "Ctrl+F5",
+        "mac": "cmd+F5",
+        "when": "alExtensionActive && inDebugMode"
+      },
+      {
+        "command": "al.publishNoDebug",
+        "key": "Ctrl+F5",
+        "mac": "cmd+F5",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.incrementalPublish",
+        "key": "Alt+F5",
+        "mac": "alt+F5",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.incrementalPublishNoDebug",
+        "key": "Ctrl+Alt+F5",
+        "mac": "cmd+alt+F5",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.onlyDebug",
+        "key": "Ctrl+Shift+F5",
+        "mac": "cmd+shift+F5",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.initalizeSnapshotDebugging",
+        "key": "F7",
+        "mac": "F7",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.finishSnapshotDebugging",
+        "key": "Alt+F7",
+        "mac": "alt+F7",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.snapshots",
+        "key": "Shift+F7",
+        "mac": "cmd+F7",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.generateCpuProfileFile",
+        "key": "Alt+10",
+        "mac": "alt+10",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.openPageDesigner",
+        "key": "F6",
+        "mac": "F6",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.downloadSource",
+        "key": "Alt+F6",
+        "mac": "ALT+F6",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.insertEvent",
+        "key": "Shift+Alt+E",
+        "when": "alExtensionActive && !inDebugMode"
+      },
+      {
+        "command": "al.explorer",
+        "key": "Ctrl+Shift+F12",
+        "mac": "cmd+shift+F12",
+        "when": "alExtensionActive"
+      },
+      {
+        "command": "al.explorer_refresh",
+        "when": "alExtensionActive && alViewActive_explorer && !inDebugMode"
+      },
+      {
+        "command": "al.explorer_reset_layout",
+        "when": "alExtensionActive && alViewActive_explorer"
+      },
+      {
+        "command": "al.explorer_navigatetoselected",
+        "key": "Ctrl+Shift+F6",
+        "mac": "cmd+shift+F6",
+        "when": "alExtensionActive && alViewActive_explorer"
+      },
+      {
+        "command": "al.explorer_designselected",
+        "key": "F6",
+        "mac": "F6",
+        "when": "alExtensionActive && alViewActive_explorer && alExperimentalUX"
+      },
+      {
+        "command": "al.explorer_runselected",
+        "key": "Ctrl+Shift+R",
+        "mac": "cmd+shift+R",
+        "when": "alExtensionActive && alViewActive_explorer && !inDebugMode"
+      },
+      {
+        "command": "al.explorer_bookmark",
+        "key": "Ctrl+Alt+B",
+        "mac": "cmd+Alt+B",
+        "when": "alExtensionActive && alViewActive_explorer"
+      },
+      {
+        "command": "al.fullDependencyPublish",
+        "key": "Shift+Alt+W",
+        "mac": "cmd+ALT+W",
+        "when": "alExtensionActive && !inDebugMode"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "app.json",
+        "url": "./syntaxes/appSyntax.json"
+      },
+      {
+        "fileMatch": [
+          "Directory.App.Props.json",
+          "Directory.App.*.Props.json"
+        ],
+        "url": "./syntaxes/appPropsSyntax.json"
+      },
+      {
+        "fileMatch": "*.ruleset.json",
+        "url": "./syntaxes/ruleSetSyntax.json"
+      },
+      {
+        "fileMatch": "AppSourceCop.json",
+        "url": "./syntaxes/appSourceCopSyntax.json"
+      },
+      {
+        "fileMatch": "Migration.json",
+        "url": "./syntaxes/migrationSyntax.json"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "al.clearCredentialsCache",
+          "when": "alExtensionActive"
+        },
+        {
+          "command": "al.downloadSymbols",
+          "when": "alExtensionActive"
+        },
+        {
+          "command": "al.publish",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.publishNoDebug",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.incrementalPublish",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.incrementalPublishNoDebug",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.onlyDebug",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.package",
+          "when": "alExtensionActive"
+        },
+        {
+          "command": "al.fullPackage",
+          "when": "alExtensionActive"
+        },
+        {
+          "command": "al.initalizeSnapshotDebugging",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.finishSnapshotDebugging",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.snapshots",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.generateCpuProfileFile",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.openPageDesigner",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.downloadSource",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.generateManifest",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.generatePermissionSetForExtensionObjects",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.insertEvent",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.publishExistingExtension",
+          "when": "inDebugMode"
+        },
+        {
+          "command": "al.fullDependencyPublish",
+          "when": "alExtensionActive && !inDebugMode"
+        },
+        {
+          "command": "al.explorer_refresh",
+          "when": "alExtensionActive && alViewActive_explorer && !inDebugMode"
+        },
+        {
+          "command": "al.explorer_reset_layout",
+          "when": "alExtensionActive && alViewActive_explorer && !inDebugMode"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "al.openExternally",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceExtname == .zip && alExtensionActive && !inDebugMode",
+          "command": "al.generateCpuProfileFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "breakpoints": [
+      {
+        "language": "al"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "al",
+        "label": "AL Language",
+        "configurationSnippets": [
+          {
+            "label": "AL: Publish to your own server",
+            "description": "Publish the package to your own server",
+            "body": {
+              "name": "${1:Publish: Your own server}",
+              "type": "al",
+              "request": "launch",
+              "environmentType": "OnPrem",
+              "server": "${2|http://bcserver,http://localhost|}",
+              "serverInstance": "${3:BC}",
+              "authentication": "${4|UserPassword,Windows,AAD,MicrosoftEntraID|}",
+              "startupObjectId": 22,
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "launchBrowser": true,
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10,
+              "tenant": "default",
+              "usePublicURLFromServer": true
+            }
+          },
+          {
+            "label": "AL: Publish to Microsoft cloud sandbox",
+            "description": "Publish the package to the Microsoft cloud sandbox",
+            "body": {
+              "name": "${0:Publish: Microsoft cloud sandbox}",
+              "type": "al",
+              "request": "launch",
+              "environmentType": "Sandbox",
+              "environmentName": "sandbox",
+              "startupObjectId": 22,
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "launchBrowser": true,
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10
+            }
+          },
+          {
+            "label": "AL: Attach to the client on your server",
+            "description": "Attach to the client on your server",
+            "body": {
+              "name": "${1:Attach: Your own server}",
+              "type": "al",
+              "request": "attach",
+              "environmentType": "OnPrem",
+              "server": "${2|http://bcserver,http://localhost|}",
+              "serverInstance": "${3:BC}",
+              "authentication": "${4|UserPassword,Windows,AAD,MicrosoftEntraID|}",
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10,
+              "breakOnNext": "WebServiceClient",
+              "tenant": "default"
+            }
+          },
+          {
+            "label": "AL: Attach to the client on the cloud sandbox",
+            "description": "Attach to the client on the cloud sandbox",
+            "body": {
+              "name": "${0:Attach: Microsoft cloud sandbox}",
+              "type": "al",
+              "request": "attach",
+              "environmentType": "Sandbox",
+              "environmentName": "sandbox",
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10,
+              "breakOnNext": "WebServiceClient"
+            }
+          },
+          {
+            "label": "AL: Attach to agent session on the cloud sandbox",
+            "description": "Attach to an agent session on the cloud sandbox",
+            "body": {
+              "name": "${0:Attach: Agent on Microsoft cloud sandbox}",
+              "type": "al",
+              "request": "attach",
+              "environmentType": "Sandbox",
+              "environmentName": "sandbox",
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10,
+              "breakOnNext": "Agent",
+              "userId": "${1:<Agent User Security ID>}"
+            }
+          },
+          {
+            "label": "AL: Attach to an agent session on your server",
+            "description": "Attach to an agent session on your server",
+            "body": {
+              "name": "${1:Attach: Agent on your own server}",
+              "type": "al",
+              "request": "attach",
+              "environmentType": "OnPrem",
+              "server": "${2|http://bcserver,http://localhost|}",
+              "serverInstance": "${3:BC}",
+              "authentication": "${4|UserPassword,Windows,AAD,MicrosoftEntraID|}",
+              "breakOnError": "All",
+              "breakOnRecordWrite": "None",
+              "enableSqlInformationDebugger": true,
+              "enableLongRunningSqlStatements": true,
+              "longRunningSqlStatementsThreshold": 500,
+              "numberOfSqlStatements": 10,
+              "breakOnNext": "Agent",
+              "tenant": "default",
+              "userId": "${5:<Agent User Security ID>}"
+            }
+          },
+          {
+            "label": "AL: Initialize a snapshot debugging session on cloud",
+            "description": "Initialize a snapshot debugging session on cloud",
+            "body": {
+              "name": "${0:snapshotInitialize: Microsoft production cloud}",
+              "type": "al",
+              "request": "snapshotInitialize",
+              "environmentType": "Production",
+              "environmentName": "production",
+              "breakOnNext": "WebClient",
+              "executionContext": "DebugAndProfile"
+            }
+          },
+          {
+            "label": "AL: Initialize a snapshot debugging session on your own server",
+            "description": "Initialize a snapshot debugging session on your own server",
+            "body": {
+              "name": "${1:snapshotInitialize: Your own server}",
+              "type": "al",
+              "request": "snapshotInitialize",
+              "environmentType": "OnPrem",
+              "server": "${2|http://bcserver,http://localhost|}",
+              "serverInstance": "${3:BC}",
+              "authentication": "${4|UserPassword,Windows,AAD,MicrosoftEntraID|}",
+              "breakOnNext": "WebClient",
+              "executionContext": "DebugAndProfile"
+            }
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [],
+            "properties": {
+              "server": {
+                "type": "string",
+                "description": "The server url.",
+                "default": "http://bcserver"
+              },
+              "port": {
+                "type": "number",
+                "description": "The development service port.",
+                "default": 7049
+              },
+              "serverInstance": {
+                "type": "string",
+                "description": "The server instance to connect to.",
+                "default": ""
+              },
+              "tenant": {
+                "type": "string",
+                "description": "The tenant to connect to.\nFor an on-premise server, this parameter must contain a tenant name, for example: MyTenant.\nFor a cloud server, this parameter must contain the Microsoft Entra tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com",
+                "default": "default"
+              },
+              "primaryTenantDomain": {
+                "type": "string",
+                "description": "Specifies the Tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com. This setting is used to enable Microsoft Entra ID authentication for on-premises installations.",
+                "default": ""
+              },
+              "applicationFamily": {
+                "type": "string",
+                "description": "The application family in the cloud server, for example: Fabrikam. This property is reserved for Embed Apps.",
+                "default": ""
+              },
+              "authentication": {
+                "enum": [
+                  "MicrosoftEntraID",
+                  "AAD",
+                  "Windows",
+                  "UserPassword"
+                ],
+                "enumDescriptions": [
+                  "Microsoft Enta ID",
+                  "Microsoft Entra ID",
+                  "Windows",
+                  "Username and Password."
+                ],
+                "description": "Specifies the server authentication method.",
+                "default": "MicrosoftEntraID"
+              },
+              "startupObjectId": {
+                "type": "number",
+                "description": "Specifies the ID of the object which should be opened after publishing.",
+                "default": 22
+              },
+              "startupObjectType": {
+                "enum": [
+                  "Page",
+                  "Table",
+                  "Report",
+                  "Query"
+                ],
+                "description": "Specifies the type of the object which should be opened after publishing.",
+                "default": "Page"
+              },
+              "startupCompany": {
+                "type": "string",
+                "description": "Specifies the name of the company which should be opened after publishing."
+              },
+              "schemaUpdateMode": {
+                "enum": [
+                  "Synchronize",
+                  "Recreate",
+                  "ForceSync"
+                ],
+                "enumDescriptions": [
+                  "Synchronize the schema and fail on incompatible schema changes.",
+                  "Recreate the tables, and table extensions and lose all data stored in them.",
+                  "ForceSync is similar to Synchronize in data will be preserved in almost all cases while giving more freedom to make schema changes."
+                ],
+                "description": "Specifies the update mode to use when the extension is already installed.",
+                "default": "Synchronize"
+              },
+              "dependencyPublishingOption": {
+                "enum": [
+                  "Default",
+                  "Ignore",
+                  "Strict"
+                ],
+                "enumDescriptions": [
+                  "Dependency publishing will be applied.",
+                  "Dependency publishing is ignored so that only leaf projects are published.",
+                  "Dependency publishing will fail if there are any apps that directly depend on the startup project and these apps are not part of the workspace."
+                ],
+                "description": "Specifies the publishing option to use. By specifying the Ignore option, only the current project is published, dependencies are ignored. By specifying the Strict option, publishing will fail if the project has apps that not part of the workspace and depend on it",
+                "default": "Default"
+              },
+              "breakOnError": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "enum": [
+                  false,
+                  true,
+                  "None",
+                  "All",
+                  "ExcludeTry"
+                ],
+                "enumDescriptions": [
+                  "Does not break on any errors",
+                  "Breaks on all errors",
+                  "Does not break on any errors",
+                  "Breaks on all errors",
+                  "Breaks on errors that are not contained within a Try block"
+                ],
+                "default": "All",
+                "description": "Specifies whether the debugger to break on the next error"
+              },
+              "breakOnRecordWrite": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "enum": [
+                  false,
+                  true,
+                  "None",
+                  "All",
+                  "ExcludeTemporary"
+                ],
+                "enumDescriptions": [
+                  "Does not break on record changes",
+                  "Breaks on all record changes",
+                  "Does not break on record changes",
+                  "Breaks on all record changes",
+                  "Ignores changes to temporary records"
+                ],
+                "description": "Specifies whether the debugger breaks on record changes.",
+                "default": "None"
+              },
+              "launchBrowser": {
+                "type": "boolean",
+                "description": "If the value is set to true, the browser tab is launched, if false, the browser tab is not launched. If publishing with debugging enabled, the browser tab is launched and this setting is ignored. The default value is true.",
+                "default": true
+              },
+              "usePublicURLFromServer": {
+                "type": "boolean",
+                "description": "If the value is set to true, the browser will be launched with the URL provided by the PublicWebBaseURL set by the server. If false, it will use the server defined in the launch configuration.",
+                "default": true
+              },
+              "validateServerCertificate": {
+                "type": "boolean",
+                "description": "If the value is set to false, the server certificate will not be validated.",
+                "default": true
+              },
+              "enableSqlInformationDebugger": {
+                "type": "boolean",
+                "description": "Specifies whether the debugger shows the SQL Information in the debugger.",
+                "default": true
+              },
+              "enableLongRunningSqlStatements": {
+                "type": "boolean",
+                "description": "Specifies whether the debugger enables or disables long running SQL statements in the debugger window.",
+                "default": true
+              },
+              "longRunningSqlStatementsThreshold": {
+                "type": "number",
+                "description": "Sets the number of milliseconds spent before a SQL statement is considered as long running in the debugger.",
+                "default": 500
+              },
+              "numberOfSqlStatements": {
+                "type": "number",
+                "description": "Sets the number of SQL statements to be shown in the debugger.",
+                "default": 10
+              },
+              "sandboxName": {
+                "type": "string",
+                "description": "Specifies which sandbox to use in cases where multiple sandboxes are owned by the same tenant.",
+                "deprecationMessage": "This setting is obsoleted. Please use the 'sandbox' environmentType and the environmentName settings instead."
+              },
+              "environmentName": {
+                "type": "string",
+                "description": "Specifies which production, or sandbox environment to use."
+              },
+              "environmentType": {
+                "enum": [
+                  "OnPrem",
+                  "Sandbox",
+                  "Production"
+                ],
+                "enumDescriptions": [
+                  "Specifies an onprem environment",
+                  "Specifies a sandbox environment",
+                  "Specifies a production environment"
+                ],
+                "description": "Specifies which environment to use to connect to Business Central."
+              },
+              "disableHttpRequestTimeout": {
+                "type": "boolean",
+                "description": "Turn off Visual Studio Code's HTTP request timeout and allow for requests to run with infinite timeout.",
+                "default": false
+              },
+              "forceUpgrade": {
+                "type": "boolean",
+                "description": "Always run upgrade codeunits, even if the version number of the extension is the same as an already installed version.",
+                "default": false
+              },
+              "useSystemSessionForDeployment": {
+                "type": "boolean",
+                "description": "Runs install and upgrade codeunits in a system session. This will prevent debugging install and upgrade codeunits.",
+                "default": false
+              },
+              "snapshotFileName": {
+                "type": "string",
+                "description": "The name of the snapshot file",
+                "default": ""
+              }
+            }
+          },
+          "attach": {
+            "required": [],
+            "properties": {
+              "server": {
+                "type": "string",
+                "description": "The server url.",
+                "default": "http://bcserver"
+              },
+              "port": {
+                "type": "number",
+                "description": "The development service port.",
+                "default": 7049
+              },
+              "serverInstance": {
+                "type": "string",
+                "description": "The server instance to connect to.",
+                "default": ""
+              },
+              "tenant": {
+                "type": "string",
+                "description": "The tenant to connect to.\nFor an on-premise server, this parameter must contain a tenant name, for example: MyTenant.\nFor a cloud server, this parameter must contain the Microsoft Entra tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com",
+                "default": "default"
+              },
+              "primaryTenantDomain": {
+                "type": "string",
+                "description": "Specifies the Tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com. This setting is used to enable Microsoft Entra ID authentication for on-premises installations.",
+                "default": ""
+              },
+              "applicationFamily": {
+                "type": "string",
+                "description": "The application family in the cloud server, for example: Fabrikam. This property is reserved for Embed Apps.",
+                "default": ""
+              },
+              "authentication": {
+                "enum": [
+                  "MicrosoftEntraID",
+                  "AAD",
+                  "Windows",
+                  "UserPassword"
+                ],
+                "enumDescriptions": [
+                  "Microsoft Entra ID",
+                  "Windows",
+                  "Username and Password."
+                ],
+                "description": "Specifies the server authentication method.",
+                "default": "MicrosoftEntraID"
+              },
+              "breakOnError": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "enum": [
+                  false,
+                  true,
+                  "None",
+                  "All",
+                  "ExcludeTry"
+                ],
+                "enumDescriptions": [
+                  "Does not break on any errors",
+                  "Breaks on all errors",
+                  "Does not break on any errors",
+                  "Breaks on all errors",
+                  "Breaks on errors that are not contained within a Try block"
+                ],
+                "default": "All",
+                "description": "Specifies whether the debugger to break on the next error"
+              },
+              "breakOnRecordWrite": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "enum": [
+                  false,
+                  true,
+                  "None",
+                  "All",
+                  "ExcludeTemporary"
+                ],
+                "enumDescriptions": [
+                  "Does not break on record changes",
+                  "Breaks on all record changes",
+                  "Does not break on record changes",
+                  "Breaks on all record changes",
+                  "Ignores changes to temporary records"
+                ],
+                "description": "Specifies whether the debugger breaks on record changes.",
+                "default": "None"
+              },
+              "enableSqlInformationDebugger": {
+                "type": "boolean",
+                "description": "Specifies whether the debugger shows the SQL Information in the debugger.",
+                "default": true
+              },
+              "enableLongRunningSqlStatements": {
+                "type": "boolean",
+                "description": "Specifies whether the debugger enables or disables long running SQL statements in the debugger window.",
+                "default": true
+              },
+              "longRunningSqlStatementsThreshold": {
+                "type": "number",
+                "description": "Sets the number of milliseconds spent before a SQL statement is considered as long running in the debugger.",
+                "default": 500
+              },
+              "numberOfSqlStatements": {
+                "type": "number",
+                "description": "Sets the number of SQL statements to be shown in the debugger.",
+                "default": 10
+              },
+              "breakOnNext": {
+                "enum": [
+                  "WebServiceClient",
+                  "WebClient",
+                  "Background",
+                  "ClientService",
+                  "Agent"
+                ],
+                "enumDescriptions": [
+                  "Break on the next Web Service request.",
+                  "Break on the next Web client session.",
+                  "Break on the next background session.",
+                  "Break on the next agent session."
+                ],
+                "description": "Specifies that attach should break on the next available client session.",
+                "default": "WebServiceClient"
+              },
+              "sandboxName": {
+                "type": "string",
+                "description": "Specifies which sandbox to use in cases where multiple sandboxes are owned by the same tenant.",
+                "deprecationMessage": "This setting is obsoleted. Please use the 'sandbox' environmentType and the environmentName settings instead."
+              },
+              "environmentName": {
+                "type": "string",
+                "description": "Specifies which production, or sandbox environment to use."
+              },
+              "environmentType": {
+                "enum": [
+                  "OnPrem",
+                  "Sandbox",
+                  "Production"
+                ],
+                "enumDescriptions": [
+                  "Specifies an onprem environment",
+                  "Specifies a sandbox environment",
+                  "Specifies a production environment"
+                ],
+                "description": "Specifies environment to use to connect to Business Central."
+              },
+              "forceUpgrade": {
+                "type": "boolean",
+                "description": "Always run upgrade codeunits, even if the version number of the extension is the same as an already installed version.",
+                "default": false
+              },
+              "useSystemSessionForDeployment": {
+                "type": "boolean",
+                "description": "Runs install and upgrade codeunits in a system session. This will prevent debugging install and upgrade codeunits.",
+                "default": false
+              },
+              "userId": {
+                "type": "string",
+                "description": "Specifies the end user id who will first connect to perform debugging session. It can be either a username or GUID.",
+                "default": ""
+              },
+              "sessionId": {
+                "type": "number",
+                "description": "The id of the session to be attached to.",
+                "default": -1
+              },
+              "validateServerCertificate": {
+                "type": "boolean",
+                "description": "If the value is set to false, the server certificate will not be validated.",
+                "default": true
+              }
+            }
+          },
+          "snapshotInitialize": {
+            "required": [],
+            "properties": {
+              "server": {
+                "type": "string",
+                "description": "The server url.",
+                "default": "http://bcserver"
+              },
+              "serverInstance": {
+                "type": "string",
+                "description": "The server instance to connect to.",
+                "default": ""
+              },
+              "tenant": {
+                "type": "string",
+                "description": "The tenant to connect to.\nFor an on-premise server, this parameter must contain a tenant name, for example: MyTenant.\nFor a cloud server, this parameter must contain the Microsoft Entra tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com",
+                "default": "default"
+              },
+              "primaryTenantDomain": {
+                "type": "string",
+                "description": "Specifies the Tenant ID or Primary Domain associated with the Microsoft Entra tenant, for example: bf4ab6d6-cd93-424e-91fa-afe03fa286ac or mycustomer.onmicrosoft.com. This setting is to used enable Microsoft Entra authentication for on-premises installations.",
+                "default": ""
+              },
+              "port": {
+                "type": "number",
+                "description": "The snapshot debugger endpoint service port.",
+                "default": 7083
+              },
+              "applicationFamily": {
+                "type": "string",
+                "description": "The application family in the cloud server, for example: Fabrikam. This property is reserved for Embed Apps.",
+                "default": ""
+              },
+              "authentication": {
+                "enum": [
+                  "MicrosoftEntraID",
+                  "AAD",
+                  "Windows",
+                  "UserPassword"
+                ],
+                "enumDescriptions": [
+                  "Microsoft Entra ID",
+                  "Microsoft Entra ID",
+                  "Windows",
+                  "Username and Password."
+                ],
+                "description": "Specifies the server authentication method.",
+                "default": "MicrosoftEntraID"
+              },
+              "userId": {
+                "type": "string",
+                "description": "Specifies the end user id who will first connect to perform a snapshot debugging session. It can be either a username or GUID.",
+                "default": ""
+              },
+              "breakOnNext": {
+                "enum": [
+                  "WebServiceClient",
+                  "WebClient",
+                  "Background",
+                  "ClientService",
+                  "Agent"
+                ],
+                "enumDescriptions": [
+                  "Break on the next Web Service request.",
+                  "Break on the next Web client session.",
+                  "Break on the next background session.",
+                  "Break on the next agent session."
+                ],
+                "description": "Specifies that kind of connection a snapshot debugging session will be established.",
+                "default": "WebServiceClient"
+              },
+              "sandboxName": {
+                "type": "string",
+                "description": "Specifies which sandbox to use in cases where multiple sandboxes are owned by the same tenant.",
+                "deprecationMessage": "This setting is obsoleted. Please use the 'sandbox' environmentType and the environmentName settings instead."
+              },
+              "environmentName": {
+                "type": "string",
+                "description": "Specifies which production, or sandbox environment to use."
+              },
+              "environmentType": {
+                "enum": [
+                  "OnPrem",
+                  "Sandbox",
+                  "Production"
+                ],
+                "enumDescriptions": [
+                  "Specifies an on premise environment",
+                  "Specifies a sandbox environment",
+                  "Specifies a production environment"
+                ],
+                "description": "Specifies environment to use to connect to Business Central."
+              },
+              "sessionId": {
+                "type": "number",
+                "description": "The id of the session that should be attached to.",
+                "default": -1
+              },
+              "snapshotVerbosity": {
+                "enum": [
+                  "SnapPoint",
+                  "Full"
+                ],
+                "enumDescriptions": [
+                  "Only allow stepping to lines with SnapPoints.",
+                  "Allows stepping through every line executed."
+                ],
+                "description": "Specifies the verbosity level of snapshot data. If SnapPoint is specified then stacktraces and line information will only be gathered on snap points.",
+                "default": "SnapPoint"
+              },
+              "executionContext": {
+                "enum": [
+                  "Debug",
+                  "Profile",
+                  "DebugAndProfile"
+                ],
+                "enumDescriptions": [
+                  "A flag that no profile data is collected",
+                  "A flag that only a profiling session is performed, snappoints will be ignored.",
+                  "Both debugging and profiling is performed"
+                ],
+                "description": "Specifies how the snapshot technology will be applied on the Business Central server executing AL code",
+                "default": "DebugAndProfile"
+              },
+              "profilingType": {
+                "enum": [
+                  "Instrumentation",
+                  "Sampling"
+                ],
+                "enumDescriptions": [
+                  "If profiling is enabled than the all frames as executed will be measured for their total time.",
+                  "If profiling is enabled than frames will be collected and aggregated based on a sample interval. This option can only be used with the executionContext set to profiling."
+                ],
+                "description": "Specifies the profiling type to be used.",
+                "default": "Instrumentation"
+              },
+              "profileSamplingInterval": {
+                "enum": [
+                  50,
+                  100,
+                  150
+                ],
+                "description": "Specifies the sampling interval in milliseconds when \"Sampling\" profiling type is specified. Default is 100ms.",
+                "default": 100
+              },
+              "validateServerCertificate": {
+                "type": "boolean",
+                "description": "If the value is set to false, the server certificate will not be validated.",
+                "default": true
+              }
+            }
+          }
+        }
+      }
+    ],
+    "typescriptServerPlugins": [
+      {
+        "name": "al-controladdin-tsserver-plugin",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ],
+    "activationEvents": [
+      "onCustomEditor:alProfileVisualizer",
+      "onWebviewPanel:al_explorer",
+      "onWebviewPanel:al_home"
+    ],
+    "customEditors": [
+      {
+        "viewType": "al.designer",
+        "displayName": "AL Visual Designer",
+        "priority": "option",
+        "selector": [
+          {
+            "filenamePattern": "*.al"
+          }
+        ]
+      },
+      {
+        "viewType": "al.settings",
+        "displayName": "App Settings",
+        "priority": "option",
+        "selector": [
+          {
+            "filenamePattern": "app.json"
+          }
+        ]
+      },
+      {
+        "viewType": "alProfileVisualizer.topDown",
+        "displayName": "AL Profile Visualizer TopDown Graph",
+        "priority": "default",
+        "selector": [
+          {
+            "filenamePattern": "*.alcpuprofile"
+          }
+        ]
+      },
+      {
+        "viewType": "alProfileVisualizer.bottomUp",
+        "displayName": "AL Profile Visualizer BottomUp Graph",
+        "priority": "option",
+        "selector": [
+          {
+            "filenamePattern": "*.alcpuprofile"
+          }
+        ]
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "builtintypes",
+        "description": "An AL builtin type."
+      },
+      {
+        "id": "builtinfunctions",
+        "description": "An AL builtin function."
+      },
+      {
+        "id": "otherkeyword",
+        "description": "The other keywords."
+      },
+      {
+        "id": "langaugeconstant",
+        "description": "The language keywords."
+      },
+      {
+        "id": "attribute",
+        "description": "Attribute names."
+      },
+      {
+        "id": "returnparameter",
+        "description": "Named return parameter."
+      },
+      {
+        "id": "pagecontrol",
+        "description": "Name of a page control, such as a repeater."
+      },
+      {
+        "id": "pageaction",
+        "description": "Name of a page control, such as an action."
+      },
+      {
+        "id": "pageview",
+        "description": "Name of a page view."
+      },
+      {
+        "id": "tablefield",
+        "description": "Name of a table field."
+      },
+      {
+        "id": "tablekey",
+        "description": "Name of a table key."
+      },
+      {
+        "id": "tablefieldgroup",
+        "description": "Name of a table fieldgroup."
+      },
+      {
+        "id": "reportlabel",
+        "description": "Name of a label in a report."
+      },
+      {
+        "id": "reportlayout",
+        "description": "Name of a layout in a report."
+      },
+      {
+        "id": "querydataitem",
+        "description": "Name of a dataitem in a query."
+      },
+      {
+        "id": "querycolumn",
+        "description": "Name of a column in a query."
+      },
+      {
+        "id": "queryfilter",
+        "description": "Name of a filter in a query."
+      },
+      {
+        "id": "xmlporttableelement",
+        "description": "Name of a xmlport table element."
+      },
+      {
+        "id": "xmlporttextelement",
+        "description": "Name of a xmlport text element."
+      },
+      {
+        "id": "xmlportfieldelement",
+        "description": "Name of a xmlport field element."
+      },
+      {
+        "id": "xmlportfieldattribute",
+        "description": "Name of a xmlport field attribute."
+      },
+      {
+        "id": "datetime",
+        "description": "Datetime literal."
+      },
+      {
+        "id": "preprocessorkeyword",
+        "description": "Keywords used in preprocessor syntax."
+      },
+      {
+        "id": "triggername",
+        "description": "The name of triggers."
+      },
+      {
+        "id": "namespace",
+        "description": "Name of a namespace."
+      },
+      {
+        "id": "excludedCode",
+        "description": "A token that represents inactive code."
+      },
+      {
+        "id": "xmlDocCommentAttributeName",
+        "description": "A token that represents an attribute in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentAttributeQuotes",
+        "description": "A token that represents an attribute quote in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentAttributeValue",
+        "description": "A token that represents an attribute value in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentCDataSection",
+        "description": "A token that represents a CDATA section in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentComment",
+        "description": "A token that represents a comment in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentDelimiter",
+        "description": "A token that represents a delimeter in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentEntityReference",
+        "description": "A token that represents reference to an entity in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentName",
+        "description": "A token that represents a name in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentProcessingInstruction",
+        "description": "A token that represents a processing instruction in an XML documentation comment"
+      },
+      {
+        "id": "xmlDocCommentText",
+        "description": "A token that represents text in an XML documentation comment"
+      },
+      {
+        "id": "xmlLiteralAttributeName",
+        "description": "A token that represents an attribute name in an XML literal"
+      },
+      {
+        "id": "xmlLiteralAttributeQuotes",
+        "description": "A token that represents an attribute quote in an XML literal"
+      },
+      {
+        "id": "globalVariable",
+        "description": "A token that represents a global variable"
+      },
+      {
+        "id": "localVariable",
+        "description": "A token that represents an local variable"
+      },
+      {
+        "id": "aleventcreation",
+        "description": "A token that represents a integration or business event."
+      },
+      {
+        "id": "aleventsubscription",
+        "description": "A token that represents a event subscription."
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "al",
+        "scopes": {
+          "aleventcreation": [
+            "entity.name.function.alevent.Creation.al"
+          ],
+          "aleventsubscription": [
+            "entity.name.function.alevent.Subscription.al"
+          ],
+          "namespace": [
+            "entity.name.type.namespace.al"
+          ],
+          "globalVariable": [
+            "variable.other.readwrite.Global.al"
+          ],
+          "localVariable": [
+            "variable.other.readwrite.Local.al"
+          ],
+          "interface": [
+            "entity.name.type.interface.al"
+          ],
+          "builtintypes": [
+            "keyword.other.builtintypes.al"
+          ],
+          "builtinfunctions": [
+            "support.function.al"
+          ],
+          "otherkeyword": [
+            "keyword.other.al"
+          ],
+          "langaugeconstant": [
+            "constant.language.al"
+          ],
+          "attribute": [
+            "entity.other.attribute.al"
+          ],
+          "returnparameter": [
+            "variable.parameter.return.al"
+          ],
+          "pagecontrol": [
+            "entity.name.class.pagecontrol.al"
+          ],
+          "pageaction": [
+            "entity.name.class.pageaction.al"
+          ],
+          "pageview": [
+            "entity.name.class.pageview.al"
+          ],
+          "tablefield": [
+            "entity.name.class.tablefield.al"
+          ],
+          "tablekey": [
+            "entity.name.class.tablekey.al"
+          ],
+          "tablefieldgroup": [
+            "entity.name.class.tablefieldgroup.al"
+          ],
+          "reportlabel": [
+            "entity.name.class.reportlabel.al"
+          ],
+          "reportlayout": [
+            "entity.name.class.reportlayout.al"
+          ],
+          "querydataitem": [
+            "entity.name.class.querydataitem.al"
+          ],
+          "querycolumn": [
+            "entity.name.class.querycolumn.al"
+          ],
+          "queryfilter": [
+            "entity.name.class.queryfilter.al"
+          ],
+          "xmlporttableelement": [
+            "entity.name.class.xmlporttableelement.al"
+          ],
+          "xmlporttextelement": [
+            "entity.name.class.xmlporttextelement.al"
+          ],
+          "xmlportfieldelement": [
+            "entity.name.class.xmlportfieldelement.al"
+          ],
+          "xmlportfieldattribute": [
+            "entity.name.class.xmlportfieldattribute.al"
+          ],
+          "datetime": [
+            "constant.numeric.datetime.al"
+          ],
+          "preprocessorkeyword": [
+            "keyword.preprocessor.al"
+          ],
+          "triggername": [
+            "entity.name.function.trigger.al"
+          ],
+          "excludedCode": [
+            "support.other.excluded.al"
+          ],
+          "xmlDocCommentAttributeName": [
+            "comment.documentation.attribute.name.al"
+          ],
+          "xmlDocCommentAttributeQuotes": [
+            "comment.documentation.attribute.quotes.al"
+          ],
+          "xmlDocCommentAttributeValue": [
+            "comment.documentation.attribute.value.al"
+          ],
+          "xmlDocCommentCDataSection": [
+            "comment.documentation.cdata.al"
+          ],
+          "xmlDocCommentComment": [
+            "comment.documentation.comment.al"
+          ],
+          "xmlDocCommentDelimiter": [
+            "comment.documentation.delimiter.al"
+          ],
+          "xmlDocCommentEntityReference": [
+            "comment.documentation.entityReference.al"
+          ],
+          "xmlDocCommentName": [
+            "comment.documentation.name.al"
+          ],
+          "xmlDocCommentProcessingInstruction": [
+            "comment.documentation.processingInstruction.al"
+          ],
+          "xmlDocCommentText": [
+            "comment.documentation.al"
+          ],
+          "xmlLiteralAttributeName": [
+            "entity.other.attribute-name.localname.xml"
+          ],
+          "xmlLiteralAttributeQuotes": [
+            "string.quoted.double.xml"
+          ]
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm install",
+    "clean": "rimraf \"out\"",
+    "package": "npm run package:view && npm run package:al",
+    "package:view": "webpack --mode production --config webpack.view.config.js",
+    "package:al": "webpack --mode production --stats-error-details",
+    "package:tsserverPlugin": "npm --prefix ../tsserver-plugin run pack",
+    "compile:tsserverPlugin": "npm --prefix ../tsserver-plugin run compile",
+    "compile:alProfileEditor": "npm --prefix ../vscode-alProfileEditor run compile",
+    "compile:view": "webpack --config webpack.view.config.js",
+    "compile:al": "webpack",
+    "compile": "npm run compile:view && npm run compile:al",
+    "standalone:client:explorer": "cross-env STANDALONE=1 KIND='explorer' webpack serve --config webpack.view.config.js",
+    "standalone:client:appsettings": "cross-env STANDALONE=1 KIND='settings' webpack serve --config webpack.view.config.js",
+    "standalone:client:home": "cross-env STANDALONE=1 KIND='home' webpack serve --config webpack.view.config.js",
+    "test": "node ./out/test/runtest.js",
+    "unittest": "mocha -c --config .mocharc.json"
+  },
+  "dependencies": {
+    "@ag-grid-community/client-side-row-model": "29.0.0",
+    "@ag-grid-community/react": "29.0.0",
+    "@ag-grid-community/styles": "29.0.0",
+    "@ag-grid-enterprise/rich-select": "29.0.0",
+    "@ag-grid-enterprise/row-grouping": "29.0.0",
+    "@fluentui/react": "^8.64.1",
+    "@fluentui/react-components": "^9.2.0",
+    "@fluentui/react-hooks": "^8.5.3",
+    "@types/git": "^0.0.21",
+    "@vscode/codicons": "^0.0.35",
+    "@vscode/debugadapter": "^1.51.0",
+    "@vscode/debugprotocol": "^1.51.0",
+    "@vscode/extension-telemetry": "^0.9.2",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "al-controladdin-tsserver-plugin": "file:../tsserver-plugin/out/al-controladdin-tsserver-plugin-0.0.1.tgz",
+    "applicationinsights": "^2.5.1",
+    "json5": "^2.2.3",
+    "lodash": "^4.17.21",
+    "preact": "^10.5.13",
+    "query-string": "^7.1.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-markdown": "^8.0.3",
+    "react-test-renderer": "^17.0.2",
+    "resolve-url-loader": "^5.0.0",
+    "semver": "^5.7.2",
+    "typed-rest-client": "^1.8.9",
+    "uuid": "3.4.0",
+    "vscode-languageclient": "9.0.1"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/lodash": "4.14.182",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.10",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.2",
+    "@types/react-test-renderer": "^17.0.1",
+    "@types/source-map-support": "^0.5.6",
+    "@types/uuid": "^3.4.7",
+    "@types/vscode": "^1.100.0",
+    "@types/vscode-webview": "^1.57.4",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "@vscode/test-electron": "^2.3.8",
+    "al-profile-visualizer": "../vscode-alProfileEditor/out",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.1",
+    "eslint": "^8.20.0",
+    "follow-redirects": "^1.15.6",
+    "glob": "^7.1.6",
+    "html-webpack-plugin": "^5.5.0",
+    "minimist": "^1.2.6",
+    "mocha": "^10.6.0",
+    "postcss": "^8.4.31",
+    "rimraf": "^3.0.2",
+    "sass": "1.58.0",
+    "sass-loader": "13.2.0",
+    "source-map-support": "^0.5.21",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.6",
+    "ts-loader": "^9.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.2.3",
+    "vscode-webview-tools": "^0.1.1",
+    "webpack": "^5.74.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "overrides": {
+    "resolve-url-loader": {
+      "postcss": "$postcss"
+    },
+    "webpack-dev-server": {
+      "follow-redirects": "$follow-redirects"
+    }
+  }
+}

@@ -25,13 +25,13 @@
 
 ### LC0001: FlowFields Editable
 ```al
-// ✗ Wrong
+// Wrong
 field(100; "Total Amount"; Decimal)
 {
     FieldClass = FlowField;
 }
 
-// ✓ Correct
+// Correct
 field(100; "Total Amount"; Decimal)
 {
     FieldClass = FlowField;
@@ -41,28 +41,28 @@ field(100; "Total Amount"; Decimal)
 
 ### LC0003: Use Object Names
 ```al
-// ✗ Wrong
+// Wrong
 SourceTable = 18;
 
-// ✓ Correct
+// Correct
 SourceTable = Customer;
 ```
 
 ### LC0040: RunTrigger Parameter
 ```al
-// ✗ Wrong
+// Wrong
 Rec.Insert();
 
-// ✓ Correct
+// Correct
 Rec.Insert(true);
 ```
 
 ### LC0081: Use IsEmpty
 ```al
-// ✗ Wrong
+// Wrong
 if Customer.Count() > 0 then
 
-// ✓ Correct
+// Correct
 if not Customer.IsEmpty() then
 ```
 

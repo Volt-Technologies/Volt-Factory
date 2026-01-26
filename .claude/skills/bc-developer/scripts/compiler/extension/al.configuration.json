@@ -1,0 +1,60 @@
+{
+    "comments": {
+        "lineComment": "//",
+        "blockComment": [ "/*", "*/" ]
+    },
+    "brackets": [
+        ["{", "}"],
+        ["[", "]"],
+        ["(", ")"],
+        ["then begin", "end"],
+        ["case", "end"],
+        ["begin", "end"]
+    ],
+    "autoClosingPairs": [
+        { "open": "THEN BEGIN", "close": "END", "notIn": ["string", "comment"] },
+        { "open": "THEN BEGIN", "close": "END;", "notIn": ["string", "comment"] },
+        { "open": "THEN begin", "close": "end", "notIn": ["string", "comment"] },
+        { "open": "THEN begin", "close": "end;", "notIn": ["string", "comment"] },
+        { "open": "THEN Begin", "close": "End", "notIn": ["string", "comment"] },
+        { "open": "THEN Begin", "close": "End;", "notIn": ["string", "comment"] },
+        { "open": "then BEGIN", "close": "END", "notIn": ["string", "comment"] },
+        { "open": "then BEGIN", "close": "END;", "notIn": ["string", "comment"] },
+        { "open": "then begin", "close": "end", "notIn": ["string", "comment"] },
+        { "open": "then begin", "close": "end;", "notIn": ["string", "comment"] },
+        { "open": "then Begin", "close": "End", "notIn": ["string", "comment"] },
+        { "open": "then Begin", "close": "End;", "notIn": ["string", "comment"] },
+        { "open": "Then BEGIN", "close": "END", "notIn": ["string", "comment"] },
+        { "open": "Then BEGIN", "close": "END;", "notIn": ["string", "comment"] },
+        { "open": "Then begin", "close": "end", "notIn": ["string", "comment"] },
+        { "open": "Then begin", "close": "end;", "notIn": ["string", "comment"] },
+        { "open": "Then Begin", "close": "End", "notIn": ["string", "comment"] },
+        { "open": "Then Begin", "close": "End;", "notIn": ["string", "comment"] },
+        { "open": "CASE", "close": "END;", "notIn": ["string", "comment"] },
+        { "open": "case", "close": "end;", "notIn": ["string", "comment"] },
+        { "open": "Case", "close": "End;", "notIn": ["string", "comment"] },
+        { "open": "BEGIN", "close": "END;", "notIn": ["string", "comment"] },
+        { "open": "begin", "close": "end;", "notIn": ["string", "comment"] },
+        { "open": "Begin", "close": "End;", "notIn": ["string", "comment"] },
+        { "open": "{", "close": "}", "notIn": ["string", "comment"] },
+        { "open": "[", "close": "]", "notIn": ["string", "comment"] },
+        { "open": "(", "close": ")", "notIn": ["string", "comment"] },
+        { "open": "'", "close": "'", "notIn": ["string", "comment"] },
+        { "open": "\"", "close": "\"", "notIn": ["string"] }
+    ],
+    "surroundingPairs": [
+        ["'", "'"],
+        ["\"", "\""],
+        ["(", ")"],
+        ["{", "}"],
+        ["[", "]"]
+    ],
+    "folding": {
+        "markers": {
+          "start": "^\\s*#?region\\b",
+          "end": "^\\s*#?endregion\\b"
+        }
+    },
+    "wordPattern": "(\"(?:(?:\\\"\\\")|[^\\\"])*\")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)",
+    "semanticHighlighting": true
+}
