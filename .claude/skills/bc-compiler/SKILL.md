@@ -2,7 +2,7 @@
 name: bc-compiler
 description: Compile and publish Business Central AL applications. Use when AL code development is complete and needs compilation, or when compiled apps need publishing to BC sandbox or production environments. Handles single or multiple apps, dependency ordering, and provides detailed diagnostic output.
 license: MIT
-compatibility: Requires Node.js 18+, @volt-technologies/bc-tools package. Windows required for local Docker publishing.
+compatibility: Requires Node.js 18+, volt-technologies/volt-bc-tools package. Windows required for local Docker publishing.
 metadata:
   author: volt-technologies
   version: "1.0.0"
@@ -11,11 +11,11 @@ allowed-tools: Bash(node:*) Bash(npx:*) Bash(volt-bc:*) Read
 
 # BC Compiler Skill
 
-Compile and publish Business Central AL applications using `@volt-technologies/bc-tools`.
+Compile and publish Business Central AL applications using `volt-technologies/volt-bc-tools`.
 
 ## Prerequisites
 
-1. **Package installed**: `npm install @volt-technologies/bc-tools`
+1. **Package installed**: `npm install volt-technologies/volt-bc-tools`
 2. **Configuration**: `.env` file with BC environment settings
 3. **Dependencies**: `.alpackages` folder with symbol packages
 
@@ -117,7 +117,7 @@ See [references/TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) for common er
 ## Programmatic Usage
 
 ```typescript
-import { ALCompiler, AppPublisher, EnvLoader } from '@volt-technologies/bc-tools';
+import { ALCompiler, AppPublisher, EnvLoader } from 'volt-technologies/volt-bc-tools';
 
 const config = new EnvLoader().load();
 

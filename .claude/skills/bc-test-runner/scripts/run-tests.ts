@@ -2,7 +2,7 @@
 /**
  * BC Test Runner Script
  *
- * Executes Business Central tests using @volt-technologies/bc-tools.
+ * Executes Business Central tests using volt-technologies/volt-bc-tools.
  *
  * Usage:
  *   npx ts-node scripts/run-tests.ts [options]
@@ -16,8 +16,8 @@
  *   --json                Output results as JSON
  */
 
-import { TestRunner, EnvLoader } from '@volt-technologies/bc-tools';
-import type { TestExecutionResult } from '@volt-technologies/bc-tools';
+import { TestRunner, EnvLoader } from 'volt-technologies/volt-bc-tools';
+import type { TestExecutionResult } from 'volt-technologies/volt-bc-tools';
 
 interface RunOptions {
   codeunit?: number;

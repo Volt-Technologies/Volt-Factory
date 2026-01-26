@@ -2,7 +2,7 @@
 name: bc-container
 description: Create and manage isolated Business Central Docker containers for parallel development or testing. Use when starting work on a new feature that needs an isolated BC environment. Handles container creation, startup, and environment configuration. Windows-only (BC Docker requires Windows).
 license: MIT
-compatibility: Windows only. Requires Docker Desktop, BCContainerHelper PowerShell module, and @volt-technologies/bc-tools package.
+compatibility: Windows only. Requires Docker Desktop, BCContainerHelper PowerShell module, and volt-technologies/volt-bc-tools package.
 metadata:
   author: volt-technologies
   version: "1.0.0"
@@ -11,14 +11,14 @@ allowed-tools: Bash(node:*) Bash(npx:*) Bash(volt-bc:*) Bash(docker:*) Bash(pwsh
 
 # BC Container Skill
 
-Create and manage Business Central Docker containers using `@volt-technologies/bc-tools`.
+Create and manage Business Central Docker containers using `volt-technologies/volt-bc-tools`.
 
 ## Prerequisites
 
 1. **Windows OS**: BC Docker containers only run on Windows
 2. **Docker Desktop**: Must be installed and running
 3. **BCContainerHelper**: PowerShell module for BC container management
-4. **Package installed**: `npm install @volt-technologies/bc-tools`
+4. **Package installed**: `npm install volt-technologies/volt-bc-tools`
 
 ## Quick Commands
 
@@ -155,7 +155,7 @@ Next Steps:
 ## Programmatic Usage
 
 ```typescript
-import { ContainerManager } from '@volt-technologies/bc-tools';
+import { ContainerManager } from 'volt-technologies/volt-bc-tools';
 
 const manager = new ContainerManager();
 

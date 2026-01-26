@@ -2,7 +2,7 @@
 /**
  * BC Publisher Script
  *
- * Publishes Business Central AL applications using @volt-technologies/bc-tools.
+ * Publishes Business Central AL applications using volt-technologies/volt-bc-tools.
  *
  * Usage:
  *   npx ts-node scripts/publish.ts <app-file> [options]
@@ -17,8 +17,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { AppPublisher, EnvLoader } from '@volt-technologies/bc-tools';
-import type { PublishResult } from '@volt-technologies/bc-tools';
+import { AppPublisher, EnvLoader } from 'volt-technologies/volt-bc-tools';
+import type { PublishResult } from 'volt-technologies/volt-bc-tools';
 
 interface PublishOptions {
   appFile: string;

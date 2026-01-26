@@ -2,7 +2,7 @@
 name: bc-test-runner
 description: Execute automated tests for Business Central AL extensions. Use after apps are compiled and published to validate functionality. Supports OData API (online/SaaS), BCContainerHelper (local/Docker), and Chrome DevTools (fallback) test execution methods. Provides detailed test results with pass/fail counts and error messages.
 license: MIT
-compatibility: Requires @volt-technologies/bc-tools. OData method needs BC Test app with TestRunner web service. Local method needs BCContainerHelper PowerShell module.
+compatibility: Requires volt-technologies/volt-bc-tools. OData method needs BC Test app with TestRunner web service. Local method needs BCContainerHelper PowerShell module.
 metadata:
   author: volt-technologies
   version: "1.0.0"
@@ -11,7 +11,7 @@ allowed-tools: Bash(node:*) Bash(npx:*) Bash(volt-bc:*) Bash(pwsh:*) Bash(powers
 
 # BC Test Runner Skill
 
-Execute automated tests for Business Central AL extensions using `@volt-technologies/bc-tools`.
+Execute automated tests for Business Central AL extensions using `volt-technologies/volt-bc-tools`.
 
 ## Prerequisites
 
@@ -194,7 +194,7 @@ See [references/TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) for more.
 ## Programmatic Usage
 
 ```typescript
-import { TestRunner, EnvLoader } from '@volt-technologies/bc-tools';
+import { TestRunner, EnvLoader } from 'volt-technologies/volt-bc-tools';
 
 const config = new EnvLoader().load();
 

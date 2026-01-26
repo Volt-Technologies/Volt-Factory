@@ -2,7 +2,7 @@
 /**
  * BC Compiler Script
  *
- * Compiles Business Central AL applications using @volt-technologies/bc-tools.
+ * Compiles Business Central AL applications using volt-technologies/volt-bc-tools.
  *
  * Usage:
  *   npx ts-node scripts/compile.ts [options]
@@ -14,8 +14,8 @@
  *   --json               Output results as JSON
  */
 
-import { ALCompiler, EnvLoader } from '@volt-technologies/bc-tools';
-import type { CompilationResult, MultiAppCompilationResult } from '@volt-technologies/bc-tools';
+import { ALCompiler, EnvLoader } from 'volt-technologies/volt-bc-tools';
+import type { CompilationResult, MultiAppCompilationResult } from 'volt-technologies/volt-bc-tools';
 
 interface CompileOptions {
   appPath?: string;

@@ -2,7 +2,7 @@
 /**
  * BC Container Management Script
  *
- * Manages Business Central Docker containers using @volt-technologies/bc-tools.
+ * Manages Business Central Docker containers using volt-technologies/volt-bc-tools.
  *
  * Usage:
  *   npx ts-node scripts/manage-container.ts <action> [options]
@@ -22,7 +22,7 @@
  *   --json              Output as JSON
  */
 
-import { ContainerManager, EnvLoader } from '@volt-technologies/bc-tools';
+import { ContainerManager, EnvLoader } from 'volt-technologies/volt-bc-tools';
 
 interface ContainerOptions {
   action: string;

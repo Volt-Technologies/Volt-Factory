@@ -2,7 +2,7 @@
 name: bc-developer
 description: Develop Business Central AL code including tables, pages, codeunits, reports, and extensions. Use when implementing BC features, modifications, or enhancements. Handles object ID allocation, AL guidelines compliance, unit test creation, and coordinates with compilation/testing skills for verification.
 license: MIT
-compatibility: Requires @volt-technologies/bc-tools package. Uses mcp__objid tools for object ID allocation.
+compatibility: Requires volt-technologies/volt-bc-tools package. Uses mcp__objid tools for object ID allocation.
 metadata:
   author: volt-technologies
   version: "1.0.0"
@@ -11,7 +11,7 @@ allowed-tools: Bash(node:*) Bash(npx:*) Read Edit Write Glob Grep mcp__objid__al
 
 # BC Developer Skill
 
-Develop Business Central AL code using `@volt-technologies/bc-tools` and AL best practices.
+Develop Business Central AL code using `volt-technologies/volt-bc-tools` and AL best practices.
 
 ## Prerequisites
 
