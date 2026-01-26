@@ -4,6 +4,5 @@
   "appFolders": ["BC"],
   "testFolders": [],
   "bcptTestFolders": [],
-  "doNotRunTests": true,
-  "excludeProjects": ["*Test*"]
+  "doNotRunTests": true
 }
