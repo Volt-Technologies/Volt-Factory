@@ -8,8 +8,8 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "optionalDependencies": {
-    "@volt-technologies/volt-bc-tools": "npm:null@^1.0.0"
+  "dependencies": {
+    "@volt-technologies/volt-bc-tools": "file:../../Volt Agent OS/volt-bc-tools"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",

@@ -16,6 +16,10 @@
 
 import { ALCompiler, EnvLoader } from '@volt-technologies/volt-bc-tools';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface CompileOptions {
   all: boolean;
@@ -61,9 +65,13 @@ async function main() {
   // Resolve compiler path relative to this script
   const compilerPath = path.resolve(__dirname, 'compiler/extension/bin/win32/alc.exe');
 
+  // Determine the app path for package cache
+  const appPath = options.appPath ?? config.appsRoot ?? 'BC';
+  const packageCachePath = path.join(appPath, '.alpackages');
+
   const compiler = new ALCompiler({
     compilerPath,
-    packageCachePath: '.alpackages',
+    packageCachePath,
     outputDir: options.output,
     enableCodeCop: true,
     enableUICop: true,

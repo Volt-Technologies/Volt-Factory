@@ -212,6 +212,47 @@ Error: Environment 'Sandbox' not found
 2. Check environment exists in BC Admin Center
 3. Ensure correct tenant
 
+## Compiler Script Errors
+
+### AL1006 - Metadata File Not Found
+```
+error AL1006: Metadata file 'CodeCop' could not be found
+```
+**Cause**: Analyzer DLL paths not properly resolved.
+
+**Solution**:
+1. Ensure `@volt-technologies/volt-bc-tools` v1.0.3+ is installed
+2. The library automatically resolves analyzer paths from the compiler's Analyzers folder
+3. Verify analyzer DLLs exist in `scripts/compiler/extension/bin/Analyzers/`
+
+### Compilation Shows 0 Errors But Fails
+```
+Compilation failed with 0 errors
+```
+**Cause**: Windows line ending issue in diagnostic parsing (fixed in v1.0.3).
+
+**Solution**:
+1. Update to `@volt-technologies/volt-bc-tools` v1.0.3+
+2. Library now handles both `\n` and `\r\n` line endings
+
+### Dynamic Require Not Supported
+```
+Error: Dynamic require of "child_process" is not supported
+```
+**Cause**: ESM module issue with older library version.
+
+**Solution**: Update to `@volt-technologies/volt-bc-tools` v1.0.3+
+
+### Paths With Spaces Fail
+```
+Command failed with exit code 1 (no error message)
+```
+**Cause**: Windows path escaping issue with spaces in paths.
+
+**Solution**:
+1. Update to `@volt-technologies/volt-bc-tools` v1.0.3+
+2. Library now properly quotes paths on Windows
+
 ## Best Practices
 
 1. **Always allocate IDs first**: Use mcp__objid__allocate_id
@@ -219,3 +260,4 @@ Error: Environment 'Sandbox' not found
 3. **Update permissionset**: Before compiling new objects
 4. **Check feature ranges**: Use BC/FeatureRanges.md
 5. **Clean up containers**: Save disk space with `docker system prune`
+6. **Keep library updated**: Use v1.0.3+ for Windows fixes
