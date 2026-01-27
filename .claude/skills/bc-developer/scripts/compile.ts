@@ -10,7 +10,7 @@
  * Options:
  *   --all              Compile all apps in BC_APPS_ROOT
  *   --app-path <path>  Compile specific app
- *   --output <dir>     Output directory (default: output)
+ *   --output <dir>     Output directory (default: same as app folder)
  *   --json             Output as JSON
  */
 
@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 interface CompileOptions {
   all: boolean;
   appPath?: string;
-  output: string;
+  output?: string;
   json: boolean;
 }
 
@@ -32,7 +32,6 @@ function parseArgs(): CompileOptions {
   const args = process.argv.slice(2);
   const options: CompileOptions = {
     all: false,
-    output: 'output',
     json: false,
   };
 
@@ -69,10 +68,13 @@ async function main() {
   const appPath = options.appPath ?? config.appsRoot ?? 'BC';
   const packageCachePath = path.join(appPath, '.alpackages');
 
+  // Output compiled .app into the same app folder
+  const outputDir = path.resolve(options.output || appPath);
+
   const compiler = new ALCompiler({
     compilerPath,
     packageCachePath,
-    outputDir: options.output,
+    outputDir,
     enableCodeCop: true,
     enableUICop: true,
   });
