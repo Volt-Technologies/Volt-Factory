@@ -66,6 +66,9 @@ async function main() {
 
   const environment = options.environment ?? config.deploymentType ?? 'online';
 
+  console.log('[DEBUG] process.env.BC_ENVIRONMENT_NAME:', process.env.BC_ENVIRONMENT_NAME);
+  console.log('[DEBUG] config.environmentName:', config.environmentName);
+
   const publisher = new AppPublisher({
     environment,
     containerName: config.containerName,

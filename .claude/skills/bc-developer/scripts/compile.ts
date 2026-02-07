@@ -16,6 +16,7 @@
 
 import { ALCompiler, EnvLoader } from '@volt-technologies/volt-bc-tools';
 import * as path from 'path';
+import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,7 +82,32 @@ async function main() {
 
   try {
     if (options.all) {
-      const appsRoot = config.appsRoot ?? 'BC';
+      const appsRoot = path.resolve(config.appsRoot ?? 'BC');
+
+      // Check if appsRoot itself is an app (has app.json directly)
+      const rootAppJson = path.join(appsRoot, 'app.json');
+      if (fs.existsSync(rootAppJson)) {
+        // appsRoot is the app itself, compile it directly
+        const result = await compiler.compile({ appPath: appsRoot });
+
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          if (result.success) {
+            console.log(`\n✓ Compiled: ${result.appFile}\n`);
+          } else {
+            console.log(`\n✗ Compilation failed with ${result.errorCount} errors\n`);
+            for (const d of result.diagnostics?.filter((x) => x.severity === 'error') ?? []) {
+              const loc = d.file ? `${d.file}:${d.line}` : '';
+              console.log(`  [${d.code}] ${d.message} ${loc}`);
+            }
+          }
+        }
+
+        process.exit(result.success ? 0 : 1);
+      }
+
+      // Otherwise, look for subdirectories containing apps
       const result = await compiler.compileAll(appsRoot);
 
       if (options.json) {

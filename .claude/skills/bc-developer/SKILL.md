@@ -3,12 +3,38 @@ name: bc-developer
 description: Complete Business Central AL development toolkit. Includes AL code development, compilation using embedded alc.exe, publishing to BC environments (online/local Docker), automated testing, and container management. Uses @volt-technologies/volt-bc-tools package.
 license: MIT
 compatibility: Windows required for local Docker. Node.js 18+ and @volt-technologies/volt-bc-tools package.
-allowed-tools: Bash(npx:*) Bash(node:*) Read Edit Write Glob Grep mcp__objid__allocate_id mcp__objid__config mcp__objid__analyze_workspace mcp__ide__getDiagnostics
+allowed-tools: Bash(npx:*) Bash(node:*) Bash(npm:*) Bash(cd:*) Read Edit Write Glob Grep mcp__objid__allocate_id mcp__objid__config mcp__objid__analyze_workspace mcp__ide__getDiagnostics
 ---
 
 # BC Developer Skill
 
 Complete Business Central AL development toolkit using `@volt-technologies/volt-bc-tools`.
+
+## Pre-requisite: Version Check
+
+**MANDATORY**: Before running ANY script, always check if `@volt-technologies/volt-bc-tools` is up to date:
+
+```bash
+cd .claude && npm outdated @volt-technologies/volt-bc-tools
+```
+
+If a newer version is available, update it:
+
+```bash
+cd .claude && npm update @volt-technologies/volt-bc-tools
+```
+
+If the package is linked locally (file: protocol), pull the latest from the source repository:
+
+```bash
+cd ".claude/node_modules/@volt-technologies/volt-bc-tools" && git pull
+```
+
+Then reinstall dependencies:
+
+```bash
+cd .claude && npm install
+```
 
 ## Capabilities
 
@@ -88,6 +114,16 @@ BC_COMPANY_NAME=CRONUS USA, Inc.
 ```
 
 ## Development Workflow
+
+### 0. Check volt-bc-tools Version (MANDATORY)
+
+Before starting any development task, verify the tools are up to date:
+
+```bash
+cd .claude && npm outdated @volt-technologies/volt-bc-tools
+```
+
+If outdated, update before proceeding (see Pre-requisite section above).
 
 ### 1. Write AL Code
 
@@ -224,3 +260,21 @@ The package provides:
 - `TestRunner` - Run tests
 - `ContainerManager` - Manage Docker containers
 - `EnvLoader` - Load .env configuration
+
+### Version Management
+
+**Always check for updates before running any script:**
+
+```bash
+# Check if update is available
+cd .claude && npm outdated @volt-technologies/volt-bc-tools
+
+# Update to latest version (npm registry)
+cd .claude && npm update @volt-technologies/volt-bc-tools
+
+# If linked locally, pull latest and reinstall
+cd ".claude/node_modules/@volt-technologies/volt-bc-tools" && git pull
+cd .claude && npm install
+```
+
+The skill will not work correctly with outdated versions. New features and bug fixes are regularly added to volt-bc-tools.
