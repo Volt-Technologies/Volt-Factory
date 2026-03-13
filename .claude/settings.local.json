@@ -1,6 +1,6 @@
 {
   "enabledPlugins": {
-    "bc-tools@volt-marketplace": true,
-    "bc-tech-agents@volt-marketplace": true
+    "bc-tools-plugin@volt-marketplace": true,
+    "bc-development-plugin@volt-marketplace": true
   }
 }
