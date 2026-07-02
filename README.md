@@ -53,7 +53,31 @@ Inside Claude Code, run:
 
 For full details on the marketplace, see the [claude-code-marketplace README](https://github.com/Volt-Technologies/claude-code-marketplace).
 
-### 3. Configure the `.env` File
+### 3. Install the Code Spell Checker Extension
+
+This project uses [cSpell settings](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries) in `.vscode/settings.json` to flag misspellings in AL code and comments.
+
+#### a) Install from the Marketplace
+
+Open the [Code Spell Checker (cSpell Bundled Dictionaries)](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries) page and click **Install**, or install it from within VS Code:
+
+1. Open the Extensions view (`Ctrl+Shift+X`).
+2. Search for `streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries`.
+3. Click **Install**.
+
+Or install it from the command line:
+
+```bash
+code --install-extension streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries
+```
+
+#### b) Reload VS Code
+
+Reload the window (`Ctrl+Shift+P` → `Developer: Reload Window`) so the extension picks up the `cSpell.words` list already configured for this project.
+
+Opening the `BC` or `BC Test` folder will also prompt you to install this extension automatically, since it's listed under recommended extensions.
+
+### 4. Configure the `.env` File
 
 Copy the `.env` file template and fill in your tenant credentials. The key fields to configure are:
 

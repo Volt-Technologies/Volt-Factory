@@ -48,5 +48,24 @@
     "al.snapshotDebuggingPath": "./.snapshot",
     "NAB.DTS ProjectId": "0?rpid=42520",
     "NAB.UseDTS": true,
-    "al-test-runner.sendDebugTelemetry": false
+    "al-test-runner.sendDebugTelemetry": false,
+    "cSpell.enabledFileTypes": {
+        "al": true
+    },
+    "cSpell.words": [
+        "actionref",
+        "addafter",
+        "addbefore",
+        "addfirst",
+        "addlast",
+        "codeunit",
+        "companyname",
+        "Subpage",
+        "SubPage",
+        "systempart",
+        "tabledata",
+        "tableextension",
+        "usercontrol",
+        "userid"
+    ]
 }
