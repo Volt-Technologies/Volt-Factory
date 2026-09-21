@@ -1,10 +1,13 @@
 /// <summary>
-/// Codeunit VOL Test Runner WS (ID 78000).
+/// Codeunit VOL Test Runner WS (ID 90000).
 /// Web service codeunit for running automated tests via API calls.
 /// Exposes procedures for bc-tester agent to execute tests and retrieve results.
 /// </summary>
 codeunit 90000 "VOL Test Runner WS"
 {
+    Permissions = tabledata "AL Test Suite" = RIMD,
+                  tabledata "Test Method Line" = RIMD;
+
     /// <summary>
     /// Runs all tests for a specific extension and returns results as JSON.
     /// This is the main entry point for the bc-tester agent.
@@ -71,29 +74,61 @@ codeunit 90000 "VOL Test Runner WS"
     end;
 
     /// <summary>
-    /// Runs a specific test codeunit by ID.
+    /// Runs a single test codeunit by ID on the isolating runner: everything the
+    /// tests write is rolled back. This is the standard door.
     /// </summary>
     /// <param name="CodeunitId">The ID of the test codeunit to run.</param>
-    /// <returns>JSON string with test results for the specific codeunit.</returns>
     procedure RunTestCodeunit(CodeunitId: Integer): Text
+    begin
+        exit(RunCodeunitInSuite('SINGLE', CodeunitId, '', Codeunit::"Test Runner - Isol. Codeunit"));
+    end;
+
+    /// <summary>
+    /// Runs a test codeunit and KEEPS the data it writes: the suite runs on
+    /// "Test Runner - Isol. Disabled", so every record the tests create is
+    /// committed and can be opened in BC afterwards. Used by Cortex "Keep in
+    /// sandbox" scenario runs and by `volt-bc dev test --non-isolated`.
+    /// Sandbox only: Cortex refuses a keep-data run against Production before
+    /// calling. Standard runs should keep using RunTestCodeunit.
+    /// </summary>
+    /// <param name="CodeunitId">The ID of the test codeunit to run.</param>
+    procedure RunTestCodeunitNonIsolated(CodeunitId: Integer): Text
+    begin
+        exit(RunCodeunitInSuite('KEEPDATA', CodeunitId, '', Codeunit::"Test Runner - Isol. Disabled"));
+    end;
+
+    /// <summary>
+    /// Runs a single named [Test] method of a codeunit and keeps the data it
+    /// writes. Use it when sibling methods in the same codeunit would clean up
+    /// the data you want to look at.
+    /// </summary>
+    /// <param name="CodeunitId">The ID of the test codeunit.</param>
+    /// <param name="MethodName">The exact [Test] procedure name to run.</param>
+    procedure RunTestMethodNonIsolated(CodeunitId: Integer; MethodName: Text): Text
+    begin
+        exit(RunCodeunitInSuite('KEEPDATA', CodeunitId, MethodName, Codeunit::"Test Runner - Isol. Disabled"));
+    end;
+
+    /// <summary>
+    /// One implementation behind the three run doors: (re)create the suite,
+    /// switch its test runner, load the codeunit's methods, optionally keep a
+    /// single method, run, and report. A suite created by CreateTestSuite sits
+    /// on the default runner, which rolls every test back, so the runner switch
+    /// is what makes a keep-data run actually keep its data.
+    /// </summary>
+    local procedure RunCodeunitInSuite(SuiteName: Code[10]; CodeunitId: Integer; MethodFilter: Text; TestRunnerId: Integer): Text
     var
         ALTestSuite: Record "AL Test Suite";
         TestMethodLine: Record "Test Method Line";
         TestSuiteMgt: Codeunit "Test Suite Mgt.";
         CodeunitMetadata: Record "CodeUnit Metadata";
-        SuiteName: Code[10];
-        ResultJson: Text;
     begin
-        SuiteName := 'SINGLE';
-
-        // Verify codeunit exists and is a test codeunit
         if not CodeunitMetadata.Get(CodeunitId) then
-            exit('{"error": "Codeunit not found: ' + Format(CodeunitId) + '"}');
+            exit(StrSubstNo('{"error": "Codeunit not found: %1"}', Format(CodeunitId)));
 
         if CodeunitMetadata.SubType <> CodeunitMetadata.SubType::Test then
-            exit('{"error": "Codeunit is not a test codeunit: ' + Format(CodeunitId) + '"}');
+            exit(StrSubstNo('{"error": "Codeunit is not a test codeunit: %1"}', Format(CodeunitId)));
 
-        // Create or clear the test suite
         if ALTestSuite.Get(SuiteName) then begin
             TestMethodLine.SetRange("Test Suite", SuiteName);
             TestMethodLine.DeleteAll(true);
@@ -102,17 +137,26 @@ codeunit 90000 "VOL Test Runner WS"
             ALTestSuite.Get(SuiteName);
         end;
 
-        // Add the specific test codeunit
+        if ALTestSuite."Test Runner Id" <> TestRunnerId then
+            TestSuiteMgt.ChangeTestRunner(ALTestSuite, TestRunnerId);
+
         CodeunitMetadata.SetRange(ID, CodeunitId);
         TestSuiteMgt.GetTestMethods(ALTestSuite, CodeunitMetadata);
 
-        // Run the tests
+        if MethodFilter <> '' then begin
+            TestMethodLine.Reset();
+            TestMethodLine.SetRange("Test Suite", SuiteName);
+            TestMethodLine.SetRange("Line Type", TestMethodLine."Line Type"::"Function");
+            TestMethodLine.SetFilter("Function", '<>%1', MethodFilter);
+            TestMethodLine.ModifyAll(Run, false);
+        end;
+
+        TestMethodLine.Reset();
         TestMethodLine.SetRange("Test Suite", SuiteName);
         if TestMethodLine.FindFirst() then
             TestSuiteMgt.RunAllTests(TestMethodLine);
 
-        ResultJson := BuildTestResultsJson(SuiteName);
-        exit(ResultJson);
+        exit(BuildTestResultsJson(SuiteName));
     end;
 
     /// <summary>
@@ -171,6 +215,90 @@ codeunit 90000 "VOL Test Runner WS"
             until CodeunitMetadata.Next() = 0;
 
         JsonArray.WriteTo(ResultText);
+        exit(ResultText);
+    end;
+
+    /// <summary>
+    /// Lists the [Test] methods of every test codeunit this environment publishes,
+    /// grouped by codeunit, WITHOUT running anything. Cortex reads this to fill the
+    /// scenario binding pickers with what the environment can actually execute
+    /// (decided 2026-09-21: discovery asks BC, not the repo). AppIdFilter narrows
+    /// the answer to one app, normally the project's BC Test app id; empty lists
+    /// every test codeunit installed.
+    /// The methods are found the way a run finds them: GetTestMethods loads the
+    /// codeunits' [Test] procedures into a suite as Test Method Lines. The
+    /// DISCOVER suite is emptied before and after, so nothing runs and nothing is
+    /// left behind.
+    /// </summary>
+    /// <param name="AppIdFilter">An app id (GUID, braces optional) or empty for all.</param>
+    /// <returns>JSON { appId, codeunits: [ { id, name, appId, methods: [ ... ] } ] }.</returns>
+    procedure ListTestMethods(AppIdFilter: Text): Text
+    var
+        ALTestSuite: Record "AL Test Suite";
+        TestMethodLine: Record "Test Method Line";
+        CodeunitMetadata: Record "CodeUnit Metadata";
+        TestSuiteMgt: Codeunit "Test Suite Mgt.";
+        Result: JsonObject;
+        Codeunits: JsonArray;
+        CodeunitJson: JsonObject;
+        Methods: JsonArray;
+        ResultText: Text;
+        AppId: Guid;
+        SuiteName: Code[10];
+    begin
+        SuiteName := 'DISCOVER';
+        if AppIdFilter <> '' then
+            if not Evaluate(AppId, AppIdFilter) then
+                exit(StrSubstNo('{"error": "Invalid app id: %1"}', AppIdFilter));
+
+        CodeunitMetadata.SetRange(SubType, CodeunitMetadata.SubType::Test);
+        if AppIdFilter <> '' then
+            CodeunitMetadata.SetRange("App ID", AppId);
+
+        if not CodeunitMetadata.IsEmpty() then begin
+            if ALTestSuite.Get(SuiteName) then begin
+                TestMethodLine.SetRange("Test Suite", SuiteName);
+                TestMethodLine.DeleteAll(true);
+            end else begin
+                TestSuiteMgt.CreateTestSuite(SuiteName);
+                ALTestSuite.Get(SuiteName);
+            end;
+
+            // Loads one Codeunit line plus one Function line per [Test] procedure
+            // for every codeunit in the filter. Discovery only: RunAllTests is
+            // never called here.
+            TestSuiteMgt.GetTestMethods(ALTestSuite, CodeunitMetadata);
+
+            if CodeunitMetadata.FindSet() then
+                repeat
+                    Clear(CodeunitJson);
+                    Clear(Methods);
+                    CodeunitJson.Add('id', CodeunitMetadata.ID);
+                    CodeunitJson.Add('name', CodeunitMetadata.Name);
+                    CodeunitJson.Add('appId', Format(CodeunitMetadata."App ID"));
+
+                    TestMethodLine.Reset();
+                    TestMethodLine.SetRange("Test Suite", SuiteName);
+                    TestMethodLine.SetRange("Test Codeunit", CodeunitMetadata.ID);
+                    TestMethodLine.SetRange("Line Type", TestMethodLine."Line Type"::"Function");
+                    TestMethodLine.SetFilter("Function", '<>%1', 'OnRun');
+                    if TestMethodLine.FindSet() then
+                        repeat
+                            Methods.Add(TestMethodLine."Function");
+                        until TestMethodLine.Next() = 0;
+
+                    CodeunitJson.Add('methods', Methods);
+                    Codeunits.Add(CodeunitJson);
+                until CodeunitMetadata.Next() = 0;
+
+            TestMethodLine.Reset();
+            TestMethodLine.SetRange("Test Suite", SuiteName);
+            TestMethodLine.DeleteAll(true);
+        end;
+
+        Result.Add('appId', AppIdFilter);
+        Result.Add('codeunits', Codeunits);
+        Result.WriteTo(ResultText);
         exit(ResultText);
     end;
 
