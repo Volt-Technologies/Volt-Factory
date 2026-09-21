@@ -36,9 +36,16 @@ codeunit 59990 "VOL Cortex Configurations"
             'Sales',
             'ApplySalesReceivablesSetup',
             'VerifySalesReceivablesSetup',
-            true);
+            true,
+            ExpectedSalesReceivablesSetup());
         Catalogue.WriteTo(Result);
         exit(Result);
+    end;
+
+    /// <summary>The values Apply establishes — what Verify must report afterwards.</summary>
+    local procedure ExpectedSalesReceivablesSetup() Expect: JsonObject
+    begin
+        Expect.Add('stockoutWarning', true);
     end;
 
     /// <summary>Sets Stockout Warning on Sales and Receivables Setup. Idempotent.</summary>
@@ -80,8 +87,14 @@ codeunit 59990 "VOL Cortex Configurations"
         SalesSetup.Modify(true);
     end;
 
-    /// <summary>Appends one catalogue entry in the shape the Cortex API parses.</summary>
-    local procedure AddEntry(var Catalogue: JsonArray; Name: Text; Description: Text; AreaName: Text; ApplyProc: Text; VerifyProc: Text; Idempotent: Boolean)
+    /// <summary>
+    /// Appends one catalogue entry in the shape the Cortex API parses. Expect is
+    /// what Apply establishes, keyed exactly as Verify reports it: Cortex copies it
+    /// into the configuration when the function is bound, so Apply & verify checks
+    /// the card against what the function meant to set. Pass an empty object only
+    /// when the target is "whatever the card says now".
+    /// </summary>
+    local procedure AddEntry(var Catalogue: JsonArray; Name: Text; Description: Text; AreaName: Text; ApplyProc: Text; VerifyProc: Text; Idempotent: Boolean; Expect: JsonObject)
     var
         Entry: JsonObject;
     begin
@@ -94,6 +107,8 @@ codeunit 59990 "VOL Cortex Configurations"
         else
             Entry.Add('verify', JsonNull());
         Entry.Add('idempotent', Idempotent);
+        if Expect.Keys.Count() > 0 then
+            Entry.Add('expect', Expect);
         Catalogue.Add(Entry);
     end;
 
