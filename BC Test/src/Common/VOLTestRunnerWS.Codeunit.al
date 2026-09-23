@@ -329,7 +329,7 @@ codeunit 90000 "VOL Test Runner WS"
     /// <returns>JSON string with success status, PDF Base64 content, and metadata.</returns>
     procedure RunReportAsPdf(ReportId: Integer; TableNo: Integer; RecordSystemId: Text): Text
     var
-        ReportTestHelper: Codeunit "VOL Report Test Helper";
+        //  ReportTestHelper: Codeunit "VOL Report Test Helper";
         JsonObj: JsonObject;
         PdfBase64: Text;
         Success: Boolean;
@@ -350,7 +350,7 @@ codeunit 90000 "VOL Test Runner WS"
         end;
 
         // Try to generate PDF
-        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, RecordGuid, PdfBase64);
+        // Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, RecordGuid, PdfBase64);
 
         if not Success then
             ErrorText := GetLastErrorText();
@@ -367,7 +367,7 @@ codeunit 90000 "VOL Test Runner WS"
         JsonObj.Add('durationMs', EndTime - StartTime);
 
         if Success then begin
-            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            //   JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
             JsonObj.Add('pdfBase64', PdfBase64);
             JsonObj.Add('hasPdfContent', PdfBase64 <> '');
         end else
@@ -412,7 +412,6 @@ codeunit 90000 "VOL Test Runner WS"
     procedure TestReportWithFirstRecord(ReportId: Integer; TableNo: Integer): Text
     var
         RecRef: RecordRef;
-        ReportTestHelper: Codeunit "VOL Report Test Helper";
         JsonObj: JsonObject;
         PdfBase64: Text;
         Success: Boolean;
@@ -433,7 +432,7 @@ codeunit 90000 "VOL Test Runner WS"
         SystemId := RecRef.Field(RecRef.SystemIdNo()).Value();
 
         // Try to generate PDF
-        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, SystemId, PdfBase64);
+        //        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, TableNo, SystemId, PdfBase64);
 
         if not Success then
             ErrorText := GetLastErrorText();
@@ -446,7 +445,7 @@ codeunit 90000 "VOL Test Runner WS"
         JsonObj.Add('success', Success);
 
         if Success then begin
-            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            // JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
             JsonObj.Add('pdfBase64', PdfBase64);
             JsonObj.Add('hasPdfContent', PdfBase64 <> '');
         end else
@@ -466,7 +465,6 @@ codeunit 90000 "VOL Test Runner WS"
     procedure TestReportWithFirstPostedSalesInvoice(ReportId: Integer): Text
     var
         SalesInvoiceHeader: Record "Sales Invoice Header";
-        ReportTestHelper: Codeunit "VOL Report Test Helper";
         JsonObj: JsonObject;
         PdfBase64: Text;
         Success: Boolean;
@@ -493,7 +491,7 @@ codeunit 90000 "VOL Test Runner WS"
 
         // Try to generate PDF with error handling
         ClearLastError();
-        Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, Database::"Sales Invoice Header", SystemId, PdfBase64);
+        //   Success := ReportTestHelper.TryRunReportAsPdfBase64(ReportId, Database::"Sales Invoice Header", SystemId, PdfBase64);
 
         if not Success then begin
             ErrorText := GetLastErrorText();
@@ -515,7 +513,7 @@ codeunit 90000 "VOL Test Runner WS"
         JsonObj.Add('durationMs', EndTime - StartTime);
 
         if Success then begin
-            JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
+            // JsonObj.Add('pdfSizeBytes', ReportTestHelper.GetPdfSizeFromBase64(PdfBase64));
             JsonObj.Add('pdfBase64', PdfBase64);
             JsonObj.Add('hasPdfContent', PdfBase64 <> '');
         end else begin

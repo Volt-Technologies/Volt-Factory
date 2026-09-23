@@ -90,7 +90,7 @@ codeunit 59990 "VOL Cortex Configurations"
     /// <summary>
     /// Appends one catalogue entry in the shape the Cortex API parses. Expect is
     /// what Apply establishes, keyed exactly as Verify reports it: Cortex copies it
-    /// into the configuration when the function is bound, so Apply & verify checks
+    /// into the configuration when the function is bound, so Apply &amp; verify checks
     /// the card against what the function meant to set. Pass an empty object only
     /// when the target is "whatever the card says now".
     /// </summary>
